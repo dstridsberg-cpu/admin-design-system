@@ -934,3 +934,28 @@ select.config-select { padding: var(--space-3) var(--space-5); border: 1px solid
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--grey-300); border-radius: var(--radius-xs); }
 ::-webkit-scrollbar-thumb:hover { background: var(--grey-400); }
+
+
+/* ── Urgency variants (dynamically applied by JS) ── */
+.urgency-routine  { color: var(--text-tertiary); }
+.urgency-urgent   { color: var(--status-warning); }
+.urgency-emergent { color: var(--status-danger); }
+.urgency-badge            { padding: var(--space-2) var(--space-4); border-radius: var(--radius-lg); font-size: var(--text-sm); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+.urgency-badge.routine    { background: var(--surface-tertiary); color: var(--text-secondary); }
+.urgency-badge.urgent     { background: var(--status-warning-bg); color: var(--status-warning-text); }
+.urgency-badge.emergent   { background: var(--status-danger-bg); color: var(--status-danger-text); }
+.sim-approval-urgency     { font-size: var(--text-base-2); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+
+
+/* ── Tier border accents (left border on order items) ── */
+.tier-border-1 { border-left: 3px solid var(--tier-1); }
+.tier-border-2 { border-left: 3px solid var(--tier-2); }
+.tier-border-3 { border-left: 3px solid var(--tier-3); }
+.tier-border-4 { border-left: 3px solid var(--tier-4); }
+
+
+/* ── Approval context panel ── */
+.approval-context        { background: var(--status-warning-bg); border-bottom: 2px solid var(--status-warning); padding: var(--space-12) var(--space-16); }
+.approval-context-header h3 { font-family: var(--heading-font); font-size: var(--text-4xl); color: var(--status-warning-text); margin-bottom: var(--space-8); }
+.approval-context-body   { font-size: var(--text-md); color: var(--text-primary); line-height: 1.6; }
+.approval-context-actions { display: flex; gap: var(--space-6); justify-content: flex-end; }
