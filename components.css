@@ -697,12 +697,16 @@ select.config-select { padding: var(--space-3) var(--space-5); border: 1px solid
 /* ── Welcome Overlay ── */
 .overlay { position: fixed; inset: 0; background: var(--surface-overlay); z-index: 2000; display: flex; align-items: center; justify-content: center; }
 .overlay.hidden { display: none; }
-.overlay-card { background: var(--surface-primary); border-radius: var(--radius-4xl); padding: 36px; max-width: 540px; width: 90%; box-shadow: var(--modal-shadow); }
-.overlay-card h2 { font-family: var(--heading-font); font-size: var(--heading-size); font-weight: 400; margin-bottom: var(--space-4); }
-.overlay-card p { font-size: var(--text-lg); color: var(--text-secondary); line-height: 1.6; margin-bottom: var(--space-8); }
-.overlay-features { list-style: none; margin-bottom: var(--space-10); }
-.overlay-features li { font-size: var(--text-md); padding: var(--space-3) 0; display: flex; align-items: center; gap: var(--space-4); }
-.overlay-features li::before { content: ''; width: 6px; height: 6px; border-radius: var(--radius-full); background: var(--text-primary); flex-shrink: 0; }
+.overlay-card { background: var(--surface-primary); border-radius: var(--radius-lg); padding: 56px; max-width: 540px; width: 90%; box-shadow: var(--modal-shadow); display: flex; flex-direction: column; gap: 34px; }
+.overlay-card h2 { font-family: var(--heading-font); font-size: var(--heading-size); font-weight: 400; text-align: center; letter-spacing: -0.5px; }
+.overlay-card > p:first-of-type { font-size: var(--text-2xl); color: var(--text-primary); line-height: 1.4; text-align: center; letter-spacing: -0.25px; }
+.overlay-card > p:last-of-type { font-size: var(--text-md) !important; color: var(--text-secondary); line-height: 1.4; text-align: center; }
+.overlay-features { list-style: none; overflow: hidden; border-radius: var(--radius-sm); }
+.overlay-features li { font-size: var(--text-md); padding: var(--space-2) 14px; display: flex; gap: var(--space-6); }
+.overlay-features li:nth-child(odd) { background: var(--grey-100); }
+.overlay-features li::before { content: none; }
+.overlay-card .btn-primary { background: var(--grey-900); border-radius: var(--radius-sm); padding: 16px 10px !important; font-size: var(--text-2xl); font-weight: 600; letter-spacing: -0.5px; }
+.overlay-card .btn-primary:hover { background: var(--grey-800); }
 
 
 /* ── Modal (admin) ── */
