@@ -1,0 +1,387 @@
+/* ============================================================
+   DESIGN SYSTEM TOKENS
+   ============================================================
+   
+   This file IS the design system. Every visual decision lives here.
+   
+   WORKFLOW:
+   1. Designer edits tokens in Figma (via Figma Variables)
+   2. Tokens export to this file (via Tokens Studio or manual sync)
+   3. Engineer pulls updated file → demo updates visually
+   
+   RULES FOR ENGINEERS:
+   - NEVER use a raw color, font-size, radius, shadow, or spacing 
+     value anywhere in component CSS. Always reference a token.
+   - If you need a value that doesn't exist, add a token here first.
+   - Token names are the contract between design and code.
+   
+   STRUCTURE (mirrors Figma variable collections):
+   1. Primitive scales (raw values, not used directly in components)
+   2. Semantic tokens (reference primitives, used in components)
+   3. Component-specific tokens (override semantics for edge cases)
+   
+   ============================================================ */
+
+
+/* ────────────────────────────────────────────────────────────
+   1. PRIMITIVE SCALES
+   Raw values. These define the available palette.
+   Components should NOT reference these directly.
+   ──────────────────────────────────────────────────────────── */
+
+:root {
+
+  /* ── Grey scale ── */
+  --grey-0:    #ffffff;
+  --grey-50:   #fafafa;
+  --grey-100:  #f5f5f5;
+  --grey-150:  #f0f0f0;
+  --grey-200:  #e5e7eb;
+  --grey-300:  #d1d5db;
+  --grey-400:  #9ca3af;
+  --grey-500:  #6b7280;
+  --grey-600:  #4b5563;
+  --grey-700:  #374151;
+  --grey-800:  #1f2937;
+  --grey-900:  #111827;
+  --grey-950:  #0b0d0f;
+
+  /* ── Status: Routine / Success / Green ── */
+  --green-50:  #f0fdf4;
+  --green-100: #d1fae5;
+  --green-200: #a7f3d0;
+  --green-500: #10b981;
+  --green-600: #059669;
+  --green-700: #047857;
+  --green-800: #065f46;
+  --green-900: #155724;
+
+  /* ── Status: Attention / Warning / Amber ── */
+  --amber-50:  #fffbeb;
+  --amber-100: #fef3c7;
+  --amber-200: #fed7aa;
+  --amber-500: #f59e0b;
+  --amber-600: #d97706;
+  --amber-700: #b45309;
+  --amber-800: #92400e;
+  --amber-900: #78350f;
+
+  /* ── Status: High / Danger / Red ── */
+  --red-50:    #fef2f2;
+  --red-100:   #fee2e2;
+  --red-200:   #fca5a5;
+  --red-500:   #ef4444;
+  --red-600:   #dc2626;
+  --red-700:   #b91c1c;
+  --red-800:   #991b1b;
+  --red-900:   #7f1d1d;
+
+  /* ── Status: Orange (Tier 3) ── */
+  --orange-50:  #fff7ed;
+  --orange-100: #ffedd5;
+  --orange-200: #fed7aa;
+  --orange-500: #f97316;
+  --orange-600: #ea580c;
+  --orange-800: #9a3412;
+
+  /* ── Accent / Interactive / Blue ── */
+  --blue-50:   #eff6ff;
+  --blue-100:  #dbeafe;
+  --blue-200:  #bfdbfe;
+  --blue-500:  #3b82f6;
+  --blue-600:  #2563eb;
+  --blue-700:  #1e40af;
+  --blue-800:  #1e3a8a;
+
+  /* ── Special: Purple (memory/AI agent) ── */
+  --purple-100: #ede9fe;
+  --purple-200: #ddd6fe;
+  --purple-500: #8b5cf6;
+  --purple-600: #7c3aed;
+  --purple-700: #6b21a8;
+  --purple-800: #581c87;
+
+  /* ── Spacing scale ── */
+  --space-0:   0px;
+  --space-1:   2px;
+  --space-2:   4px;
+  --space-3:   6px;
+  --space-4:   8px;
+  --space-5:   10px;
+  --space-6:   12px;
+  --space-8:   16px;
+  --space-10:  20px;
+  --space-12:  24px;
+  --space-16:  32px;
+  --space-20:  40px;
+  --space-24:  48px;
+
+  /* ── Type scale ── */
+  --text-2xs:  7px;
+  --text-xs:   8px;
+  --text-sm-2: 9px;
+  --text-sm:   10px;
+  --text-base-2: 11px;
+  --text-base: 12px;
+  --text-md:   13px;
+  --text-lg:   14px;
+  --text-xl:   15px;
+  --text-2xl:  16px;
+  --text-3xl:  18px;
+  --text-4xl:  20px;
+  --text-5xl:  24px;
+  --text-6xl:  28px;
+  --text-7xl:  32px;
+
+  /* ── Radius scale ── */
+  --radius-none: 0px;
+  --radius-xs:   2px;
+  --radius-sm:   4px;
+  --radius-md:   6px;
+  --radius-lg:   8px;
+  --radius-xl:   10px;
+  --radius-2xl:  12px;
+  --radius-3xl:  16px;
+  --radius-4xl:  20px;
+  --radius-full: 9999px;
+
+  /* ── Shadow scale ── */
+  --shadow-none: none;
+  --shadow-xs:   0 1px 2px rgba(0,0,0,0.05);
+  --shadow-sm:   0 2px 8px rgba(0,0,0,0.06);
+  --shadow-md:   0 4px 20px rgba(0,0,0,0.06);
+  --shadow-lg:   0 12px 40px rgba(0,0,0,0.12);
+  --shadow-xl:   0 20px 60px rgba(0,0,0,0.20);
+  --shadow-glow-blue:   0 0 0 3px rgba(37,99,235,0.18);
+  --shadow-glow-red:    0 0 0 3px rgba(239,68,68,0.18);
+  --shadow-glow-purple: 0 0 6px rgba(147,51,234,0.5);
+
+  /* ── Font stacks ── */
+  --font-sans:    'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Playfair Display', serif;
+  --font-mono:    'SF Mono', 'Fira Code', Menlo, monospace;
+
+  /* ── Transition ── */
+  --ease-default: 0.2s ease;
+  --ease-spring:  0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   2. SEMANTIC TOKENS — LIGHT THEME (default)
+   These reference primitives and are used in components.
+   ──────────────────────────────────────────────────────────── */
+
+:root {
+
+  /* ── Surfaces ── */
+  --surface-bg:       var(--grey-100);        /* page/viewport background */
+  --surface-primary:  var(--grey-0);          /* cards, panels, sidebars */
+  --surface-secondary: var(--grey-50);        /* hover states, nested surfaces */
+  --surface-tertiary: var(--grey-150);        /* active states, code blocks */
+  --surface-overlay:  rgba(0,0,0,0.5);        /* modal/overlay backdrop */
+  --surface-header:   rgba(255,255,255,0.95); /* top bar (translucent) */
+  --surface-sidebar:  rgba(255,255,255,0.92); /* sidebar (translucent) */
+
+  /* ── Background decoration (gradient, blobs) ── */
+  --bg-gradient:      linear-gradient(135deg, #B8E8E3 0%, #E8F5F3 50%, #F5F5F5 100%);
+  --bg-blob-1:        rgba(184, 232, 227, 0.3);
+  --bg-blob-2:        rgba(232, 245, 243, 0.4);
+
+  /* ── Text ── */
+  --text-primary:     var(--grey-900);        /* headings, names, emphasis */
+  --text-secondary:   var(--grey-500);        /* body text, descriptions */
+  --text-tertiary:    var(--grey-400);        /* labels, timestamps, muted */
+  --text-inverse:     var(--grey-0);          /* text on filled backgrounds */
+  --text-link:        var(--blue-600);        /* interactive text links */
+  --text-on-dark:     var(--grey-200);        /* text on dark panels (code blocks, VM) */
+
+  /* ── Borders ── */
+  --border-default:   var(--grey-200);        /* standard borders */
+  --border-subtle:    rgba(0,0,0,0.05);       /* very light card borders */
+  --border-strong:    rgba(0,0,0,0.08);       /* dividers, header bottom */
+
+  /* ── Interactive / Accent ── */
+  --accent:           var(--blue-600);        /* primary actions, links, focus */
+  --accent-hover:     var(--blue-700);        /* accent hover state */
+  --accent-bg:        var(--blue-100);        /* accent tint backgrounds */
+  --accent-subtle:    var(--blue-50);         /* accent very light tint */
+
+  /* ── Status: Success / Routine ── */
+  --status-success:        var(--green-500);
+  --status-success-hover:  var(--green-600);
+  --status-success-bg:     var(--green-100);
+  --status-success-text:   var(--green-800);
+
+  /* ── Status: Warning / Attention ── */
+  --status-warning:        var(--amber-600);
+  --status-warning-hover:  var(--amber-700);
+  --status-warning-bg:     var(--amber-100);
+  --status-warning-text:   var(--amber-800);
+
+  /* ── Status: Danger / High ── */
+  --status-danger:         var(--red-600);
+  --status-danger-hover:   var(--red-700);
+  --status-danger-bg:      var(--red-100);
+  --status-danger-text:    var(--red-800);
+
+  /* ── Status: Orange (Tier 3) ── */
+  --status-orange:         var(--orange-600);
+  --status-orange-bg:      var(--orange-100);
+  --status-orange-text:    var(--orange-800);
+
+  /* ── Status: Info / Accent ── */
+  --status-info:           var(--blue-600);
+  --status-info-bg:        var(--blue-100);
+  --status-info-text:      var(--blue-700);
+
+  /* ── Tier system (clinical risk) ── */
+  --tier-1:           var(--green-600);
+  --tier-1-bg:        var(--green-100);
+  --tier-1-text:      var(--green-800);
+  --tier-2:           var(--amber-600);
+  --tier-2-bg:        var(--amber-100);
+  --tier-2-text:      var(--amber-800);
+  --tier-3:           var(--orange-600);
+  --tier-3-bg:        var(--orange-100);
+  --tier-3-text:      var(--orange-800);
+  --tier-4:           var(--red-600);
+  --tier-4-bg:        var(--red-100);
+  --tier-4-text:      var(--red-800);
+
+  /* ── Autonomy level indicators ── */
+  --autonomy-l0:      var(--grey-200);
+  --autonomy-l0-text: var(--grey-600);
+  --autonomy-l1:      var(--blue-100);
+  --autonomy-l1-text: var(--blue-700);
+  --autonomy-l2:      var(--purple-200);
+  --autonomy-l2-text: var(--purple-700);
+  --autonomy-l3:      var(--amber-100);
+  --autonomy-l3-text: var(--amber-800);
+  --autonomy-l4:      var(--green-100);
+  --autonomy-l4-text: var(--green-800);
+
+  /* ── AI / Memory special ── */
+  --ai-agent-bg:      var(--grey-900);
+  --ai-agent-text:    var(--grey-0);
+  --memory-bg:        var(--purple-100);
+  --memory-text:      var(--purple-700);
+  --memory-dot:       var(--purple-500);
+
+  /* ── Component sizing ── */
+  --topbar-height:    56px;
+  --sidebar-width:    220px;
+  --card-padding:     16px;
+  --card-padding-lg:  18px;
+
+  /* ── Component radii (semantic) ── */
+  --card-radius:      var(--radius-3xl);      /* 16px - main cards */
+  --card-radius-sm:   var(--radius-lg);       /* 8px - inner cards, inputs */
+  --badge-radius:     var(--radius-xl);       /* 10px - badges, pills */
+  --button-radius:    var(--radius-lg);       /* 8px - buttons */
+  --button-radius-sm: var(--radius-2xl);      /* 12px - pill buttons */
+  --input-radius:     var(--radius-md);       /* 6px - form inputs */
+
+  /* ── Component shadows (semantic) ── */
+  --card-shadow:      var(--shadow-md);
+  --card-shadow-hover: var(--shadow-lg);
+  --dropdown-shadow:  var(--shadow-lg);
+  --modal-shadow:     var(--shadow-xl);
+  --toast-shadow:     var(--shadow-lg);
+
+  /* ── Component typography (semantic) ── */
+  --body-font:        var(--font-sans);
+  --heading-font:     var(--font-display);
+  --code-font:        var(--font-mono);
+  --body-size:        var(--text-lg);         /* 14px base */
+  --heading-size:     var(--text-6xl);        /* 28px section headings */
+  --label-size:       var(--text-sm);         /* 10px labels */
+  --label-weight:     700;
+  --label-spacing:    1px;
+  --label-transform:  uppercase;
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   3. DARK THEME OVERRIDES
+   Applied when body has class "dark".
+   Only semantic tokens need overriding — primitives stay the same.
+   ──────────────────────────────────────────────────────────── */
+
+body.dark {
+  --surface-bg:       var(--grey-950);
+  --surface-primary:  #111416;
+  --surface-secondary: #181b1e;
+  --surface-tertiary: #1e2226;
+  --surface-overlay:  rgba(0,0,0,0.65);
+  --surface-header:   #111416;
+  --surface-sidebar:  #111416;
+
+  --bg-gradient:      var(--grey-950);
+  --bg-blob-1:        transparent;
+  --bg-blob-2:        transparent;
+
+  --text-primary:     rgba(255,255,255,0.87);
+  --text-secondary:   rgba(255,255,255,0.55);
+  --text-tertiary:    rgba(255,255,255,0.30);
+  --text-inverse:     var(--grey-950);
+  --text-link:        #7aafff;
+  --text-on-dark:     rgba(255,255,255,0.87);
+
+  --border-default:   rgba(255,255,255,0.09);
+  --border-subtle:    rgba(255,255,255,0.05);
+  --border-strong:    rgba(255,255,255,0.13);
+
+  --accent:           #3d7fff;
+  --accent-hover:     #5a94ff;
+  --accent-bg:        rgba(61,127,255,0.12);
+  --accent-subtle:    rgba(61,127,255,0.06);
+
+  --status-success:       #4aaa7a;
+  --status-success-hover: #5cbf8c;
+  --status-success-bg:    rgba(46,107,74,0.28);
+  --status-success-text:  #4aaa7a;
+
+  --status-warning:       #d4902a;
+  --status-warning-hover: #e0a040;
+  --status-warning-bg:    rgba(140,96,14,0.28);
+  --status-warning-text:  #d4902a;
+
+  --status-danger:        #c45050;
+  --status-danger-hover:  #d06060;
+  --status-danger-bg:     rgba(160,40,40,0.06);
+  --status-danger-text:   #c45050;
+
+  --card-shadow:      none;
+  --card-shadow-hover: none;
+  --toast-shadow:     0 8px 24px rgba(0,0,0,0.4);
+}
+
+
+/* ────────────────────────────────────────────────────────────
+   4. EMR PANEL TOKENS
+   The OpenEMR embedded panel has its own visual language
+   (Bootstrap-like). These tokens control it separately so
+   it can be themed without affecting the main dashboard.
+   ──────────────────────────────────────────────────────────── */
+
+:root {
+  --emr-bg:           #ffffff;
+  --emr-bg-alt:       #f8f9fa;
+  --emr-text:         #212529;
+  --emr-text-muted:   #6c757d;
+  --emr-border:       #dee2e6;
+  --emr-border-light: #eeeeee;
+  --emr-accent:       #0d6efd;
+  --emr-accent-hover: #0b5ed7;
+  --emr-accent-bg:    #e7f1ff;
+  --emr-success:      #28a745;
+  --emr-success-bg:   #d4edda;
+  --emr-success-text: #155724;
+  --emr-input-border: #ced4da;
+  --emr-dialog-accent: #4169E1;
+  --emr-dialog-accent-bg: #e8eeff;
+  --emr-filling-bg:   var(--emr-accent-bg);
+  --emr-filled-bg:    #f0fff4;
+  --emr-filled-border: var(--emr-success);
+}
