@@ -1,0 +1,2846 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" href="/favicon.ico" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin.ai</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    /* ── CSS Custom Properties ── */
+    :root {
+      --primary: #1a1a1a;
+      --bg: linear-gradient(135deg, #B8E8E3 0%, #E8F5F3 50%, #F5F5F5 100%);
+      --bg-card: #ffffff;
+      --bg-sidebar: rgba(255,255,255,0.92);
+      --bg-sidebar-hover: rgba(0,0,0,0.04);
+      --bg-sidebar-active: rgba(0,0,0,0.06);
+      --bg-header: rgba(255,255,255,0.95);
+      --text: #1a1a1a;
+      --text-muted: #6b7280;
+      --text-sidebar: #4b5563;
+      --text-sidebar-active: #1a1a1a;
+      --border: #e2e5ea;
+      --accent: #2563eb;
+      --success: #10b981;
+      --success-light: #d1fae5;
+      --warning: #d97706;
+      --warning-light: #fef3c7;
+      --danger: #dc2626;
+      --danger-light: #fee2e2;
+      --orange: #ea580c;
+      --orange-light: #ffedd5;
+      --t1: #059669; --t1-bg: #d1fae5;
+      --t2: #d97706; --t2-bg: #fef3c7;
+      --t3: #ea580c; --t3-bg: #ffedd5;
+      --t4: #dc2626; --t4-bg: #fee2e2;
+      --radius: 16px;
+      --radius-sm: 8px;
+      --shadow: 0 4px 20px rgba(0,0,0,0.06);
+      --shadow-lg: 0 12px 40px rgba(0,0,0,0.12);
+      --font: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-display: 'Playfair Display', serif;
+      --mono: "SF Mono", "Fira Code", Menlo, monospace;
+      --transition: 0.2s ease;
+    }
+
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; font-family: var(--font); font-size: 14px; color: var(--text); background: linear-gradient(135deg, #B8E8E3 0%, #E8F5F3 50%, #F5F5F5 100%); overflow: hidden; }
+    button { font-family: var(--font); cursor: pointer; border: none; background: none; font-size: inherit; }
+    input, select { font-family: var(--font); font-size: inherit; }
+
+    /* Background shapes */
+    body::before {
+      content: '';
+      position: fixed;
+      top: -20%;
+      left: -10%;
+      width: 60%;
+      height: 80%;
+      background: rgba(184, 232, 227, 0.3);
+      border-radius: 40% 60% 70% 30%;
+      filter: blur(80px);
+      z-index: 0;
+    }
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -20%;
+      right: -10%;
+      width: 50%;
+      height: 70%;
+      background: rgba(232, 245, 243, 0.4);
+      border-radius: 60% 40% 30% 70%;
+      filter: blur(100px);
+      z-index: 0;
+    }
+
+    /* ── Main Dashboard (app grid) ── */
+    #dashboard {
+      position: relative;
+      z-index: 1;
+      height: 100vh;
+    }
+    .app {
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      grid-template-rows: 56px 1fr;
+      height: 100vh;
+    }
+
+    /* ── Top Nav (header) ── */
+    .top-nav {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      background: var(--bg-header);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+      z-index: 100;
+    }
+    .nav-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .nav-logo {
+      width: 28px;
+      height: 28px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 3px;
+    }
+    .nav-logo span {
+      width: 12px;
+      height: 12px;
+      background: #1a1a1a;
+      border-radius: 50%;
+    }
+    .company-dropdown {
+      font-size: 15px;
+      font-weight: 500;
+      color: #1a1a1a;
+      border: none;
+      background: none;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+
+    .nav-center {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .autonomy-switcher {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f5f5f5;
+      padding: 4px 12px;
+      border-radius: 20px;
+      border: 1px solid var(--border);
+    }
+    .autonomy-switcher label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .autonomy-btns { display: flex; gap: 2px; }
+    .autonomy-btn {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      transition: all var(--transition);
+    }
+    .autonomy-btn:hover { background: var(--border); }
+    .autonomy-btn.active { background: var(--primary); color: white; }
+
+    .speed-control {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .speed-btn {
+      padding: 3px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      transition: all var(--transition);
+    }
+    .speed-btn:hover { border-color: var(--primary); color: var(--primary); }
+    .speed-btn.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+    .header-status {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      color: var(--success);
+    }
+    .header-status.paused { color: var(--danger); }
+
+    .nav-right {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .nav-right a {
+      font-size: 14px;
+      color: #666;
+      text-decoration: none;
+    }
+    .nav-right a:hover { color: #1a1a1a; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      transition: all var(--transition);
+    }
+    .btn-primary { background: var(--primary); color: white; }
+    .btn-primary:hover { background: #000; }
+    .btn-danger { background: var(--danger); color: white; }
+    .btn-danger:hover { background: #b91c1c; }
+    .btn-outline { border: 1px solid var(--border); color: var(--text); background: white; }
+    .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
+    .btn-success { background: var(--success); color: white; }
+    .btn-success:hover { background: #047857; }
+    .btn-warning { background: var(--warning); color: white; }
+    .btn-sm { padding: 4px 10px; font-size: 12px; }
+    .btn-xs { padding: 2px 8px; font-size: 11px; }
+    .pause-btn { }
+    .pause-btn.is-paused { background: var(--success); }
+    .pause-btn.is-paused:hover { background: #047857; }
+
+    /* ── Sidebar ── */
+    .sidebar {
+      grid-row: 2;
+      background: var(--bg-sidebar);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-right: 1px solid var(--border);
+      padding: 16px 0;
+      overflow-y: auto;
+    }
+    .sidebar-section { padding: 0 12px; margin-bottom: 20px; }
+    .sidebar-label {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      padding: 0 12px;
+      margin-bottom: 8px;
+      opacity: 0.6;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: var(--radius-sm);
+      color: var(--text-sidebar);
+      font-size: 13px;
+      font-weight: 500;
+      transition: all var(--transition);
+      cursor: pointer;
+      position: relative;
+    }
+    .nav-item:hover { background: var(--bg-sidebar-hover); color: var(--text-sidebar-active); }
+    .nav-item.active { background: var(--bg-sidebar-active); color: var(--text-sidebar-active); font-weight: 600; }
+    .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .nav-badge {
+      margin-left: auto;
+      background: #ef4444;
+      color: white;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 10px;
+      min-width: 18px;
+      text-align: center;
+    }
+
+    /* ── Main Content Area ── */
+    .main {
+      grid-row: 2;
+      overflow-y: auto;
+      padding: 24px;
+      background: transparent;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      animation: pulse 2s infinite;
+    }
+    .paused .pulse-dot { background: var(--danger); animation: none; }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+    .card-title { font-size: 14px; font-weight: 600; }
+
+    /* ── Badges ── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .badge-t1 { background: var(--t1-bg); color: var(--t1); }
+    .badge-t2 { background: var(--t2-bg); color: var(--t2); }
+    .badge-t3 { background: var(--t3-bg); color: var(--t3); }
+    .badge-t4 { background: var(--t4-bg); color: var(--t4); }
+    .badge-info { background: #dbeafe; color: #2563eb; }
+    .badge-success { background: var(--success-light); color: var(--success); }
+    .badge-danger { background: var(--danger-light); color: var(--danger); }
+    .badge-muted { background: #f1f5f9; color: var(--text-muted); }
+
+    .risk-badge {
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .risk-badge.low, .risk-badge.t1 { background: #d1fae5; color: #065f46; }
+    .risk-badge.medium, .risk-badge.t2 { background: #fef3c7; color: #92400e; }
+    .risk-badge.high, .risk-badge.t3 { background: #fed7aa; color: #9a3412; }
+    .risk-badge.t4 { background: #fee2e2; color: #991b1b; }
+
+    .autonomy-badge {
+      padding: 3px 8px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      display: inline-block;
+      margin-left: 8px;
+    }
+    .autonomy-badge.l0 { background: #e5e7eb; color: #4b5563; }
+    .autonomy-badge.l1 { background: #dbeafe; color: #1e40af; }
+    .autonomy-badge.l2 { background: #ddd6fe; color: #6b21a8; }
+    .autonomy-badge.l3 { background: #fef3c7; color: #92400e; }
+    .autonomy-badge.l4 { background: #d1fae5; color: #065f46; }
+
+    /* ── Risk Tier Colors (Left borders) ── */
+    .tier-border-t1 { border-left: 3px solid var(--t1); }
+    .tier-border-t2 { border-left: 3px solid var(--t2); }
+    .tier-border-t3 { border-left: 3px solid var(--t3); }
+    .tier-border-t4 { border-left: 3px solid var(--t4); }
+
+    /* ── Activity Feed ── */
+    .feed-list { display: flex; flex-direction: column; gap: 8px; }
+    .feed-item {
+      padding: 12px 14px;
+      border-radius: var(--radius);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: all var(--transition);
+      animation: slideIn 0.3s ease;
+    }
+    .feed-item:hover { box-shadow: var(--shadow-lg); }
+    .feed-item-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+    .feed-patient { font-weight: 600; font-size: 13px; }
+    .feed-tool { font-family: var(--mono); font-size: 11px; background: #f1f5f9; padding: 1px 6px; border-radius: var(--radius-sm); color: var(--text-muted); }
+    .feed-time { font-size: 11px; color: var(--text-muted); margin-left: auto; }
+    .feed-desc { font-size: 13px; color: var(--text); line-height: 1.5; }
+    .feed-meta { display: flex; align-items: center; gap: 10px; margin-top: 8px; font-size: 12px; color: var(--text-muted); }
+    .feed-status { display: inline-flex; align-items: center; gap: 4px; }
+    .feed-status.approved { color: var(--success); }
+    .feed-status.pending { color: var(--warning); }
+    .feed-status.rejected { color: var(--danger); }
+    .feed-status.auto-approved { color: #2563eb; }
+    .confidence-bar { width: 50px; height: 5px; background: #e5e7eb; border-radius: 3px; overflow: hidden; display: inline-block; vertical-align: middle; }
+    .confidence-fill { height: 100%; border-radius: 3px; transition: width 0.3s ease; }
+
+    @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* ── Expandable Reasoning ── */
+    .reasoning-toggle { font-size: 12px; color: #2563eb; cursor: pointer; display: inline-flex; align-items: center; gap: 4px; }
+    .reasoning-toggle:hover { text-decoration: underline; }
+    .reasoning-content { display: none; margin-top: 10px; padding: 12px; background: #f8fafc; border-radius: var(--radius-sm); font-size: 12px; line-height: 1.6; border: 1px solid var(--border); }
+    .reasoning-content.open { display: block; }
+    .reasoning-step-label { font-weight: 600; color: #2563eb; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .tool-json { font-family: var(--mono); font-size: 11px; background: #1e293b; color: #e2e8f0; padding: 10px; border-radius: var(--radius-sm); overflow-x: auto; white-space: pre; margin-top: 6px; }
+    .json-key { color: #7dd3fc; }
+    .json-string { color: #86efac; }
+    .json-number { color: #fbbf24; }
+    .json-bool { color: #c084fc; }
+
+    /* ── Sim Approvals Queue ── */
+    .sim-approval-item {
+      padding: 16px;
+      border-radius: var(--radius);
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      margin-bottom: 10px;
+    }
+    .sim-approval-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .sim-approval-urgency { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .urgency-routine { color: var(--text-muted); }
+    .urgency-urgent { color: var(--warning); }
+    .urgency-emergent { color: var(--danger); }
+    .sla-timer { font-family: var(--mono); font-size: 13px; font-weight: 600; padding: 3px 10px; border-radius: 12px; }
+    .sla-ok { background: var(--success-light); color: var(--success); }
+    .sla-warning { background: var(--warning-light); color: var(--warning); }
+    .sla-critical { background: var(--danger-light); color: var(--danger); }
+    .sim-approval-body { margin-bottom: 12px; }
+    .sim-approval-patient { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
+    .sim-approval-action { font-size: 13px; color: var(--text); line-height: 1.5; }
+    .sim-approval-actions { display: flex; gap: 8px; }
+
+    /* ── Admin Approvals (from API) ── */
+    .approvals-section {
+      background: white;
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+    .approvals-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .approvals-title {
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 400;
+      color: #1a1a1a;
+    }
+    .approvals-count {
+      background: #ef4444;
+      color: white;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .approval-hero {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: var(--radius);
+      padding: 28px 32px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    .approval-hero.real-approval {
+      border-color: #86efac;
+      box-shadow: 0 2px 12px rgba(16, 185, 129, 0.1);
+    }
+    .approval-hero .hero-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .approval-hero .hero-left-meta { display: flex; align-items: center; gap: 10px; }
+    .approval-hero .hero-badges { display: flex; align-items: center; gap: 8px; }
+    .approval-hero .hero-body { display: flex; gap: 32px; align-items: flex-start; }
+    .approval-hero .hero-info { flex: 1; min-width: 0; }
+    .approval-hero .hero-action-text { font-size: 20px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px; }
+    .approval-hero .hero-patient { font-size: 14px; color: #6b7280; margin-bottom: 12px; }
+    .approval-hero .hero-context { font-size: 13px; color: #4b5563; line-height: 1.6; padding: 10px 14px; background: #f9fafb; border-radius: 8px; border-left: 3px solid #d1d5db; }
+    .approval-hero .hero-context strong { color: #374151; font-weight: 600; }
+    .approval-hero .hero-actions-col { flex-shrink: 0; display: flex; flex-direction: column; gap: 8px; min-width: 180px; }
+    .approval-hero .hero-approve-btn { padding: 12px 24px; background: #1a1a1a; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s; width: 100%; }
+    .approval-hero .hero-approve-btn:hover { background: #000; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+    .approval-hero .hero-reject-btn { padding: 12px 24px; background: white; color: #6b7280; border: 1px solid #e5e7eb; border-radius: 8px; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.15s; width: 100%; }
+    .approval-hero .hero-reject-btn:hover { border-color: #ef4444; color: #dc2626; background: #fef2f2; }
+    .approval-hero .hero-reject-form { display: flex; flex-direction: column; gap: 8px; width: 100%; animation: fadeSlideIn 0.2s ease; }
+    .approval-hero .hero-reject-input { width: 100%; padding: 10px 12px; border: 1px solid #fca5a5; border-radius: 8px; font-size: 13px; background: #fff; font-family: inherit; box-sizing: border-box; }
+    .approval-hero .hero-reject-input:focus { outline: none; border-color: #ef4444; box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.1); }
+    .approval-hero .hero-reject-form-btns { display: flex; gap: 6px; }
+    .approval-hero .hero-reject-confirm { padding: 8px 16px; background: #ef4444; color: white; border: none; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; }
+    .approval-hero .hero-reject-confirm:hover { background: #dc2626; }
+    .approval-hero .hero-reject-confirm:disabled { background: #fca5a5; cursor: not-allowed; }
+    .approval-hero .hero-reject-cancel { padding: 8px 12px; background: none; color: #9ca3af; border: none; font-size: 13px; cursor: pointer; }
+
+    .approval-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      background: #fafafa;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      border-left: 4px solid #e5e5e5;
+      transition: all 0.3s;
+      cursor: pointer;
+    }
+    .approval-item.real-approval { border-left: 4px solid #2ecc71; }
+    .approval-item:hover { background: #f5f5f5; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+    .approval-item.urgent { border-left-color: #f59e0b; background: #fffbeb; }
+    .approval-item.emergent { border-left-color: #ef4444; background: #fef2f2; animation: urgent-pulse 2s ease-in-out infinite; }
+    @keyframes urgent-pulse {
+      0%, 100% { box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2); }
+      50% { box-shadow: 0 4px 16px rgba(239, 68, 68, 0.4); }
+    }
+    .approval-patient { display: flex; flex-direction: column; gap: 4px; flex: 0 0 120px; }
+    .approval-patient-id { font-size: 13px; font-weight: 600; color: #1a1a1a; }
+    .approval-patient-name { font-size: 11px; color: #666; }
+    .approval-content { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+    .approval-action { font-size: 14px; font-weight: 500; color: #1a1a1a; }
+    .approval-reason { font-size: 12px; color: #666; }
+    .approval-meta { display: flex; align-items: center; gap: 12px; flex: 0 0 auto; }
+    .urgency-badge { padding: 4px 8px; border-radius: 8px; font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    .urgency-badge.routine { background: #e5e7eb; color: #4b5563; }
+    .urgency-badge.urgent { background: #fed7aa; color: #9a3412; }
+    .urgency-badge.emergent { background: #fee2e2; color: #991b1b; }
+    .approval-actions { display: flex; gap: 8px; }
+    .approve-btn, .reject-btn {
+      padding: 8px 16px;
+      border: none;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .approve-btn { background: #10b981; color: white; }
+    .approve-btn:hover { background: #059669; }
+    .reject-btn { background: #f3f4f6; color: #4b5563; }
+    .reject-btn:hover { background: #e5e7eb; }
+    .reject-inline { display: flex; gap: 6px; align-items: center; }
+    .reject-inline input { padding: 6px 10px; border: 1px solid #e5e7eb; border-radius: 6px; font-size: 11px; width: 160px; font-family: inherit; }
+    .reject-inline input:focus { outline: none; border-color: #ef4444; }
+    .reject-inline .reject-confirm-btn { padding: 6px 12px; background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; }
+    .reject-inline .reject-cancel-btn { padding: 6px 8px; background: none; color: #6b7280; border: none; font-size: 11px; cursor: pointer; }
+
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Patient Grid ── */
+    .patient-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 16px;
+    }
+    .patient-card {
+      background: white;
+      border-radius: var(--radius);
+      padding: 18px;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      transition: all 0.3s;
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+    .patient-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+    .patient-name { font-size: 16px; font-weight: 600; margin-bottom: 2px; }
+    .patient-demo { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; }
+    .patient-chief { font-size: 13px; color: var(--text); margin-bottom: 14px; padding: 8px 10px; background: #f8fafc; border-radius: var(--radius-sm); border-left: 3px solid #2563eb; }
+
+    /* Admin-style patient cards */
+    .patient-card.high-risk { background: linear-gradient(135deg, #fef2f2 0%, #ffffff 100%); border-color: rgba(220, 38, 38, 0.2); }
+    .patient-card.medium-risk { background: linear-gradient(135deg, #fffbeb 0%, #ffffff 100%); border-color: rgba(217, 119, 6, 0.2); }
+    .patient-card.live-session { background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%); border-color: rgba(37, 99, 235, 0.3); }
+    .patient-card.live-session:hover { box-shadow: 0 12px 40px rgba(37, 99, 235, 0.18); }
+
+    .patient-id { font-size: 14px; font-weight: 600; color: #1a1a1a; }
+    .live-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 10px; font-size: 10px; font-weight: 600; letter-spacing: 0.5px; background: #dbeafe; color: #1e40af; }
+    .live-dot { width: 6px; height: 6px; border-radius: 50%; background: #2563eb; animation: live-pulse 2s ease-in-out infinite; }
+    @keyframes live-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+    .activity-status { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #3b82f6; margin-bottom: 12px; font-weight: 500; }
+    .activity-status.complete { color: #10b981; }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; animation: pulse 2s ease-in-out infinite; }
+    .condition { font-size: 16px; color: #1a1a1a; margin-bottom: 12px; font-weight: 500; }
+    .condition-code { color: #666; font-weight: 400; font-size: 13px; }
+    .agent-info { display: flex; align-items: center; gap: 8px; margin-top: 16px; padding-top: 16px; border-top: 1px solid #f5f5f5; font-size: 13px; color: #666; }
+    .agent-icon { width: 18px; height: 18px; border-radius: 50%; background: #1a1a1a; display: flex; align-items: center; justify-content: center; color: white; font-size: 9px; font-weight: 700; }
+    .memory-indicator { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; background: #ede9fe; border-radius: 10px; font-size: 10px; color: #6b21a8; font-weight: 500; margin-left: auto; }
+    .memory-icon { width: 8px; height: 8px; background: #9333ea; border-radius: 50%; animation: glow 2s ease infinite; }
+    @keyframes glow { 0%, 100% { box-shadow: 0 0 0px #9333ea; } 50% { box-shadow: 0 0 6px #9333ea; } }
+    .card-timestamp { font-size: 11px; color: #999; margin-top: 8px; }
+
+    /* ── Workflow Stepper ── */
+    .stepper { display: flex; gap: 0; margin-bottom: 8px; }
+    .step { flex: 1; text-align: center; position: relative; font-size: 10px; font-weight: 600; color: var(--text-muted); padding-top: 16px; }
+    .step::before { content: ''; position: absolute; top: 4px; left: 50%; transform: translateX(-50%); width: 10px; height: 10px; border-radius: 50%; background: #e5e7eb; border: 2px solid #e5e7eb; transition: all var(--transition); }
+    .step::after { content: ''; position: absolute; top: 8px; left: calc(50% + 7px); width: calc(100% - 14px); height: 2px; background: #e5e7eb; }
+    .step:last-child::after { display: none; }
+    .step.done::before { background: var(--success); border-color: var(--success); }
+    .step.done::after { background: var(--success); }
+    .step.active::before { background: white; border-color: #2563eb; box-shadow: 0 0 0 3px #dbeafe; }
+    .step.active { color: #2563eb; }
+    .step.done { color: var(--success); }
+
+    /* ── Encounter Detail ── */
+    .encounter-layout { display: grid; grid-template-columns: 200px 1fr 340px; gap: 20px; height: calc(100vh - 104px); }
+    .encounter-stepper-col { padding: 16px 0; }
+    .encounter-stepper-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: var(--radius-sm); font-size: 13px; color: var(--text-muted); cursor: pointer; margin-bottom: 4px; transition: all var(--transition); }
+    .encounter-stepper-item:hover { background: #f1f5f9; }
+    .encounter-stepper-item.active { background: #dbeafe; color: #2563eb; font-weight: 600; }
+    .encounter-stepper-item.done { color: var(--success); }
+    .step-icon { width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; border: 2px solid #e5e7eb; color: var(--text-muted); flex-shrink: 0; }
+    .encounter-stepper-item.done .step-icon { background: var(--success); border-color: var(--success); color: white; }
+    .encounter-stepper-item.active .step-icon { border-color: #2563eb; color: #2563eb; box-shadow: 0 0 0 3px #dbeafe; }
+    .encounter-content { overflow-y: auto; padding: 16px; }
+    .encounter-section { margin-bottom: 20px; }
+    .encounter-section h3 { font-size: 15px; font-weight: 600; margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
+    .reasoning-panel-sidebar { background: #f8fafc; border-left: 2px solid var(--border); padding: 16px; overflow-y: auto; }
+    .reasoning-panel-sidebar h3 { font-size: 14px; font-weight: 600; margin-bottom: 12px; color: var(--text-muted); }
+    .trace-entry { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+    .trace-entry:last-child { border-bottom: none; }
+    .trace-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: #2563eb; margin-bottom: 4px; }
+    .trace-text { font-size: 13px; line-height: 1.6; }
+    .typing-cursor { display: inline-block; width: 2px; height: 14px; background: #2563eb; animation: blink 0.8s infinite; vertical-align: text-bottom; margin-left: 2px; }
+    @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+
+    /* ── Differential Diagnosis Table ── */
+    .dx-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .dx-table th { text-align: left; padding: 8px 10px; background: #f1f5f9; border-bottom: 2px solid var(--border); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); }
+    .dx-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .dx-table tr:hover { background: #f8fafc; }
+    .dx-rank { font-weight: 700; color: #2563eb; }
+    .dx-prob { font-family: var(--mono); font-weight: 600; }
+    .evidence-for { color: var(--success); font-size: 12px; }
+    .evidence-against { color: var(--danger); font-size: 12px; }
+
+    /* ── SOAP Note ── */
+    .soap-section { margin-bottom: 14px; }
+    .soap-label { font-size: 12px; font-weight: 700; color: #2563eb; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+    .soap-content { font-size: 13px; line-height: 1.6; padding-left: 12px; border-left: 2px solid #dbeafe; }
+
+    /* ── Orders List ── */
+    .order-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: #f8fafc; border-radius: var(--radius-sm); margin-bottom: 6px; font-size: 13px; }
+    .order-item .badge { flex-shrink: 0; }
+
+    /* ── Analytics ── */
+    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .metric-card { text-align: center; padding: 20px; }
+    .metric-value { font-size: 32px; font-weight: 700; color: #2563eb; margin-bottom: 4px; }
+    .metric-label { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .metric-sublabel { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+
+    /* ── Configuration ── */
+    .config-section { margin-bottom: 24px; }
+    .config-section h3 { font-size: 15px; font-weight: 600; margin-bottom: 12px; }
+    .config-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+    .config-item { display: flex; align-items: center; justify-content: space-between; padding: 12px; }
+    .config-label { font-size: 13px; font-weight: 500; }
+    .config-desc { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
+    .toggle { width: 40px; height: 22px; border-radius: 11px; background: #d1d5db; position: relative; cursor: pointer; transition: background var(--transition); flex-shrink: 0; }
+    .toggle.on { background: #2563eb; }
+    .toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 18px; height: 18px; border-radius: 50%; background: white; transition: transform var(--transition); box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+    .toggle.on::after { transform: translateX(18px); }
+    select.config-select { padding: 6px 10px; border: 1px solid var(--border); border-radius: var(--radius-sm); background: white; }
+    .approval-matrix { width: 100%; border-collapse: collapse; font-size: 13px; margin-top: 12px; }
+    .approval-matrix th, .approval-matrix td { padding: 10px 14px; border: 1px solid var(--border); text-align: center; }
+    .approval-matrix th { background: #f1f5f9; font-weight: 600; font-size: 12px; }
+    .matrix-auto { background: var(--success-light); color: var(--success); font-weight: 600; }
+    .matrix-approve { background: var(--warning-light); color: var(--warning); font-weight: 600; }
+
+    /* ── Toast Notifications ── */
+    .toast-container { position: fixed; top: 68px; right: 20px; z-index: 1000; display: flex; flex-direction: column; gap: 8px; }
+    .toast { padding: 12px 16px; border-radius: var(--radius-sm); box-shadow: var(--shadow-lg); font-size: 13px; display: flex; align-items: center; gap: 8px; animation: toastIn 0.3s ease; min-width: 300px; max-width: 420px; }
+    .toast-info { background: var(--primary); color: white; }
+    .toast-success { background: var(--success); color: white; }
+    .toast-warning { background: var(--warning); color: white; }
+    .toast-danger { background: var(--danger); color: white; }
+    .toast-close { margin-left: auto; opacity: 0.8; cursor: pointer; background: none; border: none; color: inherit; font-size: 16px; }
+    @keyframes toastIn { from { opacity: 0; transform: translateX(40px); } to { opacity: 1; transform: translateX(0); } }
+
+    /* ── Welcome Overlay ── */
+    .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 2000; display: flex; align-items: center; justify-content: center; }
+    .overlay.hidden { display: none; }
+    .overlay-card { background: white; border-radius: 20px; padding: 36px; max-width: 540px; width: 90%; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+    .overlay-card h2 { font-family: var(--font-display); font-size: 28px; font-weight: 400; margin-bottom: 8px; }
+    .overlay-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px; }
+    .overlay-features { list-style: none; margin-bottom: 20px; }
+    .overlay-features li { font-size: 13px; padding: 6px 0; display: flex; align-items: center; gap: 8px; }
+    .overlay-features li::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--primary); flex-shrink: 0; }
+
+    /* ── Modal (admin) ── */
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center; padding: 20px; }
+    .modal-overlay.active { display: flex; }
+    .modal-container { background: white; border-radius: 20px; width: 100%; max-width: 1400px; height: 90vh; display: flex; flex-direction: column; box-shadow: 0 25px 50px rgba(0,0,0,0.25); overflow: hidden; }
+    .modal-header { padding: 24px 32px; border-bottom: 1px solid #e5e5e5; display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+    .modal-title { font-family: var(--font-display); font-size: 28px; font-weight: 400; color: #1a1a1a; }
+    .modal-close { background: none; border: none; font-size: 28px; color: #999; cursor: pointer; padding: 0; width: 32px; height: 32px; line-height: 1; }
+    .modal-close:hover { color: #1a1a1a; }
+    .approval-context { background: linear-gradient(135deg, #fffbeb 0%, #ffffff 100%); border-bottom: 2px solid #f59e0b; padding: 24px 40px; }
+    .approval-context-header h3 { font-family: var(--font-display); font-size: 20px; color: #92400e; margin-bottom: 16px; }
+    .approval-action-card { background: white; padding: 20px; border-radius: 12px; border: 1px solid #fbbf24; margin-bottom: 16px; }
+    .approval-action-header { display: flex; gap: 12px; margin-bottom: 12px; align-items: center; }
+    .approval-action-text { font-size: 18px; font-weight: 600; color: #1a1a1a; margin-bottom: 8px; }
+    .approval-reason-text { font-size: 14px; color: #666; }
+    .approval-context-actions { display: flex; gap: 12px; justify-content: flex-end; }
+    .approve-btn-large, .reject-btn-large, .modify-btn { padding: 12px 24px; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+    .approve-btn-large { background: #10b981; color: white; }
+    .approve-btn-large:hover { background: #059669; }
+    .modify-btn { background: #3b82f6; color: white; }
+    .reject-btn-large { background: #ef4444; color: white; }
+    .reject-btn-large:hover { background: #dc2626; }
+
+    .progress-timeline { padding: 20px 40px; background: #fafafa; border-bottom: 1px solid #e5e5e5; display: flex; align-items: center; justify-content: center; gap: 12px; }
+    .timeline-step { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #999; font-weight: 500; }
+    .timeline-step.active { color: #3b82f6; }
+    .timeline-step.completed { color: #10b981; }
+    .timeline-dot { width: 8px; height: 8px; border-radius: 50%; background: #e5e5e5; }
+    .timeline-step.active .timeline-dot { background: #3b82f6; animation: pulse 2s ease-in-out infinite; }
+    .timeline-step.completed .timeline-dot { background: #10b981; }
+    .timeline-arrow { color: #e5e5e5; font-size: 12px; }
+    .modal-body { flex: 1; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: #e5e5e5; overflow: hidden; }
+    .modal-panel { background: white; overflow-y: auto; display: flex; flex-direction: column; position: relative; }
+    .modal-panel.active { box-shadow: inset 0 0 0 2px rgba(59, 130, 246, 0.3); }
+    .panel-header { padding: 20px 24px; border-bottom: 1px solid #f5f5f5; font-size: 12px; font-weight: 600; color: #666; letter-spacing: 1px; text-transform: uppercase; flex-shrink: 0; }
+    .panel-content { flex: 1; padding: 24px; overflow-y: auto; }
+
+    /* Conversation */
+    .chat-message { margin-bottom: 20px; display: flex; flex-direction: column; }
+    .chat-message.patient { align-items: flex-start; }
+    .chat-message.ai { align-items: flex-end; }
+    .message-bubble { max-width: 75%; padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.6; }
+    .chat-message.patient .message-bubble { background: #f5f5f5; color: #1a1a1a; border-bottom-left-radius: 4px; }
+    .chat-message.ai .message-bubble { background: #1a1a1a; color: white; border-bottom-right-radius: 4px; }
+    .message-time { font-size: 11px; color: #999; margin-top: 6px; }
+    .typing-indicator { display: flex; gap: 4px; padding: 12px 16px; background: #f5f5f5; border-radius: 16px; width: fit-content; }
+    .typing-dot { width: 6px; height: 6px; background: #999; border-radius: 50%; animation: typingBounce 1.4s infinite; }
+    .typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .typing-dot:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typingBounce { 0%, 60%, 100% { transform: translateY(0); } 30% { transform: translateY(-8px); } }
+
+    /* Reasoning panel items */
+    .reasoning-item { margin-bottom: 24px; padding-bottom: 24px; border-bottom: 1px solid #f5f5f5; }
+    .reasoning-item:last-child { border-bottom: none; }
+    .reasoning-agent { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+    .reasoning-agent-icon { width: 24px; height: 24px; border-radius: 50%; background: #1a1a1a; display: flex; align-items: center; justify-content: center; color: white; font-size: 10px; font-weight: 700; }
+    .reasoning-agent-name { font-size: 13px; font-weight: 600; color: #1a1a1a; }
+    .modal-reasoning-step { font-size: 13px; color: #4a5568; margin: 6px 0 6px 34px; line-height: 1.6; }
+    .modal-reasoning-step::before { content: "\2192"; color: #1a1a1a; margin-right: 8px; font-weight: 600; }
+    .modal-confidence-bar { margin: 12px 0 0 34px; height: 6px; background: #f5f5f5; border-radius: 3px; overflow: hidden; }
+    .modal-confidence-fill { height: 100%; background: linear-gradient(90deg, #1a1a1a, #4a5568); transition: width 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
+    .confidence-label { font-size: 11px; color: #999; margin: 6px 0 0 34px; }
+
+    /* EMR Panel */
+    .vm-container { background: #1a1a1a; border-radius: 12px; padding: 8px; margin-bottom: 20px; }
+    .vm-header { background: #2d2d2d; padding: 10px 14px; border-radius: 8px 8px 0 0; display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .vm-title { font-size: 11px; color: #999; font-family: monospace; }
+    .vm-status { display: flex; align-items: center; gap: 6px; font-size: 10px; color: #10b981; }
+    .vm-status-dot { width: 6px; height: 6px; background: #10b981; border-radius: 50%; animation: pulse 2s ease infinite; }
+    .vm-screen { background: linear-gradient(135deg, #1a3a5c 0%, #0c2d48 50%, #1a3a5c 100%); border-radius: 0 0 8px 8px; position: relative; overflow: hidden; min-height: 420px; display: flex; flex-direction: column; }
+    .vm-cursor { position: absolute; width: 16px; height: 16px; pointer-events: none; z-index: 10; transition: top 0.6s ease, left 0.6s ease; filter: drop-shadow(1px 1px 1px rgba(0,0,0,0.5)); }
+    .win-window { flex: 1; display: flex; flex-direction: column; background: #fff; margin: 6px 6px 0 6px; border-radius: 8px 8px 0 0; overflow: hidden; box-shadow: 0 2px 16px rgba(0,0,0,0.22); }
+    .win-titlebar { background: #f3f3f3; padding: 0 0 0 10px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; height: 28px; border-bottom: 1px solid #e5e5e5; }
+    .win-titlebar-left { display: flex; align-items: center; gap: 6px; }
+    .win-titlebar-icon { width: 14px; height: 14px; display: flex; align-items: center; justify-content: center; font-size: 10px; flex-shrink: 0; }
+    .win-titlebar-text { color: #1a1a1a; font-size: 10px; font-family: 'Segoe UI Variable', 'Segoe UI', sans-serif; font-weight: 400; opacity: 0.9; }
+    .win-btns { display: flex; height: 100%; }
+    .win-btn { width: 34px; height: 28px; border: none; background: transparent; color: #1a1a1a; font-size: 9px; cursor: default; display: flex; align-items: center; justify-content: center; transition: background 0.1s; }
+    .win-btn:hover { background: rgba(0,0,0,0.05); }
+    .win-btn.win-close:hover { background: #c42b1c; color: white; }
+    .win-taskbar { background: rgba(32,32,32,0.85); backdrop-filter: blur(20px); height: 28px; display: flex; align-items: center; justify-content: center; position: relative; padding: 0 6px; gap: 2px; flex-shrink: 0; margin: 0 6px 6px 6px; border-radius: 6px; }
+    .win-taskbar-center { display: flex; align-items: center; gap: 2px; }
+    .win-taskbar-right { position: absolute; right: 8px; display: flex; align-items: center; gap: 6px; }
+    .win-start { width: 24px; height: 22px; border: none; border-radius: 4px; background: transparent; cursor: default; display: flex; align-items: center; justify-content: center; }
+    .win-start:hover { background: rgba(255,255,255,0.1); }
+    .win-start svg { width: 14px; height: 14px; fill: white; }
+    .win-tb-search { width: 24px; height: 22px; border: none; border-radius: 4px; background: transparent; cursor: default; display: flex; align-items: center; justify-content: center; }
+    .win-tb-search:hover { background: rgba(255,255,255,0.1); }
+    .win-tb-search svg { width: 13px; height: 13px; fill: rgba(255,255,255,0.85); }
+    .win-taskbar-item { height: 22px; border: none; border-radius: 4px; background: transparent; cursor: default; display: flex; align-items: center; justify-content: center; padding: 0 6px; gap: 4px; font-size: 0; transition: background 0.1s; position: relative; }
+    .win-taskbar-item:hover { background: rgba(255,255,255,0.1); }
+    .win-taskbar-item.active::after { content: ''; position: absolute; bottom: 1px; width: 12px; height: 2px; border-radius: 1px; background: #60cdff; }
+    .win-tb-icon { width: 14px; height: 14px; display: flex; align-items: center; justify-content: center; font-size: 11px; }
+    .win-clock { font-size: 8px; color: rgba(255,255,255,0.85); text-align: right; line-height: 1.3; font-family: 'Segoe UI Variable', 'Segoe UI', sans-serif; }
+    .win-systray { display: flex; align-items: center; gap: 3px; }
+    .win-systray-icon { font-size: 9px; color: rgba(255,255,255,0.7); }
+
+    /* OpenEMR */
+    .oemr-menu { background: #f8f9fa; border-bottom: 1px solid #dee2e6; padding: 1px 4px; display: flex; flex-wrap: wrap; flex-shrink: 0; }
+    .oemr-menu span { font-size: 9px; color: #212529; padding: 1px 4px; cursor: default; font-family: Arial, sans-serif; }
+    .oemr-patient-bar { background: #fff; border-bottom: 1px solid #dee2e6; padding: 4px 8px; display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .oemr-avatar { width: 28px; height: 28px; background: #6c757d; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 9px; font-weight: 600; flex-shrink: 0; }
+    .oemr-pname { font-size: 13px; font-weight: 600; color: #212529; }
+    .oemr-pinfo { font-size: 9px; color: #6c757d; }
+    .oemr-encounter-btn { margin-left: auto; padding: 2px 8px; border: 1px solid #0d6efd; border-radius: 3px; background: white; color: #0d6efd; font-size: 9px; cursor: default; }
+    .oemr-tabs { background: #f8f9fa; border-bottom: 1px solid #dee2e6; display: flex; padding: 0 4px; flex-shrink: 0; overflow-x: auto; }
+    .oemr-tab { font-size: 9px; padding: 4px 8px; color: #495057; cursor: default; border-bottom: 2px solid transparent; white-space: nowrap; font-family: Arial, sans-serif; }
+    .oemr-tab.active { color: #0d6efd; border-bottom-color: #0d6efd; background: #fff; }
+    .oemr-content { flex: 1; overflow-y: auto; padding: 8px 10px; background: #fff; font-family: Arial, sans-serif; }
+    .oemr-form-title { font-size: 11px; color: #333; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #eee; }
+    .oemr-section { font-size: 11px; font-weight: 700; color: #333; border-bottom: 2px solid #0d6efd; padding-bottom: 3px; margin: 8px 0 6px 0; }
+    .oemr-grid { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 4px 8px; margin-bottom: 6px; }
+    .oemr-field { display: flex; flex-direction: column; gap: 1px; }
+    .oemr-label { font-size: 8px; color: #6c757d; font-weight: 500; }
+    .oemr-value { font-size: 9px; color: #212529; padding: 2px 4px; border: 1px solid #ced4da; border-radius: 2px; background: #fff; min-height: 16px; transition: all 0.3s; }
+    .oemr-value.filling { border-color: #0d6efd; background: #e7f1ff; box-shadow: 0 0 0 1px rgba(13,110,253,0.2); }
+    .oemr-value.filled { background: #f0fff4; border-color: #28a745; }
+    .oemr-textarea { min-height: 36px; }
+    .oemr-issue-btn { background: #0d6efd; color: white; border: none; border-radius: 2px; padding: 3px 8px; font-size: 9px; cursor: default; width: 100%; }
+    .oemr-btn-bar { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding-top: 10px; border-top: 1px solid #dee2e6; }
+    .oemr-save { background: #0d6efd; color: white; border: none; border-radius: 4px; padding: 5px 16px; font-size: 10px; cursor: default; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+    .oemr-save.clicked { animation: oemr-btn-click 0.3s ease; background: #0b5ed7; }
+    @keyframes oemr-btn-click { 0% { transform: scale(1); } 50% { transform: scale(0.95); } 100% { transform: scale(1); } }
+    .oemr-cancel { background: none; color: #555; border: none; padding: 5px 8px; font-size: 10px; cursor: default; display: inline-flex; align-items: center; gap: 3px; }
+    .oemr-confirmation { text-align: center; padding: 24px 16px; }
+    .oemr-confirm-icon { width: 40px; height: 40px; border-radius: 50%; background: #d4edda; color: #155724; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; font-size: 18px; animation: oemr-confirm-pop 0.4s ease; }
+    @keyframes oemr-confirm-pop { 0% { transform: scale(0); opacity: 0; } 60% { transform: scale(1.15); } 100% { transform: scale(1); opacity: 1; } }
+    .oemr-confirm-title { font-size: 13px; font-weight: 600; color: #155724; margin-bottom: 4px; }
+    .oemr-confirm-subtitle { font-size: 10px; color: #6c757d; margin-bottom: 14px; }
+    .oemr-confirm-details { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 10px 14px; text-align: left; margin-bottom: 14px; font-size: 9px; color: #333; }
+    .oemr-confirm-row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px solid #eee; }
+    .oemr-confirm-row:last-child { border-bottom: none; }
+    .oemr-confirm-label { color: #6c757d; font-weight: 500; }
+    .oemr-confirm-value { font-weight: 600; color: #212529; }
+    .oemr-confirm-actions { display: flex; gap: 8px; justify-content: center; margin-top: 10px; }
+    .oemr-confirm-btn { padding: 4px 14px; border-radius: 4px; font-size: 10px; border: 1px solid #dee2e6; background: #fff; color: #333; cursor: default; }
+    .oemr-confirm-btn.primary { background: #0d6efd; color: white; border-color: #0d6efd; }
+    .oemr-dialog { background: #fff; border: 1px solid #ccc; border-radius: 4px; box-shadow: 0 2px 10px rgba(0,0,0,0.15); font-family: Arial, sans-serif; animation: oemr-confirm-pop 0.3s ease; }
+    .oemr-dialog-titlebar { display: flex; justify-content: space-between; align-items: center; padding: 4px 8px; border-bottom: 1px solid #ddd; background: #f8f8f8; }
+    .oemr-dialog-titlebar span { font-size: 10px; font-weight: 600; color: #333; }
+    .oemr-dialog-close { font-size: 12px; color: #999; cursor: default; font-weight: bold; }
+    .oemr-dialog-tab-bar { background: #4169E1; padding: 0 4px; display: flex; }
+    .oemr-dialog-tab { font-size: 8px; color: #fff; padding: 3px 8px; cursor: default; border: 1px solid transparent; border-bottom: none; background: transparent; border-radius: 3px 3px 0 0; }
+    .oemr-dialog-tab.active { background: #fff; color: #4169E1; border-color: #aaa; }
+    .oemr-dialog-type { font-size: 8px; font-weight: 600; color: #333; padding: 4px 8px 2px; }
+    .oemr-dialog-body { padding: 4px 8px 6px; }
+    .oemr-dialog-row { display: flex; gap: 6px; margin-bottom: 4px; align-items: flex-start; }
+    .oemr-dialog-field { flex: 1; min-width: 0; }
+    .oemr-dialog-field label { display: block; font-size: 7px; color: #333; font-weight: 500; margin-bottom: 1px; }
+    .oemr-dialog-field .d-input { width: 100%; border: 1px solid #ced4da; border-radius: 2px; padding: 2px 3px; font-size: 8px; color: #212529; background: #fff; min-height: 14px; transition: all 0.3s; box-sizing: border-box; }
+    .oemr-dialog-field .d-input.filling { border-color: #4169E1; background: #e8eeff; box-shadow: 0 0 0 1px rgba(65,105,225,0.2); }
+    .oemr-dialog-field .d-input.filled { background: #f0fff4; border-color: #28a745; }
+    .oemr-dialog-field .d-select { width: 100%; border: 1px solid #ced4da; border-radius: 2px; padding: 2px 3px; font-size: 8px; color: #212529; background: #fff; min-height: 14px; transition: all 0.3s; box-sizing: border-box; }
+    .oemr-dialog-field .d-select.filled { background-color: #f0fff4; border-color: #28a745; }
+    .oemr-dialog-field .d-textarea { width: 100%; border: 1px solid #ced4da; border-radius: 2px; padding: 2px 3px; font-size: 8px; color: #212529; background: #fff; min-height: 22px; resize: none; transition: all 0.3s; box-sizing: border-box; }
+    .oemr-dialog-field .d-textarea.filling { border-color: #4169E1; background: #e8eeff; }
+    .oemr-dialog-field .d-textarea.filled { background: #f0fff4; border-color: #28a745; }
+    .oemr-dialog-field .d-checkbox { display: inline-flex; align-items: center; gap: 2px; font-size: 7px; color: #333; }
+    .oemr-dialog-field .d-checkbox input { width: 8px; height: 8px; margin: 0; }
+    .oemr-dialog-actions { display: flex; justify-content: flex-end; align-items: center; gap: 4px; padding: 4px 8px 6px; border-top: 1px solid #eee; }
+    .oemr-dialog-actions .show-more { font-size: 7px; color: #333; margin-right: auto; cursor: default; }
+    .oemr-dialog-actions .d-btn { padding: 3px 10px; border-radius: 3px; font-size: 8px; border: 1px solid #ccc; background: #fff; color: #333; cursor: default; font-weight: 500; }
+    .oemr-dialog-actions .d-btn.primary { background: #4169E1; color: #fff; border-color: #4169E1; }
+    .oemr-dialog-actions .d-btn.primary.clicked { animation: oemr-btn-click 0.3s ease; background: #3457b2; }
+    .oemr-dialog-actions .d-btn.danger { background: #dc6c7d; color: #fff; border-color: #dc6c7d; }
+    .oemr-appt-tabs { display: flex; border-bottom: 1px solid #ddd; margin-bottom: 4px; }
+    .oemr-appt-tab { font-size: 8px; padding: 3px 10px; cursor: default; color: #333; border-bottom: 2px solid transparent; }
+    .oemr-appt-tab.active { color: #4169E1; border-bottom-color: #4169E1; }
+    .oemr-dialog-saved { text-align: center; padding: 8px; animation: oemr-confirm-pop 0.3s ease; }
+    .oemr-dialog-saved .saved-icon { width: 20px; height: 20px; border-radius: 50%; background: #d4edda; color: #155724; display: flex; align-items: center; justify-content: center; margin: 0 auto 4px; font-size: 10px; }
+    .oemr-dialog-saved .saved-text { font-size: 9px; font-weight: 600; color: #155724; }
+    .oemr-dialog-saved .saved-detail { font-size: 8px; color: #6c757d; }
+    .emr-activity { margin-top: 20px; }
+    .activity-item { display: flex; align-items: center; gap: 10px; padding: 10px 0; font-size: 13px; color: #4a5568; border-bottom: 1px solid #f5f5f5; }
+    .activity-icon { color: #10b981; font-weight: 700; }
+    .activity-text { flex: 1; }
+    .activity-time { font-size: 11px; color: #999; }
+
+    /* ── View control ── */
+    .view { display: none; }
+    .view.active { display: block; }
+    .view-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    .view-header h2 { font-family: var(--font-display); font-size: 28px; font-weight: 400; }
+    .view-header-meta { font-size: 12px; color: var(--text-muted); }
+    .paused-banner { display: none; padding: 10px 20px; background: var(--danger); color: white; text-align: center; font-weight: 600; font-size: 13px; }
+    .paused-banner.visible { display: block; }
+
+    /* ── Empty State ── */
+    .empty-state { text-align: center; padding: 48px 24px; color: var(--text-muted); }
+    .empty-state h3 { font-size: 15px; color: var(--text); margin-bottom: 4px; }
+    .empty-state p { font-size: 13px; }
+
+    /* ── Utility ── */
+    .hidden { display: none !important; }
+    .text-muted { color: var(--text-muted); }
+    .text-sm { font-size: 12px; }
+    .mt-2 { margin-top: 8px; }
+    .mt-4 { margin-top: 16px; }
+    .mb-2 { margin-bottom: 8px; }
+    .flex { display: flex; }
+    .items-center { align-items: center; }
+    .justify-between { justify-content: space-between; }
+
+    /* ── Responsive ── */
+    @media (max-width: 1200px) {
+      .modal-body { grid-template-columns: 1fr; }
+      .encounter-layout { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 768px) {
+      .patient-grid { grid-template-columns: 1fr; }
+      .app { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+    }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+  </style>
+</head>
+<body>
+
+  <!-- MAIN DASHBOARD -->
+  <div id="dashboard">
+    <div class="app">
+      <!-- Top Nav -->
+      <header class="top-nav">
+        <div class="nav-left">
+          <div class="nav-logo"><span></span><span></span><span></span><span></span></div>
+          <select class="company-dropdown"><option>Company A</option></select>
+        </div>
+        <div class="nav-center">
+          <div class="autonomy-switcher">
+            <label>Autonomy</label>
+            <div class="autonomy-btns" id="autonomyBtns">
+              <button class="autonomy-btn" data-level="0">L0</button>
+              <button class="autonomy-btn" data-level="1">L1</button>
+              <button class="autonomy-btn active" data-level="2">L2</button>
+              <button class="autonomy-btn" data-level="3">L3</button>
+              <button class="autonomy-btn" data-level="4">L4</button>
+            </div>
+          </div>
+          <div class="speed-control">
+            <span>Speed:</span>
+            <button class="speed-btn" data-speed="0.5">0.5x</button>
+            <button class="speed-btn active" data-speed="1">1x</button>
+            <button class="speed-btn" data-speed="2">2x</button>
+            <button class="speed-btn" data-speed="0">Instant</button>
+          </div>
+          <div class="header-status" id="agentStatus">
+            <span class="pulse-dot"></span>
+            <span id="statusText">Agent Active</span>
+          </div>
+        </div>
+        <div class="nav-right">
+          <button class="btn btn-danger pause-btn" id="pauseBtn" onclick="togglePause()">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><rect x="2" y="1" width="3.5" height="12" rx="1"/><rect x="8.5" y="1" width="3.5" height="12" rx="1"/></svg>
+            Pause
+          </button>
+          <a href="#">API Keys</a>
+        </div>
+      </header>
+
+      <!-- Sidebar -->
+      <nav class="sidebar">
+        <div class="sidebar-section">
+          <div class="sidebar-label">Dashboard</div>
+          <div class="nav-item active" data-view="feed" onclick="switchView('feed')">
+            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3h12M3 7h12M3 11h8M3 15h5"/></svg>
+            Activity Feed
+          </div>
+          <div class="nav-item" data-view="approvals" onclick="switchView('approvals')">
+            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 1v4M5 3l1.5 2M13 3l-1.5 2M3 9h12v6a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg>
+            Pending Approvals
+            <span class="nav-badge" id="approvalBadge">0</span>
+          </div>
+          <div class="nav-item" data-view="patients" onclick="switchView('patients')">
+            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="5" r="3"/><path d="M3 17v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
+            Patient Panel
+          </div>
+          <div class="nav-item" data-view="encounter" onclick="switchView('encounter')">
+            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 2h10a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2zM6 6h6M6 9h6M6 12h3"/></svg>
+            Encounter Detail
+          </div>
+        </div>
+        <div class="sidebar-section">
+          <div class="sidebar-label">System</div>
+          <div class="nav-item" data-view="analytics" onclick="switchView('analytics')">
+            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 15V9M7 15V5M11 15V8M15 15V3"/></svg>
+            Analytics
+          </div>
+          <div class="nav-item" data-view="config" onclick="switchView('config')">
+            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="9" r="3"/><path d="M9 1v3M9 14v3M1 9h3M14 9h3M3.3 3.3l2.1 2.1M12.6 12.6l2.1 2.1M3.3 14.7l2.1-2.1M12.6 5.4l2.1-2.1"/></svg>
+            Configuration
+          </div>
+        </div>
+        <div class="sidebar-section" style="margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border);">
+          <div class="sidebar-label">Encounters</div>
+          <div class="nav-item" style="font-size:12px;" onclick="selectPatient('thompson'); switchView('encounter')">
+            <span class="pulse-dot" style="width:6px;height:6px;"></span>
+            M. Thompson, 58F
+          </div>
+          <div class="nav-item" style="font-size:12px;" onclick="selectPatient('rodriguez'); switchView('encounter')">
+            <span class="pulse-dot" style="width:6px;height:6px;"></span>
+            J. Rodriguez, 34M
+          </div>
+          <div class="nav-item" style="font-size:12px;" onclick="selectPatient('patel'); switchView('encounter')">
+            <span class="pulse-dot" style="width:6px;height:6px;background:var(--danger);animation:none;"></span>
+            A. Patel, 71F
+          </div>
+          <div id="live-sidebar-items"></div>
+        </div>
+      </nav>
+
+      <!-- Main Content -->
+      <main class="main">
+        <div class="paused-banner" id="pausedBanner">AGENT PAUSED -- All activity suspended. Click Resume to continue.</div>
+
+        <!-- Activity Feed View -->
+        <div class="view active" id="view-feed">
+          <div class="view-header">
+            <h2>Activity Feed</h2>
+            <span class="view-header-meta" id="feedCount">0 actions</span>
+          </div>
+          <div class="feed-list" id="feedList"></div>
+        </div>
+
+        <!-- Pending Approvals View (merged: sim + admin/API) -->
+        <div class="view" id="view-approvals">
+          <div class="view-header">
+            <h2>Pending Approvals</h2>
+            <span class="view-header-meta" id="simApprovalCount">0 pending</span>
+          </div>
+          <!-- Admin API approvals section -->
+          <div class="approvals-section" id="admin-approvals-section" style="display:none;">
+            <div class="approvals-header">
+              <h2 class="approvals-title">Live Approvals (API)</h2>
+              <span class="approvals-count" id="admin-approvals-count">0</span>
+            </div>
+            <div id="admin-approvals-queue"></div>
+          </div>
+          <!-- Simulation approvals -->
+          <div id="simApprovalList"></div>
+        </div>
+
+        <!-- Patient Panel View -->
+        <div class="view" id="view-patients">
+          <div class="view-header">
+            <h2>Patient Panel</h2>
+            <span class="view-header-meta" id="patientPanelMeta">3 active encounters</span>
+          </div>
+          <!-- Admin live sessions cards -->
+          <div class="patient-grid" id="liveSessionGrid" style="margin-bottom:24px;"></div>
+          <!-- Sim patient cards -->
+          <div class="patient-grid" id="simPatientGrid"></div>
+        </div>
+
+        <!-- Encounter Detail View -->
+        <div class="view" id="view-encounter">
+          <div id="encounterDetail"></div>
+        </div>
+
+        <!-- Analytics View -->
+        <div class="view" id="view-analytics">
+          <div class="view-header"><h2>Analytics</h2></div>
+          <div class="metrics-grid" id="metricsGrid"></div>
+          <div class="card mt-4">
+            <div class="card-header"><span class="card-title">Action Distribution by Risk Tier</span></div><br />
+            <div id="tierChart" style="display:flex;gap:4px;align-items:flex-end;height:140px;padding:10px 0;"></div>
+            <div style="display:flex;gap:16px;margin-top:8px;font-size:12px;color:var(--text-muted);">
+              <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--t1);vertical-align:middle;margin-right:4px;"></span>T1 Low</span>
+              <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--t2);vertical-align:middle;margin-right:4px;"></span>T2 Medium</span>
+              <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--t3);vertical-align:middle;margin-right:4px;"></span>T3 High</span>
+              <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--t4);vertical-align:middle;margin-right:4px;"></span>T4 Critical</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Configuration View -->
+        <div class="view" id="view-config">
+          <div class="view-header"><h2>Configuration</h2></div>
+          <div id="configContent"></div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- PATIENT MODAL (admin) -->
+  <div class="modal-overlay" id="patient-modal">
+    <div class="modal-container">
+      <div class="modal-header">
+        <h2 class="modal-title" id="modal-title">Patient Details</h2>
+        <button class="modal-close" onclick="closeModal()">&#215;</button>
+      </div>
+      <div class="approval-context" id="approval-context" style="display: none;">
+        <div class="approval-context-header"><h3>Approval Required</h3></div>
+        <div class="approval-context-body">
+          <div class="approval-action-card">
+            <div class="approval-action-header">
+              <span class="risk-badge" id="approval-risk"></span>
+              <span class="urgency-badge" id="approval-urgency"></span>
+              <span class="sla-timer" id="approval-sla"></span>
+            </div>
+            <div class="approval-action-text" id="approval-action"></div>
+            <div class="approval-reason-text" id="approval-reason"></div>
+          </div>
+          <div class="approval-context-actions" id="modal-approval-actions">
+            <button class="approve-btn-large" onclick="approveActionFromModal()">&#10003; Approve Action</button>
+            <button class="modify-btn" onclick="modifyAction()">&#9998; Modify &amp; Approve</button>
+            <button class="reject-btn-large" onclick="showModalRejectForm()">&#10007; Reject Action</button>
+          </div>
+          <div class="hero-reject-form" id="modal-reject-form" style="display:none;">
+            <input type="text" class="hero-reject-input" id="modal-reject-reason" placeholder="Reason for rejection...">
+            <div class="hero-reject-form-btns">
+              <button class="hero-reject-confirm" onclick="confirmRejectFromModal()">Reject</button>
+              <button class="hero-reject-cancel" onclick="cancelModalReject()">Cancel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="progress-timeline" id="progress-timeline">
+        <div class="timeline-step" data-stage="intake"><div class="timeline-dot"></div><span>Intake</span></div>
+        <span class="timeline-arrow">&#8594;</span>
+        <div class="timeline-step" data-stage="analysis"><div class="timeline-dot"></div><span>Analysis</span></div>
+        <span class="timeline-arrow">&#8594;</span>
+        <div class="timeline-step" data-stage="review"><div class="timeline-dot"></div><span>Review</span></div>
+        <span class="timeline-arrow">&#8594;</span>
+        <div class="timeline-step" data-stage="documentation"><div class="timeline-dot"></div><span>Documentation</span></div>
+      </div>
+      <div class="modal-body">
+        <div class="modal-panel"><div class="panel-header">Conversation</div><div class="panel-content" id="conversation-panel"></div></div>
+        <div class="modal-panel"><div class="panel-header">AI Reasoning</div><div class="panel-content" id="reasoning-panel"></div></div>
+        <div class="modal-panel">
+          <div class="panel-header">Computer Use &bull; EMR</div>
+          <div class="panel-content" id="emr-panel">
+            <div class="vm-container">
+              <div class="vm-header">
+                <span class="vm-title">VM-1847 &bull; OpenEMR</span>
+                <div class="vm-status"><span class="vm-status-dot"></span>ACTIVE</div>
+              </div>
+              <div class="vm-screen" id="vm-screen">
+                <div class="win-window">
+                  <div class="win-titlebar">
+                    <div class="win-titlebar-left">
+                      <span class="win-titlebar-icon">&#127973;</span>
+                      <span class="win-titlebar-text" id="win-title">OpenEMR - New Encounter</span>
+                    </div>
+                    <div class="win-btns">
+                      <span class="win-btn"><svg width="10" height="1" viewBox="0 0 10 1"><rect width="10" height="1" fill="currentColor"/></svg></span>
+                      <span class="win-btn"><svg width="10" height="10" viewBox="0 0 10 10"><rect x="0.5" y="0.5" width="9" height="9" rx="1" fill="none" stroke="currentColor" stroke-width="1"/></svg></span>
+                      <span class="win-btn win-close"><svg width="10" height="10" viewBox="0 0 10 10"><line x1="1" y1="1" x2="9" y2="9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/><line x1="9" y1="1" x2="1" y2="9" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg></span>
+                    </div>
+                  </div>
+                  <div class="oemr-menu"><span>Calendar</span><span>Finder</span><span>Flow</span><span>Recalls</span><span>Messages</span><span>Patient</span><span>Fees</span><span>Modules</span><span>Procedures</span><span>Admin</span><span>Reports</span><span>Miscellaneous</span><span>Popups</span></div>
+                  <div class="oemr-patient-bar">
+                    <div class="oemr-avatar" id="oemr-avatar">BC</div>
+                    <div>
+                      <div class="oemr-pname" id="oemr-pname">Patient <span style="color:#6c757d">(1)</span> &#215;</div>
+                      <div class="oemr-pinfo" id="oemr-pinfo">DOB: -- Age: --</div>
+                    </div>
+                    <button class="oemr-encounter-btn">Select Encounter (0) &#9662;</button>
+                  </div>
+                  <div class="oemr-tabs" id="oemr-tabs">
+                    <div class="oemr-tab">Calendar</div>
+                    <div class="oemr-tab">Message Center</div>
+                    <div class="oemr-tab">Dashboard</div>
+                    <div class="oemr-tab active" id="oemr-active-tab">Patient Encounter</div>
+                  </div>
+                  <div class="oemr-content" id="oemr-content">
+                    <div id="oemr-encounter-view">
+                      <div class="oemr-form-title">New Encounter Form - <span id="oemr-form-pname">Patient</span></div>
+                      <div class="oemr-section">Visit Details</div>
+                      <div class="oemr-grid">
+                        <div class="oemr-field"><div class="oemr-label">Visit Category:</div><div class="oemr-value" id="oemr-f-visitcat">-- Select One --</div></div>
+                        <div class="oemr-field"><div class="oemr-label">Class:</div><div class="oemr-value" id="oemr-f-class"></div></div>
+                        <div class="oemr-field"><div class="oemr-label">Type:</div><div class="oemr-value" id="oemr-f-type">--Select One--</div></div>
+                        <div class="oemr-field"><div class="oemr-label">Sensitivity:</div><div class="oemr-value" id="oemr-f-sensitivity"></div></div>
+                      </div>
+                      <div class="oemr-grid">
+                        <div class="oemr-field"><div class="oemr-label">Encounter Provider:</div><div class="oemr-value" id="oemr-f-provider"></div></div>
+                        <div class="oemr-field"><div class="oemr-label">Referring Provider:</div><div class="oemr-value" id="oemr-f-refprov"></div></div>
+                        <div class="oemr-field"><div class="oemr-label">Facility:</div><div class="oemr-value" id="oemr-f-facility"></div></div>
+                        <div class="oemr-field"><div class="oemr-label">Billing Facility:</div><div class="oemr-value" id="oemr-f-billing"></div></div>
+                      </div>
+                      <div class="oemr-grid">
+                        <div class="oemr-field"><div class="oemr-label">Date of Service:</div><div class="oemr-value" id="oemr-f-date"></div></div>
+                        <div class="oemr-field"><div class="oemr-label">Onset/hosp. date:</div><div class="oemr-value" id="oemr-f-onset"></div></div>
+                        <div class="oemr-field"><div class="oemr-label">In Collection:</div><div class="oemr-value" id="oemr-f-collection"></div></div>
+                        <div class="oemr-field"><div class="oemr-label">Discharge Disposition:</div><div class="oemr-value" id="oemr-f-discharge">-- Select One --</div></div>
+                      </div>
+                      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+                        <div>
+                          <div class="oemr-section">Reason for Visit</div>
+                          <div class="oemr-value oemr-textarea" id="oemr-f-reason"></div>
+                        </div>
+                        <div>
+                          <div class="oemr-section">Link/Add Issues to This Visit</div>
+                          <button class="oemr-issue-btn">+ Add Issue</button>
+                          <div style="font-size:8px;color:#6c757d;margin-top:4px;">To link this encounter/consult to an existing issue, click the desired issue above to highlight it and then click [Save].</div>
+                        </div>
+                      </div>
+                      <div class="oemr-btn-bar">
+                        <button class="oemr-save" id="oemr-save-btn"><span style="font-size:12px">&#10003;</span> Save</button>
+                        <button class="oemr-cancel"><span style="font-size:11px">&#10007;</span> Cancel</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="win-taskbar">
+                  <div class="win-taskbar-center">
+                    <div class="win-start"><svg viewBox="0 0 16 16"><rect x="1" y="1" width="6.5" height="6.5" rx="1" fill="white"/><rect x="8.5" y="1" width="6.5" height="6.5" rx="1" fill="white"/><rect x="1" y="8.5" width="6.5" height="6.5" rx="1" fill="white"/><rect x="8.5" y="8.5" width="6.5" height="6.5" rx="1" fill="white"/></svg></div>
+                    <div class="win-tb-search"><svg viewBox="0 0 16 16"><circle cx="6.5" cy="6.5" r="5" stroke="white" stroke-width="1.5" fill="none"/><line x1="10" y1="10" x2="14" y2="14" stroke="white" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+                    <div class="win-taskbar-item"><div class="win-tb-icon">&#128193;</div></div>
+                    <div class="win-taskbar-item active"><div class="win-tb-icon">&#127973;</div></div>
+                  </div>
+                  <div class="win-taskbar-right">
+                    <div class="win-systray"><span class="win-systray-icon">&#128263;</span><span class="win-systray-icon">&#128246;</span></div>
+                    <div class="win-clock" id="win-clock"><div>09:25</div><div>3/3/2026</div></div>
+                  </div>
+                </div>
+                <svg class="vm-cursor" id="vm-cursor" viewBox="0 0 16 16">
+                  <path d="M0 0 L0 14 L4 10 L7 16 L9 15 L6 9 L11 9 Z" fill="#1a1a1a" />
+                </svg>
+              </div>
+            </div>
+            <div class="emr-activity" id="emr-activity"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Welcome Overlay -->
+  <div class="overlay" id="welcomeOverlay">
+    <div class="overlay-card">
+      <h2>Admin.ai Supervisor Dashboard</h2>
+      <p>Interactive demo of an autonomous primary care AI agent. You are the supervising physician overseeing three concurrent patient encounters.</p>
+      <ul class="overlay-features">
+        <li><strong>Margaret Thompson</strong> (58F) -- Community-acquired pneumonia. Full clinical workflow.</li>
+        <li><strong>James Rodriguez</strong> (34M) -- Simple UTI. Routine case that flows quickly.</li>
+        <li><strong>Aisha Patel</strong> (71F) -- Chest tightness with cardiac risks. Triggers mandatory escalation.</li>
+      </ul>
+      <p style="font-size:12px;">Use the <strong>autonomy level switcher</strong> in the header to see how L0-L4 changes what needs your approval.</p>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:10px;" onclick="startDemo()">Start Simulation</button>
+    </div>
+  </div>
+
+  <script>
+// ══════════════════════════════════════════════════════════════
+// SIMULATION DATA (from fredrik)
+// ══════════════════════════════════════════════════════════════
+const WORKFLOW_STEPS = ['Intake','History','Assessment','Investigation','Diagnosis','Treatment','Documentation'];
+
+const SIM_PATIENTS = {
+  thompson: {
+    id: 'thompson', name: 'Margaret Thompson', age: 58, sex: 'F', mrn: 'MRN-20240847',
+    chief: 'Productive cough with fever for 3 days, worsening shortness of breath',
+    vitals: { temp: '38.9\u00b0C', hr: 102, bp: '128/78', rr: 22, spo2: '94%' },
+    pmh: ['Hypertension (controlled)', 'Type 2 DM (HbA1c 7.1)', 'Former smoker (quit 5 yrs ago)'],
+    meds: ['Lisinopril 20mg daily', 'Metformin 1000mg BID', 'Atorvastatin 40mg daily'],
+    allergies: ['Penicillin (rash)'],
+    step: 0, status: 'active'
+  },
+  rodriguez: {
+    id: 'rodriguez', name: 'James Rodriguez', age: 34, sex: 'M', mrn: 'MRN-20240848',
+    chief: 'Dysuria and urinary frequency for 2 days',
+    vitals: { temp: '37.2\u00b0C', hr: 76, bp: '118/72', rr: 16, spo2: '99%' },
+    pmh: ['None significant'],
+    meds: ['None'],
+    allergies: ['NKDA'],
+    step: 0, status: 'active'
+  },
+  patel: {
+    id: 'patel', name: 'Aisha Patel', age: 71, sex: 'F', mrn: 'MRN-20240849',
+    chief: 'Intermittent chest tightness for 2 weeks, worse with exertion',
+    vitals: { temp: '36.8\u00b0C', hr: 88, bp: '152/92', rr: 18, spo2: '97%' },
+    pmh: ['Hypertension', 'Hyperlipidemia', 'Family hx MI (father, age 62)', 'DM Type 2'],
+    meds: ['Amlodipine 10mg daily', 'Metformin 500mg BID', 'Rosuvastatin 20mg daily'],
+    allergies: ['NKDA'],
+    step: 0, status: 'active'
+  }
+};
+
+const TIMELINES = {
+  thompson: [
+    { step: 0, delay: 0, tool: 'emr.read_patient_record', tier: 1, desc: 'Pulling existing medical records for Margaret Thompson', confidence: 0.99, urgency: 'routine', reasoning: { thought: 'Patient presents with productive cough, fever, and dyspnea. Need to review PMH.', evidence: 'Standard intake protocol.' } },
+    { step: 0, delay: 3, tool: 'cds.guideline_lookup', tier: 1, desc: 'Retrieving CAP guidelines', confidence: 0.95, urgency: 'routine', reasoning: { thought: 'Vitals consistent with lower respiratory tract infection. Pulling CAP guidelines.', evidence: 'NICE CG191, ATS/IDSA 2019' } },
+    { step: 1, delay: 6, tool: 'comm.message_patient', tier: 1, desc: 'Initiating structured history-taking: HPI, review of systems', confidence: 0.97, urgency: 'routine', reasoning: { thought: 'Beginning systematic history collection for respiratory presentation.' } },
+    { step: 1, delay: 10, tool: 'emr.write_encounter_note', tier: 1, desc: 'Documenting history: 3-day productive cough, fever 39.2\u00b0C, progressive dyspnea', confidence: 0.96, urgency: 'routine', reasoning: { thought: 'HPI documented: productive cough, subjective fever, progressive DOE, pleuritic chest pain.' } },
+    { step: 2, delay: 14, tool: 'cds.differential_diagnosis', tier: 1, desc: 'Differential: CAP (72%), acute bronchitis (14%), influenza (8%), PE (4%), TB (2%)', confidence: 0.88, urgency: 'routine', isDifferential: true,
+      differential: [
+        { rank: 1, dx: 'Community-acquired pneumonia', prob: '72%', forEvidence: ['Productive cough','Fever 38.9\u00b0C','Tachypnea','Tachycardia','SpO2 94%'], againstEvidence: ['No consolidation confirmed yet'] },
+        { rank: 2, dx: 'Acute bronchitis', prob: '14%', forEvidence: ['Productive cough'], againstEvidence: ['High fever unusual','SpO2 reduction'] },
+        { rank: 3, dx: 'Influenza', prob: '8%', forEvidence: ['Fever','Myalgias'], againstEvidence: ['Purulent sputum atypical'] },
+        { rank: 4, dx: 'Pulmonary embolism', prob: '4%', forEvidence: ['Pleuritic pain','Tachycardia'], againstEvidence: ['Fever + productive cough'] },
+        { rank: 5, dx: 'Pulmonary TB', prob: '2%', forEvidence: ['Former smoker'], againstEvidence: ['Acute onset','No TB contacts'] }
+      ],
+      reasoning: { thought: 'CAP is the leading diagnosis given fever, purulent sputum, tachypnea, tachycardia, and reduced SpO2.' } },
+    { step: 2, delay: 17, tool: 'cds.calculate_score', tier: 1, desc: 'CURB-65 score: 1 point \u2014 low-moderate severity', confidence: 0.94, urgency: 'routine', reasoning: { thought: 'CURB-65 = 0-1. Low mortality risk.' } },
+    { step: 3, delay: 20, tool: 'orders.lab_order', tier: 2, desc: 'Ordering: CBC, BMP, CRP, procalcitonin, blood cultures, sputum culture', confidence: 0.93, urgency: 'routine', reasoning: { thought: 'Standard CAP workup.', tool_call: { tool: 'orders.lab_order', params: { tests: ['CBC_DIFF','BMP','CRP','PROCALCITONIN','BLOOD_CULTURE_X2','SPUTUM_CULTURE'] } } } },
+    { step: 3, delay: 24, tool: 'orders.imaging_order', tier: 2, desc: 'Ordering: PA and lateral chest X-ray', confidence: 0.95, urgency: 'routine', reasoning: { thought: 'CXR essential to confirm CAP.', tool_call: { tool: 'orders.imaging_order', params: { modality: 'X-RAY', body_part: 'CHEST' } } } },
+    { step: 3, delay: 30, tool: 'results.read_lab_results', tier: 1, desc: 'Labs: WBC 14.2 (elevated), CRP 128, Procalcitonin 0.8 (bacterial likely)', confidence: 0.96, urgency: 'routine', reasoning: { thought: 'Results support bacterial infection: leukocytosis, elevated CRP, PCT >0.5.' } },
+    { step: 3, delay: 33, tool: 'results.read_imaging_results', tier: 1, desc: 'CXR: Right lower lobe consolidation with air bronchograms. No effusion.', confidence: 0.97, urgency: 'routine', reasoning: { thought: 'CXR confirms RLL consolidation consistent with bacterial pneumonia.' } },
+    { step: 4, delay: 36, tool: 'emr.update_problem_list', tier: 2, desc: 'Diagnosis: Community-acquired pneumonia (J18.9), RLL, moderate severity', confidence: 0.92, urgency: 'routine', reasoning: { thought: 'Diagnosis confirmed by clinical, lab, and imaging findings.' } },
+    { step: 5, delay: 40, tool: 'cds.drug_interaction_check', tier: 1, desc: 'Checking azithromycin interactions with current medications', confidence: 0.98, urgency: 'routine', reasoning: { thought: 'Penicillin allergy \u2014 checking macrolide alternative.' } },
+    { step: 5, delay: 43, tool: 'orders.medication_order', tier: 2, desc: 'Prescribing: Azithromycin 500mg day 1, then 250mg days 2-5', confidence: 0.91, urgency: 'routine', reasoning: { thought: 'Azithromycin for CAP with penicillin allergy. No significant interactions.', tool_call: { tool: 'orders.medication_order', params: { medication: 'Azithromycin', dose: '500mg x1 then 250mg x4' } } } },
+    { step: 5, delay: 47, tool: 'comm.patient_education', tier: 1, desc: 'Sending patient education: pneumonia overview, medication, warning signs', confidence: 0.97, urgency: 'routine', reasoning: { thought: 'Standard patient education for outpatient CAP management.' } },
+    { step: 5, delay: 50, tool: 'schedule.book_appointment', tier: 1, desc: 'Scheduling follow-up in 5-7 days', confidence: 0.96, urgency: 'routine', reasoning: { thought: 'Follow-up to assess treatment response.' } },
+    { step: 6, delay: 53, tool: 'emr.write_encounter_note', tier: 1, desc: 'Generating SOAP note', confidence: 0.95, urgency: 'routine',
+      soap: {
+        subjective: '58F with 3-day productive cough, fever 39.2\u00b0C, progressive DOE, right-sided pleuritic pain. PMH: HTN, T2DM. Allergy: Penicillin.',
+        objective: 'T 38.9\u00b0C, HR 102, BP 128/78, RR 22, SpO2 94%. Decreased breath sounds RLL with crackles. WBC 14.2, CRP 128, PCT 0.8. CXR: RLL consolidation.',
+        assessment: 'Community-acquired pneumonia, RLL, moderate severity (CURB-65=1). Bacterial etiology likely.',
+        plan: '1. Azithromycin 500mg day 1, then 250mg days 2-5\n2. Supportive care\n3. Patient education provided\n4. Follow-up 5-7 days\n5. Pending cultures'
+      },
+      reasoning: { thought: 'Complete SOAP documentation.' } },
+    { step: 6, delay: 56, tool: 'billing.code_encounter', tier: 1, desc: 'Coding: ICD-10 J18.9, CPT 99214', confidence: 0.94, urgency: 'routine', reasoning: { thought: 'Standard encounter coding.' } }
+  ],
+  rodriguez: [
+    { step: 0, delay: 2, tool: 'emr.read_patient_record', tier: 1, desc: 'Pulling records for James Rodriguez', confidence: 0.99, urgency: 'routine', reasoning: { thought: 'Retrieving records. Chief complaint: dysuria/frequency.' } },
+    { step: 1, delay: 7, tool: 'comm.message_patient', tier: 1, desc: 'History: 2 days dysuria, frequency, urgency. No fever or flank pain.', confidence: 0.97, urgency: 'routine', reasoning: { thought: 'Standard UTI history collection.' } },
+    { step: 2, delay: 12, tool: 'cds.differential_diagnosis', tier: 1, desc: 'Differential: UTI (85%), urethritis (8%), prostatitis (5%), STI (2%)', confidence: 0.90, urgency: 'routine', isDifferential: true,
+      differential: [
+        { rank: 1, dx: 'Uncomplicated UTI', prob: '85%', forEvidence: ['Dysuria','Frequency','Urgency'], againstEvidence: ['Male UTIs less common'] },
+        { rank: 2, dx: 'Urethritis', prob: '8%', forEvidence: ['Dysuria','Young male'], againstEvidence: ['No discharge'] },
+        { rank: 3, dx: 'Prostatitis', prob: '5%', forEvidence: ['Male','Urinary symptoms'], againstEvidence: ['No fever'] },
+        { rank: 4, dx: 'STI', prob: '2%', forEvidence: ['Young male'], againstEvidence: ['No discharge'] }
+      ],
+      reasoning: { thought: 'Uncomplicated cystitis most likely.' } },
+    { step: 3, delay: 16, tool: 'orders.lab_order', tier: 2, desc: 'Ordering: UA with culture and sensitivity', confidence: 0.95, urgency: 'routine', reasoning: { thought: 'Culture recommended for male UTI.' } },
+    { step: 3, delay: 22, tool: 'results.read_lab_results', tier: 1, desc: 'UA: positive LE, positive nitrites, >10 WBC/hpf', confidence: 0.96, urgency: 'routine', reasoning: { thought: 'UA supports UTI diagnosis.' } },
+    { step: 4, delay: 26, tool: 'emr.update_problem_list', tier: 2, desc: 'Diagnosis: Acute cystitis (N30.00)', confidence: 0.93, urgency: 'routine', reasoning: { thought: 'Confirmed acute cystitis.' } },
+    { step: 5, delay: 29, tool: 'orders.medication_order', tier: 2, desc: 'Prescribing: Nitrofurantoin 100mg BID x 7 days', confidence: 0.94, urgency: 'routine', reasoning: { thought: 'First-line for uncomplicated cystitis. 7-day for males.' } },
+    { step: 6, delay: 33, tool: 'emr.write_encounter_note', tier: 1, desc: 'SOAP note for acute cystitis', confidence: 0.95, urgency: 'routine',
+      soap: {
+        subjective: '34M with 2-day dysuria, frequency, urgency. No fever or flank pain.',
+        objective: 'Vitals normal. UA: LE+, nitrites+, >10 WBC/hpf.',
+        assessment: 'Acute uncomplicated cystitis.',
+        plan: '1. Nitrofurantoin 100mg BID x 7 days\n2. Increase fluids\n3. Follow up culture\n4. Return if worsening'
+      },
+      reasoning: { thought: 'Straightforward case.' } },
+    { step: 6, delay: 35, tool: 'billing.code_encounter', tier: 1, desc: 'Coding: ICD-10 N30.00, CPT 99213', confidence: 0.95, urgency: 'routine', reasoning: { thought: 'Standard coding.' } }
+  ],
+  patel: [
+    { step: 0, delay: 1, tool: 'emr.read_patient_record', tier: 1, desc: 'Pulling records for Aisha Patel', confidence: 0.99, urgency: 'routine', reasoning: { thought: 'Chief complaint: chest tightness with exertion in 71F with cardiac risk factors.' } },
+    { step: 0, delay: 4, tool: 'cds.calculate_score', tier: 1, desc: 'HEART score assessment \u2014 chest tightness + multiple risk factors', confidence: 0.92, urgency: 'urgent', isEscalation: true,
+      reasoning: { thought: 'CRITICAL: 71F with exertional chest tightness, HTN, HLD, DM, family hx. Mandatory escalation.', evidence: 'Out-of-scope trigger: chest pain with cardiac risk factors.' },
+      escalation: {
+        type: 'OUT_OF_SCOPE',
+        urgency: 'emergent',
+        title: 'MANDATORY ESCALATION: Chest Pain with Cardiac Risk Factors',
+        summary: 'Aisha Patel (71F) presents with exertional chest tightness \u00d7 2 weeks. Cardiac risk factors: age >65, HTN, HLD, DM Type 2, family hx MI.',
+        recommended: 'Immediate physician evaluation. Consider: ECG, troponin, CXR. Cardiology consult if ACS suspected.',
+        riskFactors: ['Age 71 (>65)', 'Hypertension', 'Hyperlipidemia', 'DM Type 2', 'Family hx MI (father, 62)']
+      } }
+  ]
+};
+
+// ══════════════════════════════════════════════════════════════
+// ADMIN DATA (patient cards, approvals from API)
+// ══════════════════════════════════════════════════════════════
+const rnd = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
+const pick = a => a[rnd(0,a.length-1)];
+
+const ADMIN_CONDITIONS = [
+  {code:'R07.9', name:'Chest Pain', severity:'high'},
+  {code:'J18.9', name:'Pneumonia', severity:'high'},
+  {code:'E11.9', name:'Type 2 Diabetes', severity:'medium'},
+  {code:'I10', name:'Hypertension', severity:'medium'},
+  {code:'J45.909', name:'Asthma', severity:'medium'},
+  {code:'F32.9', name:'Depression', severity:'low'},
+  {code:'N39.0', name:'UTI', severity:'low'},
+  {code:'M54.5', name:'Low Back Pain', severity:'low'},
+  {code:'K21.0', name:'GERD', severity:'low'}
+];
+const ADMIN_PATIENT_IDS = ['PT-1847','PT-2394','PT-8832','PT-4721','PT-9234','PT-3821','PT-7612','PT-5493'];
+const ADMIN_PIPELINE_STAGES = [
+  {agent:'Clinician', text:'analyzing symptoms', class:'clinician', step:0},
+  {agent:'Clinician', text:'completed', class:'clinician', step:1},
+  {agent:'QA', text:'reviewing', class:'qa', step:1},
+  {agent:'QA', text:'validated', class:'qa', step:2},
+  {agent:'Admin', text:'documenting', class:'admin', step:2},
+  {agent:'Admin', text:'complete', class:'complete', step:3}
+];
+const ADMIN_ACTION_TYPES = [
+  {action:'Order: CBC, BMP labs', tier:'T2', urgency:'routine', context:'Patient reports fatigue and dizziness. Basic metabolic workup.'},
+  {action:'Prescribe: Lisinopril 10mg', tier:'T2', urgency:'routine', context:'BP 152/96 on two visits. Starting ACE inhibitor.'},
+  {action:'Order: Chest X-Ray', tier:'T2', urgency:'urgent', context:'Persistent cough 3 weeks with hemoptysis.'},
+  {action:'Prescribe: Oxycodone 5mg', tier:'T3', urgency:'urgent', context:'Severe acute pain post rib fracture.'},
+  {action:'Referral: Cardiology', tier:'T3', urgency:'urgent', context:'New-onset palpitations, irregular rhythm.'},
+  {action:'Prescribe: Warfarin 5mg', tier:'T4', urgency:'emergent', context:'Confirmed DVT on ultrasound.'},
+  {action:'Diagnosis: Suspected MI', tier:'T4', urgency:'emergent', context:'Crushing substernal chest pain, ST changes.'}
+];
+
+let adminTiles = [];
+let adminApprovals = [];
+var livePatients = {};
+var rejectFormOpen = false;
+
+function getPatientData(pid) {
+  if (SIM_PATIENTS[pid]) return SIM_PATIENTS[pid];
+  if (livePatients[pid]) return livePatients[pid];
+  return null;
+}
+
+// ══════════════════════════════════════════════════════════════
+// SIMULATION STATE (from fredrik)
+// ══════════════════════════════════════════════════════════════
+let state = {
+  autonomyLevel: 2,
+  speed: 1,
+  paused: false,
+  started: false,
+  currentView: 'feed',
+  selectedPatient: 'thompson',
+  selectedEncounterStep: null,
+  feedItems: [],
+  pendingApprovals: [],
+  completedActions: [],
+  simTime: 0,
+  simInterval: null,
+  nextEventIndex: { thompson: 0, rodriguez: 0, patel: 0 },
+  patientSteps: { thompson: -1, rodriguez: -1, patel: -1 },
+  encounterComplete: { thompson: false, rodriguez: false, patel: false },
+  metrics: { totalActions: 0, autoApproved: 0, manualApproved: 0, rejected: 0, escalations: 0, avgConfidence: 0, confidenceSum: 0 }
+};
+
+// ══════════════════════════════════════════════════════════════
+// UTILITY FUNCTIONS
+// ══════════════════════════════════════════════════════════════
+function tierClass(t) { return 'badge-t' + t; }
+function tierLabel(t) { return 'T' + t; }
+function tierColor(t) { return ['','var(--t1)','var(--t2)','var(--t3)','var(--t4)'][t]; }
+function tierBorderClass(t) { return 'tier-border-t' + t; }
+function confidenceColor(c) {
+  if (c >= 0.9) return 'var(--success)';
+  if (c >= 0.7) return 'var(--warning)';
+  return 'var(--danger)';
+}
+function formatTime(seconds) {
+  var m = Math.floor(seconds / 60);
+  var s = Math.floor(seconds % 60);
+  return m + ':' + s.toString().padStart(2,'0');
+}
+function needsApproval(tier, autonomyLevel) {
+  if (autonomyLevel === 0 || autonomyLevel === 1) return true;
+  if (autonomyLevel === 2) return tier >= 2;
+  if (autonomyLevel === 3) return tier >= 3;
+  if (autonomyLevel === 4) return tier >= 4;
+  return false;
+}
+function highlightJson(obj) {
+  var json = JSON.stringify(obj, null, 2);
+  return json.replace(/"([^"]+)":/g, '<span class="json-key">"$1"</span>:')
+    .replace(/: "([^"]*)"(,?)/g, ': <span class="json-string">"$1"</span>$2')
+    .replace(/: (\d+\.?\d*)(,?)/g, ': <span class="json-number">$1</span>$2')
+    .replace(/: (true|false)(,?)/g, ': <span class="json-bool">$1</span>$2');
+}
+function patientShortName(id) {
+  var p = getPatientData(id);
+  if (!p) return 'Unknown';
+  var parts = p.name.split(' ');
+  var last = parts.length > 1 ? parts[parts.length - 1] : parts[0];
+  return last + (p.age ? ', ' + p.age + p.sex : '');
+}
+function getPatientName(id) {
+  var p = getPatientData(id);
+  return p ? p.name : 'Unknown';
+}
+function formatTimestamp(timestamp) {
+  var seconds = Math.floor((Date.now() - timestamp) / 1000);
+  if (seconds < 60) return seconds + 's ago';
+  var minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return minutes + 'm ago';
+  return Math.floor(minutes / 60) + 'h ago';
+}
+
+// ══════════════════════════════════════════════════════════════
+// TOAST SYSTEM
+// ══════════════════════════════════════════════════════════════
+function showToast(message, type, duration) {
+  type = type || 'info';
+  duration = duration || 4000;
+  var container = document.getElementById('toastContainer');
+  var toast = document.createElement('div');
+  toast.className = 'toast toast-' + type;
+  toast.innerHTML = '<span>' + message + '</span><button class="toast-close" onclick="this.parentElement.remove()">\u00d7</button>';
+  container.appendChild(toast);
+  setTimeout(function() { if (toast.parentElement) toast.remove(); }, duration);
+}
+
+// ══════════════════════════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════════════════════════
+function switchView(view) {
+  state.currentView = view;
+  document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
+  var el = document.getElementById('view-' + view);
+  if (el) el.classList.add('active');
+  document.querySelectorAll('.nav-item[data-view]').forEach(function(n) {
+    n.classList.toggle('active', n.dataset.view === view);
+  });
+  renderCurrentView();
+}
+function selectPatient(id) {
+  state.selectedPatient = id;
+  state.selectedEncounterStep = null;
+}
+
+// ══════════════════════════════════════════════════════════════
+// RENDERING - Activity Feed
+// ══════════════════════════════════════════════════════════════
+function renderFeed() {
+  var list = document.getElementById('feedList');
+  var count = document.getElementById('feedCount');
+  // Merge sim + live actions
+  var allItems = state.feedItems.slice();
+  Object.keys(livePatients).forEach(function(pid) {
+    var p = livePatients[pid];
+    if (p._actions) {
+      p._actions.forEach(function(a) {
+        allItems.push(Object.assign({}, a, {patientId: pid, _isLive: true}));
+      });
+    }
+  });
+  count.textContent = allItems.length + ' actions';
+  if (allItems.length === 0) {
+    list.innerHTML = '<div class="empty-state"><h3>No activity yet</h3><p>Actions will appear as the simulation runs or from live sessions.</p></div>';
+    return;
+  }
+  var items = allItems.slice().reverse();
+  list.innerHTML = items.map(function(item) {
+    var statusClass = item.status === 'auto-approved' ? 'auto-approved' : item.status;
+    var statusLabel = item.status === 'auto-approved' ? 'Auto-approved' : item.status === 'approved' ? 'Approved' : item.status === 'rejected' ? 'Rejected' : item.status === 'pending' ? 'Pending' : item.status === 'escalated' ? 'Escalated' : item.status;
+    var timeDisplay = item._isLive ? (item.timestamp ? formatTimestamp(new Date(item.timestamp).getTime()) : '') : formatTime(item.time);
+    return '<div class="feed-item ' + tierBorderClass(item.tier) + '" onclick="toggleReasoning(this)">' +
+      '<div class="feed-item-header">' +
+        '<span class="feed-patient">' + getPatientName(item.patientId) + '</span>' +
+        (item._isLive ? '<span class="live-badge" style="margin-left:4px;font-size:9px;"><span class="live-dot"></span>LIVE</span>' : '') +
+        '<span class="badge ' + tierClass(item.tier) + '">' + tierLabel(item.tier) + '</span>' +
+        '<span class="feed-tool">' + item.tool + '</span>' +
+        (item.isEscalation ? '<span class="badge badge-danger">ESCALATION</span>' : '') +
+        '<span class="feed-time">' + timeDisplay + '</span>' +
+      '</div>' +
+      '<div class="feed-desc">' + item.desc + '</div>' +
+      '<div class="feed-meta">' +
+        '<span class="feed-status ' + statusClass + '">' + statusLabel + '</span>' +
+        '<span>Confidence: <span class="confidence-bar"><span class="confidence-fill" style="width:' + (item.confidence*100) + '%;background:' + confidenceColor(item.confidence) + '"></span></span> ' + Math.round(item.confidence*100) + '%</span>' +
+      '</div>' +
+      (item.reasoning ? '<div class="reasoning-toggle" onclick="event.stopPropagation();toggleReasoning(this.closest(\'.feed-item\'))">\u25b6 Reasoning trace</div><div class="reasoning-content">' + renderReasoningInline(item.reasoning, item.tool) + '</div>' : '') +
+    '</div>';
+  }).join('');
+}
+
+function toggleReasoning(el) {
+  var content = el.querySelector('.reasoning-content');
+  var toggle = el.querySelector('.reasoning-toggle');
+  if (!content) return;
+  content.classList.toggle('open');
+  if (toggle) toggle.textContent = content.classList.contains('open') ? '\u25bc Hide reasoning' : '\u25b6 Reasoning trace';
+}
+
+function renderReasoningInline(r, toolName) {
+  var html = '';
+  if (r.thought) html += '<div class="reasoning-step-label">Chain of Thought</div><div style="margin-bottom:8px">' + r.thought + '</div>';
+  if (r.evidence) html += '<div class="reasoning-step-label">Evidence</div><div style="margin-bottom:8px">' + r.evidence + '</div>';
+  if (r.tool_call) html += '<div class="reasoning-step-label">Tool Invocation</div><div class="tool-json">' + highlightJson(r.tool_call) + '</div>';
+  return html;
+}
+
+// ══════════════════════════════════════════════════════════════
+// RENDERING - Sim Approvals
+// ══════════════════════════════════════════════════════════════
+function renderSimApprovals() {
+  var list = document.getElementById('simApprovalList');
+  var count = document.getElementById('simApprovalCount');
+  var badge = document.getElementById('approvalBadge');
+  var pending = state.pendingApprovals;
+  var totalPending = pending.length + adminApprovals.length;
+  count.textContent = totalPending + ' pending';
+  badge.textContent = totalPending;
+  badge.style.display = totalPending > 0 ? '' : 'none';
+
+  if (pending.length === 0) {
+    list.innerHTML = '<div class="empty-state"><h3>No simulation approvals</h3><p>Actions requiring review will appear here.</p></div>';
+    return;
+  }
+  var urgencyOrder = { emergent: 0, urgent: 1, routine: 2 };
+  var sorted = pending.slice().sort(function(a,b) { return (urgencyOrder[a.urgency]||2) - (urgencyOrder[b.urgency]||2); });
+  list.innerHTML = sorted.map(function(item) {
+    var slaElapsed = state.simTime - item.time;
+    var slaMax = item.urgency === 'emergent' ? 120 : item.urgency === 'urgent' ? 300 : 900;
+    var slaRemaining = Math.max(0, slaMax - slaElapsed);
+    var slaPercent = slaRemaining / slaMax;
+    var slaClass = slaPercent > 0.5 ? 'sla-ok' : slaPercent > 0.2 ? 'sla-warning' : 'sla-critical';
+    return '<div class="sim-approval-item ' + tierBorderClass(item.tier) + '">' +
+      '<div class="sim-approval-header"><div>' +
+        '<span class="sim-approval-urgency urgency-' + item.urgency + '">' + item.urgency.toUpperCase() + '</span> ' +
+        '<span class="badge ' + tierClass(item.tier) + '">' + tierLabel(item.tier) + '</span> ' +
+        '<span class="feed-tool">' + item.tool + '</span>' +
+      '</div><span class="sla-timer ' + slaClass + '">SLA: ' + formatTime(slaRemaining) + '</span></div>' +
+      '<div class="sim-approval-body">' +
+        '<div class="sim-approval-patient">' + SIM_PATIENTS[item.patientId].name + '</div>' +
+        '<div class="sim-approval-action">' + item.desc + '</div>' +
+        (item.escalation ? '<div style="margin-top:8px;padding:10px;background:var(--danger-light);border-radius:8px;font-size:12px;"><strong style="color:var(--danger);">' + item.escalation.title + '</strong><br>' + item.escalation.summary + '</div>' : '') +
+        '<div style="margin-top:6px;font-size:12px;color:var(--text-muted);">Confidence: ' + Math.round(item.confidence*100) + '%</div>' +
+      '</div>' +
+      '<div class="sim-approval-actions" id="sim-actions-' + item.id + '">' +
+        '<button class="btn btn-success btn-sm" onclick="simApproveAction(\'' + item.id + '\')">Approve</button>' +
+        (item.isEscalation ? '<button class="btn btn-primary btn-sm" onclick="takeOverEncounter(\'' + item.patientId + '\')">Take Over</button>' : '<button class="btn btn-warning btn-sm" onclick="simShowRejectForm(\'' + item.id + '\')">Reject</button>') +
+      '</div></div>';
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// RENDERING - Patient Panel (merged: sim patients + live sessions)
+// ══════════════════════════════════════════════════════════════
+function renderPatientPanel() {
+  // Sim patients
+  var simGrid = document.getElementById('simPatientGrid');
+  simGrid.innerHTML = Object.values(SIM_PATIENTS).map(function(p) {
+    var currentStep = state.patientSteps[p.id];
+    var isComplete = state.encounterComplete[p.id];
+    var isEscalated = p.id === 'patel' && state.feedItems.some(function(f) { return f.patientId === 'patel' && f.isEscalation; });
+    return '<div class="card patient-card" onclick="selectPatient(\'' + p.id + '\'); switchView(\'encounter\');">' +
+      '<div class="flex items-center justify-between mb-2"><div>' +
+        '<div class="patient-name">' + p.name + '</div>' +
+        '<div class="patient-demo">' + p.age + p.sex + ' \u00b7 ' + p.mrn + '</div>' +
+      '</div>' +
+      (isEscalated ? '<span class="badge badge-danger">ESCALATED</span>' : isComplete ? '<span class="badge badge-success">Complete</span>' : '<span class="badge badge-info">In Progress</span>') +
+      '</div>' +
+      '<div class="patient-chief">' + p.chief + '</div>' +
+      '<div class="stepper">' + WORKFLOW_STEPS.map(function(s,i) {
+        var cls = i < currentStep ? 'done' : i === currentStep ? 'active' : '';
+        return '<div class="step ' + cls + '">' + s + '</div>';
+      }).join('') + '</div>' +
+      '<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">' +
+        '<span class="text-sm text-muted">Vitals:</span>' +
+        '<span class="badge badge-muted">' + p.vitals.temp + '</span>' +
+        '<span class="badge badge-muted">HR ' + p.vitals.hr + '</span>' +
+        '<span class="badge badge-muted">' + p.vitals.bp + '</span>' +
+        '<span class="badge badge-muted">SpO2 ' + p.vitals.spo2 + '</span>' +
+      '</div></div>';
+  }).join('');
+
+  // Live sessions — same rich cards as sim patients
+  var liveGrid = document.getElementById('liveSessionGrid');
+  var liveIds = Object.keys(livePatients);
+  if (liveIds.length > 0) {
+    liveGrid.innerHTML = liveIds.map(function(pid) {
+      var p = livePatients[pid];
+      var currentStep = p._workflowStep;
+      var hasVitals = p.vitals && p.vitals.temp && p.vitals.temp !== '--';
+      return '<div class="card patient-card live-session" onclick="selectPatient(\'' + pid + '\'); switchView(\'encounter\');">' +
+        '<div class="flex items-center justify-between mb-2"><div>' +
+          '<div class="patient-name">' + p.name + ' <span class="live-badge"><span class="live-dot"></span>LIVE</span></div>' +
+          '<div class="patient-demo">' + p._messageCount + ' messages</div>' +
+        '</div>' +
+        (p.status === 'complete' ? '<span class="badge badge-success">Complete</span>' : '<span class="badge badge-info">In Progress</span>') +
+        '</div>' +
+        '<div class="patient-chief">' + p.chief + '</div>' +
+        '<div class="stepper">' + WORKFLOW_STEPS.map(function(s,i) {
+          var cls = i < currentStep ? 'done' : i === currentStep ? 'active' : '';
+          return '<div class="step ' + cls + '">' + s + '</div>';
+        }).join('') + '</div>' +
+        (hasVitals ? '<div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;">' +
+          '<span class="text-sm text-muted">Vitals:</span>' +
+          (p.vitals.temp ? '<span class="badge badge-muted">' + p.vitals.temp + '</span>' : '') +
+          (p.vitals.hr ? '<span class="badge badge-muted">HR ' + p.vitals.hr + '</span>' : '') +
+          (p.vitals.bp ? '<span class="badge badge-muted">' + p.vitals.bp + '</span>' : '') +
+          (p.vitals.spo2 ? '<span class="badge badge-muted">SpO2 ' + p.vitals.spo2 + '</span>' : '') +
+        '</div>' : '') +
+      '</div>';
+    }).join('');
+  } else {
+    liveGrid.innerHTML = '';
+  }
+
+  var meta = document.getElementById('patientPanelMeta');
+  if (meta) meta.textContent = '3 sim encounters' + (liveIds.length > 0 ? ' + ' + liveIds.length + ' live sessions' : '');
+}
+
+// ══════════════════════════════════════════════════════════════
+// RENDERING - Encounter Detail
+// ══════════════════════════════════════════════════════════════
+var liveEncounterPoll = null;
+
+function renderEncounterDetail() {
+  var container = document.getElementById('encounterDetail');
+  var pid = state.selectedPatient;
+  var p = getPatientData(pid);
+  if (!p) {
+    container.innerHTML = '<div class="empty-state"><h3>Select a patient</h3></div>';
+    return;
+  }
+  var isLive = !!p._live;
+
+  // Fetch full data for live patients on first view
+  if (isLive && !p._actionsLoaded) {
+    container.innerHTML = '<div class="empty-state"><h3>Loading encounter...</h3></div>';
+    fetch('/api/sessions/' + pid).then(function(r){ return r.json(); }).then(function(data) {
+      p._actions = (data.actions || []).map(function(a) {
+        a.patientId = pid;
+        a.time = a.timestamp ? new Date(a.timestamp).getTime() / 1000 : 0;
+        return a;
+      });
+      p._differential = data.differential;
+      p._soapNote = data.soap_note;
+      p._workflowStep = data.workflow_step !== undefined ? data.workflow_step : -1;
+      p.status = data.status || p.status;
+      if (data.vitals) {
+        p.chief = data.vitals.chief_complaint || p.chief;
+        p.vitals = { temp: data.vitals.temp || '', hr: data.vitals.hr || '', bp: data.vitals.bp || '', rr: data.vitals.rr || '', spo2: data.vitals.spo2 || '' };
+      }
+      // Derive PMH/meds/allergies from facts and EMR
+      p.pmh = (data.facts || []).filter(function(f) { return !f.toLowerCase().startsWith('name:'); });
+      p.meds = (data.emr_entries || []).filter(function(e) { return e.type === 'medication'; }).map(function(e) { return e.title; });
+      p.allergies = (data.emr_entries || []).filter(function(e) { return e.type === 'allergy'; }).map(function(e) { return e.title; });
+      if (p.allergies.length === 0) p.allergies = ['NKDA'];
+      p._conversationHistory = data.conversation_history || [];
+      p._emrEntries = data.emr_entries || [];
+      p._actionsLoaded = true;
+      renderEncounterDetail();
+    });
+    // Start polling for live updates
+    startLiveEncounterPoll(pid);
+    return;
+  }
+
+  var isLiveComplete = isLive && p.status === 'complete';
+  var currentStep = isLiveComplete ? WORKFLOW_STEPS.length : (isLive ? Math.max(p._workflowStep || -1, 0) : state.patientSteps[pid]);
+  var events = isLive ? (p._actions || []) : state.feedItems.filter(function(f) { return f.patientId === pid; });
+  var isEscalated = !isLive && pid === 'patel' && events.some(function(f) { return f.isEscalation; });
+  var viewStep = state.selectedEncounterStep !== null ? state.selectedEncounterStep : currentStep;
+  var diffEvent = events.find(function(e) { return e.isDifferential; });
+  var soapEvent = events.find(function(e) { return e.soap; });
+  var escalationEvent = events.find(function(e) { return e.isEscalation; });
+  // For live patients, synthesize diff/soap events from patient data if not in actions
+  if (isLive && !diffEvent && p._differential && p._differential.length > 0) {
+    diffEvent = { isDifferential: true, differential: p._differential, step: 2 };
+  }
+  if (isLive && !soapEvent && p._soapNote && p._soapNote.subjective) {
+    soapEvent = { soap: p._soapNote, step: 6 };
+  }
+
+  container.innerHTML =
+    '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">' +
+      '<h2 style="font-size:18px;font-weight:700;">' + p.name + '</h2>' +
+      (p.age ? '<span class="badge badge-muted">' + p.age + p.sex + '</span>' : '') +
+      (p.mrn ? '<span class="badge badge-muted">' + p.mrn + '</span>' : '') +
+      (isLive ? '<span class="live-badge"><span class="live-dot"></span>LIVE</span>' : '') +
+      (isEscalated ? '<span class="badge badge-danger">ESCALATED</span>' : '') +
+      (isLive ? '<button class="btn btn-outline btn-sm" style="margin-left:auto;" onclick="openLiveSession(\'' + pid + '\')">Chat &amp; EMR View</button>' : '') +
+    '</div>' +
+    '<div class="encounter-layout">' +
+      '<div class="encounter-stepper-col">' +
+        WORKFLOW_STEPS.map(function(s,i) {
+          var cls = i < currentStep ? 'done' : i === currentStep ? 'active' : '';
+          var selected = i === viewStep ? 'background:#f1f5f9;font-weight:600;' : '';
+          return '<div class="encounter-stepper-item ' + cls + '" style="' + selected + '" onclick="state.selectedEncounterStep=' + i + ';renderEncounterDetail();">' +
+            '<div class="step-icon">' + (i < currentStep ? '\u2713' : (i+1)) + '</div>' + s + '</div>';
+        }).join('') +
+        '<div style="margin-top:16px;padding:12px;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border);">' +
+          (p.pmh && p.pmh.length > 0 ? '<div><strong>' + (isLive ? 'Facts:' : 'PMH:') + '</strong></div>' + p.pmh.map(function(x){ return '<div>\u00b7 '+x+'</div>'; }).join('') : '') +
+          (p.meds && p.meds.length > 0 ? '<div style="margin-top:6px;"><strong>Meds:</strong></div>' + p.meds.map(function(x){ return '<div>\u00b7 '+x+'</div>'; }).join('') : '') +
+          (p.allergies && p.allergies.length > 0 ? '<div style="margin-top:6px;"><strong>Allergies:</strong></div>' + p.allergies.map(function(x){ return '<div>\u00b7 '+x+'</div>'; }).join('') : '') +
+        '</div>' +
+      '</div>' +
+      '<div class="encounter-content">' + renderEncounterContent(pid, viewStep, events, diffEvent, soapEvent, escalationEvent) + '</div>' +
+      '<div class="reasoning-panel-sidebar"><h3>Reasoning Trace</h3>' + renderEncounterReasoningPanel(events, viewStep) + '</div>' +
+    '</div>';
+
+  // Start polling for live patients
+  if (isLive) startLiveEncounterPoll(pid);
+}
+
+function startLiveEncounterPoll(pid) {
+  if (liveEncounterPoll) clearInterval(liveEncounterPoll);
+  liveEncounterPoll = setInterval(function() {
+    if (state.selectedPatient !== pid || state.currentView !== 'encounter') {
+      clearInterval(liveEncounterPoll);
+      liveEncounterPoll = null;
+      return;
+    }
+    fetch('/api/sessions/' + pid).then(function(r){ return r.json(); }).then(function(data) {
+      var p = livePatients[pid];
+      if (!p) return;
+      var oldCount = (p._actions || []).length;
+      p._actions = (data.actions || []).map(function(a) {
+        a.patientId = pid;
+        a.time = a.timestamp ? new Date(a.timestamp).getTime() / 1000 : 0;
+        return a;
+      });
+      p._differential = data.differential;
+      p._soapNote = data.soap_note;
+      p._workflowStep = data.workflow_step !== undefined ? data.workflow_step : -1;
+      p.status = data.status || p.status;
+      if (data.vitals) {
+        p.chief = data.vitals.chief_complaint || p.chief;
+        p.vitals = { temp: data.vitals.temp || '', hr: data.vitals.hr || '', bp: data.vitals.bp || '', rr: data.vitals.rr || '', spo2: data.vitals.spo2 || '' };
+      }
+      p.pmh = (data.facts || []).filter(function(f) { return !f.toLowerCase().startsWith('name:'); });
+      p.meds = (data.emr_entries || []).filter(function(e) { return e.type === 'medication'; }).map(function(e) { return e.title; });
+      p.allergies = (data.emr_entries || []).filter(function(e) { return e.type === 'allergy'; }).map(function(e) { return e.title; });
+      if (p.allergies.length === 0) p.allergies = ['NKDA'];
+      p._conversationHistory = data.conversation_history || [];
+      p._emrEntries = data.emr_entries || [];
+      var changed = p._actions.length !== oldCount || (data.conversation_history || []).length !== (p._prevMsgCount || 0);
+      p._prevMsgCount = (data.conversation_history || []).length;
+      if (changed) renderEncounterDetail();
+    });
+  }, 5000);
+}
+
+function renderEncounterContent(pid, viewStep, events, diffEvent, soapEvent, escalationEvent) {
+  var stepEvents = events.filter(function(e) { return e.step === viewStep; });
+  var html = '';
+  if (escalationEvent && pid === 'patel') {
+    html += '<div class="card" style="border:2px solid var(--danger);margin-bottom:16px;"><div style="background:var(--danger-light);padding:12px;margin:-16px -16px 12px;border-radius:16px 16px 0 0;"><strong style="color:var(--danger);">\u26a0 MANDATORY ESCALATION</strong></div><div style="font-size:13px;line-height:1.6;"><strong>' + escalationEvent.escalation.title + '</strong><br><br>' + escalationEvent.escalation.summary + '<br><br><strong>Recommended:</strong> ' + escalationEvent.escalation.recommended + '</div></div>';
+  }
+  if (diffEvent && viewStep >= diffEvent.step) {
+    html += '<div class="encounter-section"><h3><span class="badge badge-info">Assessment</span> Differential Diagnosis</h3><table class="dx-table"><thead><tr><th>#</th><th>Diagnosis</th><th>Prob</th><th>For</th><th>Against</th></tr></thead><tbody>' +
+      diffEvent.differential.map(function(d) {
+        return '<tr><td class="dx-rank">' + d.rank + '</td><td><strong>' + d.dx + '</strong></td><td class="dx-prob">' + d.prob + '</td><td class="evidence-for">' + d.forEvidence.map(function(e){return '+ '+e;}).join('<br>') + '</td><td class="evidence-against">' + d.againstEvidence.map(function(e){return '\u2212 '+e;}).join('<br>') + '</td></tr>';
+      }).join('') + '</tbody></table></div>';
+  }
+  if (soapEvent && viewStep >= soapEvent.step) {
+    var s = soapEvent.soap;
+    html += '<div class="encounter-section"><h3><span class="badge badge-info">Documentation</span> SOAP Note</h3><div class="card"><div class="soap-section"><div class="soap-label">Subjective</div><div class="soap-content">' + s.subjective + '</div></div><div class="soap-section"><div class="soap-label">Objective</div><div class="soap-content">' + s.objective + '</div></div><div class="soap-section"><div class="soap-label">Assessment</div><div class="soap-content">' + s.assessment + '</div></div><div class="soap-section"><div class="soap-label">Plan</div><div class="soap-content">' + s.plan.replace(/\n/g,'<br>') + '</div></div></div></div>';
+  }
+  if (stepEvents.length > 0) {
+    html += '<div class="encounter-section"><h3>Actions at this step</h3>' + stepEvents.map(function(e) {
+      return '<div class="order-item ' + tierBorderClass(e.tier) + '"><span class="badge ' + tierClass(e.tier) + '">' + tierLabel(e.tier) + '</span><span class="feed-tool">' + e.tool + '</span><span style="flex:1;">' + e.desc + '</span><span class="badge ' + (e.status==='auto-approved'||e.status==='approved'?'badge-success':e.status==='pending'?'badge-muted':'badge-danger') + '">' + e.status + '</span></div>';
+    }).join('') + '</div>';
+  }
+  // For live patients with no structured actions, show conversation + EMR as fallback
+  if (!html) {
+    var lp = livePatients[pid];
+    if (lp) {
+      var conv = lp._conversationHistory || [];
+      var emr = lp._emrEntries || [];
+      if (conv.length > 0 || emr.length > 0) {
+        if (emr.length > 0) {
+          html += '<div class="encounter-section"><h3><span class="badge badge-info">EMR</span> Entries</h3>' +
+            emr.map(function(e) {
+              return '<div class="order-item tier-border-1"><span class="badge badge-muted">' + (e.type || 'note') + '</span>' +
+                '<span style="flex:1;"><strong>' + (e.title || '') + '</strong>' + (e.detail ? ' — ' + e.detail : '') + '</span>' +
+                '<span class="text-sm text-muted">' + (e.timestamp ? new Date(e.timestamp).toLocaleTimeString() : '') + '</span></div>';
+            }).join('') + '</div>';
+        }
+        if (conv.length > 0) {
+          html += '<div class="encounter-section"><h3><span class="badge badge-muted">Chat</span> Conversation</h3>' +
+            '<div style="max-height:400px;overflow-y:auto;padding:8px;">' +
+            conv.slice(-20).map(function(m) {
+              var isUser = m.role === 'user';
+              return '<div style="display:flex;gap:8px;margin-bottom:8px;justify-content:' + (isUser ? 'flex-end' : 'flex-start') + ';">' +
+                '<div style="max-width:80%;padding:8px 12px;border-radius:12px;font-size:13px;line-height:1.5;' +
+                (isUser ? 'background:#e0f2fe;color:#0c4a6e;' : 'background:#f3f4f6;color:#1f2937;') + '">' +
+                '<div style="font-size:10px;font-weight:600;margin-bottom:2px;color:var(--text-muted);">' + (isUser ? 'Patient' : 'AI') + '</div>' +
+                m.content.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>') +
+                '</div></div>';
+            }).join('') + '</div></div>';
+        }
+      }
+    }
+  }
+  if (!html) html = '<div class="empty-state"><h3>No data for this step yet</h3><p>Actions will populate as the encounter progresses.</p></div>';
+  return html;
+}
+
+function renderEncounterReasoningPanel(events, viewStep) {
+  var relevant = events.filter(function(e) { return e.step <= viewStep && e.reasoning; });
+  if (relevant.length === 0) {
+    // For live patients, show facts as context
+    var pid = state.selectedPatient;
+    var lp = livePatients[pid];
+    if (lp) {
+      var facts = lp.pmh || [];
+      if (facts.length > 0) {
+        return '<div style="margin-bottom:12px;"><div class="trace-label">Extracted Facts</div>' +
+          facts.map(function(f) { return '<div class="trace-text" style="margin-bottom:4px;">&bull; ' + f + '</div>'; }).join('') + '</div>' +
+          '<div class="text-sm text-muted">Reasoning traces will appear as the agent works.</div>';
+      }
+    }
+    return '<div class="text-sm text-muted">Reasoning traces will appear as the agent works.</div>';
+  }
+  return relevant.map(function(e) {
+    var timeStr = e.timestamp ? formatTimestamp(new Date(e.timestamp).getTime()) : formatTime(e.time || 0);
+    return '<div class="trace-entry"><div class="trace-label">' + e.tool + ' \u00b7 ' + timeStr + '</div><div class="trace-text">' + (e.reasoning.thought || '') + '</div>' +
+      (e.reasoning.evidence ? '<div style="margin-top:6px;font-size:11px;color:#2563eb;"><strong>Evidence:</strong> ' + e.reasoning.evidence + '</div>' : '') +
+      (e.reasoning.tool_call ? '<div class="tool-json" style="margin-top:6px;font-size:10px;">' + highlightJson(e.reasoning.tool_call) + '</div>' : '') +
+    '</div>';
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// RENDERING - Analytics
+// ══════════════════════════════════════════════════════════════
+function renderAnalytics() {
+  // Clone sim metrics and add live patient data
+  var m = { totalActions: state.metrics.totalActions, autoApproved: state.metrics.autoApproved,
+    manualApproved: state.metrics.manualApproved, rejected: state.metrics.rejected,
+    escalations: state.metrics.escalations, confidenceSum: state.metrics.confidenceSum };
+  var liveCount = 0;
+  Object.keys(livePatients).forEach(function(pid) {
+    var p = livePatients[pid];
+    if (p._actions) {
+      p._actions.forEach(function(a) {
+        m.totalActions++;
+        m.confidenceSum += (a.confidence || 0.95);
+        if (a.status === 'auto-approved') m.autoApproved++;
+        else if (a.status === 'approved') m.manualApproved++;
+        else if (a.status === 'rejected') m.rejected++;
+      });
+      liveCount++;
+    }
+  });
+  var avgConf = m.totalActions > 0 ? Math.round(m.confidenceSum / m.totalActions * 100) : 0;
+  var escRate = m.totalActions > 0 ? Math.round(m.escalations / m.totalActions * 100) : 0;
+  var concordance = m.totalActions > 0 ? Math.min(98, 85 + Math.floor(m.manualApproved * 2.5)) : 0;
+  var simComplete = Object.values(state.encounterComplete).filter(Boolean).length;
+  var grid = document.getElementById('metricsGrid');
+  grid.innerHTML = [
+    { value: m.totalActions, label: 'Total Actions', sub: 'sim + live encounters' },
+    { value: m.autoApproved, label: 'Auto-Approved', sub: (m.totalActions ? Math.round(m.autoApproved/m.totalActions*100) : 0) + '% of total' },
+    { value: (m.manualApproved + m.rejected), label: 'Manual Reviews', sub: m.manualApproved + ' approved, ' + m.rejected + ' rejected' },
+    { value: escRate + '%', label: 'Escalation Rate', sub: m.escalations + ' escalations' },
+    { value: avgConf + '%', label: 'Avg Confidence', sub: 'across all actions' },
+    { value: concordance + '%', label: 'Concordance', sub: 'agent vs supervisor' },
+    { value: simComplete + '/3 sim + ' + liveCount + ' live', label: 'Encounters', sub: '' },
+    { value: formatTime(state.simTime), label: 'Sim Time', sub: '' }
+  ].map(function(m) { return '<div class="card metric-card"><div class="metric-value">' + m.value + '</div><div class="metric-label">' + m.label + '</div>' + (m.sub ? '<div class="metric-sublabel">' + m.sub + '</div>' : '') + '</div>'; }).join('');
+
+  var tierCounts = [0,0,0,0,0];
+  state.feedItems.forEach(function(f) { tierCounts[f.tier]++; });
+  // Include live actions in tier chart
+  Object.keys(livePatients).forEach(function(pid) {
+    var p = livePatients[pid];
+    if (p._actions) p._actions.forEach(function(a) { if (a.tier >= 1 && a.tier <= 4) tierCounts[a.tier]++; });
+  });
+  var maxCount = Math.max(1, Math.max.apply(null, tierCounts));
+  var chart = document.getElementById('tierChart');
+  chart.innerHTML = [1,2,3,4].map(function(t) {
+    var h = Math.max(4, (tierCounts[t] / maxCount) * 120);
+    return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;"><span style="font-size:12px;font-weight:600;">' + tierCounts[t] + '</span><div style="width:100%;height:' + h + 'px;background:' + tierColor(t) + ';border-radius:4px 4px 0 0;"></div><span style="font-size:11px;color:var(--text-muted);">T' + t + '</span></div>';
+  }).join('');
+}
+
+// ══════════════════════════════════════════════════════════════
+// RENDERING - Configuration
+// ══════════════════════════════════════════════════════════════
+function renderConfig() {
+  var container = document.getElementById('configContent');
+  container.innerHTML =
+    '<div class="config-section"><h3>Autonomy Level</h3><div class="card" style="padding:20px;">' +
+      '<p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Current: <strong style="color:#2563eb;">L' + state.autonomyLevel + '</strong></p>' +
+      '<div style="display:flex;gap:8px;">' + [0,1,2,3,4].map(function(l) { return '<button class="btn ' + (state.autonomyLevel===l?'btn-primary':'btn-outline') + ' btn-sm" onclick="setAutonomy(' + l + ')">L' + l + '</button>'; }).join('') + '</div>' +
+      '<div style="margin-top:12px;font-size:12px;color:var(--text-muted);">' + ['L0 Shadow: All actions draft','L1 Copilot: All need approval','L2 Supervised: T1 auto, T2+ review','L3 Guarded: T1-T2 auto, T3+ review','L4 Full: T1-T3 auto, T4+ review'][state.autonomyLevel] + '</div>' +
+    '</div></div>' +
+    '<div class="config-section"><h3>Risk Tier Approval Matrix</h3><div class="card"><table class="approval-matrix"><thead><tr><th></th><th>T1</th><th>T2</th><th>T3</th><th>T4</th></tr></thead><tbody>' +
+      [0,1,2,3,4].map(function(l) {
+        return '<tr><td style="text-align:left;font-weight:600;">L' + l + ' ' + ['Shadow','Copilot','Supervised','Guarded','Full'][l] + '</td>' +
+          [1,2,3,4].map(function(t) { var auto = !needsApproval(t, l); return '<td class="' + (auto?'matrix-auto':'matrix-approve') + '">' + (auto?'Auto':'Review') + '</td>'; }).join('') + '</tr>';
+      }).join('') +
+    '</tbody></table></div></div>';
+}
+
+// ══════════════════════════════════════════════════════════════
+// RENDER DISPATCH
+// ══════════════════════════════════════════════════════════════
+function renderCurrentView() {
+  switch (state.currentView) {
+    case 'feed': renderFeed(); break;
+    case 'approvals': renderSimApprovals(); renderAdminApprovals(); break;
+    case 'patients': renderPatientPanel(); break;
+    case 'encounter': renderEncounterDetail(); break;
+    case 'analytics': renderAnalytics(); break;
+    case 'config': renderConfig(); break;
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// SIMULATION ENGINE (from fredrik)
+// ══════════════════════════════════════════════════════════════
+function startSimulation() {
+  if (state.simInterval) clearInterval(state.simInterval);
+  var tickMs = state.speed === 0 ? 50 : 1000 / state.speed;
+  state.simInterval = setInterval(simTick, tickMs);
+}
+
+function simTick() {
+  if (state.paused || rejectFormOpen) return;
+  state.simTime += (state.speed === 0 ? 3 : 1);
+  for (var i = 0; i < 3; i++) {
+    var pid = ['thompson','rodriguez','patel'][i];
+    var timeline = TIMELINES[pid];
+    var idx = state.nextEventIndex[pid];
+    if (idx >= timeline.length) continue;
+    var evt = timeline[idx];
+    if (state.simTime >= evt.delay) {
+      processEvent(pid, evt);
+      state.nextEventIndex[pid]++;
+    }
+  }
+  if (state.currentView === 'approvals' && state.pendingApprovals.length > 0 && !rejectFormOpen) renderSimApprovals();
+}
+
+function processEvent(pid, evt) {
+  if (evt.step > state.patientSteps[pid]) state.patientSteps[pid] = evt.step;
+  var isEscalation = !!evt.isEscalation;
+  var autoApprove = !isEscalation && !needsApproval(evt.tier, state.autonomyLevel);
+  var actionId = 'act_' + Date.now() + '_' + Math.random().toString(36).slice(2,6);
+  var feedItem = {
+    id: actionId, patientId: pid, tool: evt.tool, tier: evt.tier, desc: evt.desc,
+    confidence: evt.confidence, urgency: evt.urgency || 'routine', time: state.simTime,
+    step: evt.step, reasoning: evt.reasoning, isDifferential: evt.isDifferential,
+    differential: evt.differential, soap: evt.soap, isEscalation: isEscalation,
+    escalation: evt.escalation,
+    status: autoApprove ? 'auto-approved' : (isEscalation ? 'escalated' : 'pending')
+  };
+  state.feedItems.push(feedItem);
+  state.metrics.totalActions++;
+  state.metrics.confidenceSum += evt.confidence;
+
+  if (autoApprove) {
+    state.metrics.autoApproved++;
+    state.completedActions.push(feedItem);
+    showToast('Auto-approved: ' + evt.tool + ' for ' + SIM_PATIENTS[pid].name.split(' ')[1], 'success', 2500);
+  } else {
+    state.pendingApprovals.push(feedItem);
+    if (isEscalation) {
+      state.metrics.escalations++;
+      showToast('\u26a0 ESCALATION: ' + SIM_PATIENTS[pid].name, 'danger', 8000);
+    } else {
+      showToast('Approval needed: ' + evt.tool + ' for ' + SIM_PATIENTS[pid].name.split(' ')[1], 'warning', 3500);
+    }
+  }
+
+  var timeline = TIMELINES[pid];
+  var nextIdx = state.nextEventIndex[pid];
+  if (nextIdx >= timeline.length - 1) {
+    var allProcessed = state.feedItems.filter(function(f) { return f.patientId === pid; });
+    var allDone = allProcessed.every(function(f) { return f.status !== 'pending'; });
+    if (allDone && !state.encounterComplete[pid]) {
+      state.encounterComplete[pid] = true;
+      state.patientSteps[pid] = WORKFLOW_STEPS.length;
+      if (!evt.isEscalation) showToast('Encounter complete: ' + SIM_PATIENTS[pid].name, 'info', 4000);
+    }
+  }
+  renderCurrentView();
+}
+
+// ══════════════════════════════════════════════════════════════
+// SIM INTERACTION HANDLERS
+// ══════════════════════════════════════════════════════════════
+function simApproveAction(actionId) {
+  var idx = state.pendingApprovals.findIndex(function(a) { return a.id === actionId; });
+  if (idx === -1) return;
+  var action = state.pendingApprovals.splice(idx, 1)[0];
+  action.status = 'approved';
+  state.metrics.manualApproved++;
+  var feedIdx = state.feedItems.findIndex(function(f) { return f.id === actionId; });
+  if (feedIdx !== -1) state.feedItems[feedIdx].status = 'approved';
+  state.completedActions.push(action);
+  showToast('Approved: ' + action.tool, 'success', 2500);
+  checkEncounterCompletion(action.patientId);
+  renderCurrentView();
+}
+
+function simShowRejectForm(actionId) {
+  var container = document.getElementById('sim-actions-' + actionId);
+  if (!container) return;
+  rejectFormOpen = true;
+  container.innerHTML =
+    '<div class="reject-inline">' +
+      '<input type="text" id="sim-reject-reason-' + actionId + '" placeholder="Rejection reason..." onkeydown="if(event.key===\'Enter\')simRejectAction(\'' + actionId + '\')">' +
+      '<button class="reject-confirm-btn" onclick="simRejectAction(\'' + actionId + '\')">Reject</button>' +
+      '<button class="reject-cancel-btn" onclick="rejectFormOpen=false;renderSimApprovals()">Cancel</button>' +
+    '</div>';
+  document.getElementById('sim-reject-reason-' + actionId).focus();
+}
+
+function simRejectAction(actionId) {
+  var input = document.getElementById('sim-reject-reason-' + actionId);
+  var reason = input ? input.value.trim() : '';
+  if (!reason) { if (input) { input.style.borderColor = '#ef4444'; input.placeholder = 'Please provide a reason...'; } return; }
+  rejectFormOpen = false;
+  var idx = state.pendingApprovals.findIndex(function(a) { return a.id === actionId; });
+  if (idx === -1) return;
+  var action = state.pendingApprovals.splice(idx, 1)[0];
+  action.status = 'rejected';
+  state.metrics.rejected++;
+  var feedIdx = state.feedItems.findIndex(function(f) { return f.id === actionId; });
+  if (feedIdx !== -1) state.feedItems[feedIdx].status = 'rejected';
+  showToast('Rejected: ' + reason, 'danger', 3500);
+  renderCurrentView();
+}
+
+function takeOverEncounter(pid) {
+  state.pendingApprovals = state.pendingApprovals.filter(function(a) { return a.patientId !== pid; });
+  state.encounterComplete[pid] = true;
+  showToast('Took over encounter for ' + SIM_PATIENTS[pid].name, 'info', 5000);
+  renderCurrentView();
+}
+
+function checkEncounterCompletion(pid) {
+  var timeline = TIMELINES[pid];
+  var processed = state.feedItems.filter(function(f) { return f.patientId === pid; });
+  if (processed.length >= timeline.length) {
+    var allDone = processed.every(function(f) { return f.status !== 'pending' && f.status !== 'escalated'; });
+    if (allDone && !state.encounterComplete[pid]) {
+      state.encounterComplete[pid] = true;
+      state.patientSteps[pid] = WORKFLOW_STEPS.length;
+      showToast('Encounter complete: ' + SIM_PATIENTS[pid].name, 'info', 4000);
+    }
+  }
+}
+
+function setAutonomy(level) {
+  var oldLevel = state.autonomyLevel;
+  state.autonomyLevel = level;
+  document.querySelectorAll('.autonomy-btn').forEach(function(b) {
+    b.classList.toggle('active', parseInt(b.dataset.level) === level);
+  });
+  var toAutoApprove = [];
+  state.pendingApprovals = state.pendingApprovals.filter(function(item) {
+    if (!item.isEscalation && !needsApproval(item.tier, level)) { toAutoApprove.push(item); return false; }
+    return true;
+  });
+  toAutoApprove.forEach(function(item) {
+    item.status = 'auto-approved';
+    var feedIdx = state.feedItems.findIndex(function(f) { return f.id === item.id; });
+    if (feedIdx !== -1) state.feedItems[feedIdx].status = 'auto-approved';
+    state.metrics.autoApproved++;
+    state.completedActions.push(item);
+  });
+  if (toAutoApprove.length > 0) showToast('Autonomy \u2192 L' + level + ': ' + toAutoApprove.length + ' action(s) auto-approved', 'info', 3000);
+  else showToast('Autonomy set to L' + level, 'info', 2000);
+  for (var i = 0; i < 3; i++) checkEncounterCompletion(['thompson','rodriguez','patel'][i]);
+  renderCurrentView();
+}
+
+function setSpeed(speed) {
+  state.speed = speed;
+  document.querySelectorAll('.speed-btn').forEach(function(b) {
+    b.classList.toggle('active', parseFloat(b.dataset.speed) === speed);
+  });
+  if (state.started) startSimulation();
+}
+
+function togglePause() {
+  state.paused = !state.paused;
+  var btn = document.getElementById('pauseBtn');
+  var status = document.getElementById('agentStatus');
+  var statusText = document.getElementById('statusText');
+  var banner = document.getElementById('pausedBanner');
+  if (state.paused) {
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M3 1l10 6-10 6V1z"/></svg> Resume';
+    btn.classList.add('is-paused');
+    status.classList.add('paused');
+    statusText.textContent = 'Agent Paused';
+    banner.classList.add('visible');
+    showToast('Agent paused', 'danger', 3000);
+  } else {
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><rect x="2" y="1" width="3.5" height="12" rx="1"/><rect x="8.5" y="1" width="3.5" height="12" rx="1"/></svg> Pause';
+    btn.classList.remove('is-paused');
+    status.classList.remove('paused');
+    statusText.textContent = 'Agent Active';
+    banner.classList.remove('visible');
+    showToast('Agent resumed', 'success', 2000);
+  }
+}
+
+// ══════════════════════════════════════════════════════════════
+// ADMIN API: Live Sessions + Approvals
+// ══════════════════════════════════════════════════════════════
+var CHAT_API = '/api/sessions';
+
+function fetchLiveSessions() {
+  fetch(CHAT_API).then(function(r){ return r.json(); }).then(function(sessions) {
+    adminTiles = [];
+    sessions.forEach(function(s) {
+      if (s.message_count === 0) return;
+      var pid = s.session_id;
+      var vitals = s.vitals || {};
+      // Build or update livePatients entry
+      var existing = livePatients[pid];
+      livePatients[pid] = {
+        id: pid,
+        name: s.name || 'Unknown',
+        age: '', sex: '', mrn: '',
+        chief: vitals.chief_complaint || (s.facts && s.facts.length > 0 ? s.facts[0] : 'Active conversation'),
+        vitals: {
+          temp: vitals.temp || '',
+          hr: vitals.hr || '',
+          bp: vitals.bp || '',
+          rr: vitals.rr || '',
+          spo2: vitals.spo2 || ''
+        },
+        pmh: (s.facts || []).filter(function(f) { return !f.toLowerCase().startsWith('name:'); }),
+        meds: (s.emr_entries || []).filter(function(e) { return e.type === 'medication'; }).map(function(e) { return e.title; }),
+        allergies: (s.emr_entries || []).filter(function(e) { return e.type === 'allergy'; }).map(function(e) { return e.title; }),
+        _live: true,
+        _sessionId: pid,
+        _actions: existing ? existing._actions : [],
+        _actionsLoaded: existing ? existing._actionsLoaded : false,
+        _differential: s.differential || (existing ? existing._differential : null),
+        _soapNote: s.soap_note || (existing ? existing._soapNote : null),
+        _workflowStep: s.workflow_step !== undefined ? s.workflow_step : -1,
+        _facts: s.facts || [],
+        _messageCount: s.message_count,
+        step: s.workflow_step !== undefined ? s.workflow_step : -1,
+        status: s.status || 'active'
+      };
+      adminTiles.push({
+        id: (s.name || 'Unknown').toUpperCase().slice(0, 12),
+        _live: true, _sessionId: s.session_id, _name: s.name,
+        _facts: s.facts || [], _messageCount: s.message_count,
+        hasMemory: s.facts && s.facts.length > 0,
+        timestamp: s.last_active ? new Date(s.last_active).getTime() : Date.now()
+      });
+    });
+    // Remove stale live patients
+    Object.keys(livePatients).forEach(function(pid) {
+      if (!sessions.some(function(s) { return s.session_id === pid; })) {
+        delete livePatients[pid];
+      }
+    });
+    if (state.currentView === 'patients') renderPatientPanel();
+    if (state.currentView === 'feed') renderFeed();
+    updateSidebarEncounters();
+  }).catch(function(){});
+}
+
+function updateSidebarEncounters() {
+  var container = document.getElementById('live-sidebar-items');
+  if (!container) return;
+  var liveIds = Object.keys(livePatients);
+  if (liveIds.length === 0) { container.innerHTML = ''; return; }
+  container.innerHTML = '<div class="sidebar-label" style="margin-top:8px;font-size:10px;">Live Sessions</div>' +
+    liveIds.map(function(pid) {
+      var p = livePatients[pid];
+      return '<div class="nav-item" style="font-size:12px;" onclick="selectPatient(\'' + pid + '\'); switchView(\'encounter\')">' +
+        '<span class="pulse-dot" style="width:6px;height:6px;background:#2563eb;"></span>' +
+        p.name + ' <span style="color:#2563eb;font-size:9px;">LIVE</span>' +
+      '</div>';
+    }).join('');
+}
+
+function fetchAdminApprovals() {
+  fetch('/api/approvals').then(function(r){ return r.json(); }).then(function(realApprovals) {
+    adminApprovals = realApprovals.map(function(a) { a._real = true; return a; });
+    if (state.currentView === 'approvals' && !rejectFormOpen) renderAdminApprovals();
+    // Update badge count
+    var badge = document.getElementById('approvalBadge');
+    badge.textContent = state.pendingApprovals.length + adminApprovals.length;
+  }).catch(function(){});
+}
+
+function renderAdminApprovals() {
+  var section = document.getElementById('admin-approvals-section');
+  var queue = document.getElementById('admin-approvals-queue');
+  var countEl = document.getElementById('admin-approvals-count');
+  if (adminApprovals.length === 0) { section.style.display = 'none'; return; }
+  section.style.display = 'block';
+  countEl.textContent = adminApprovals.length;
+  queue.innerHTML = adminApprovals.map(function(a) {
+    var tier = a.tier || 'T2';
+    var tierNum = parseInt(tier.replace('T','')) || 2;
+    var slaRemaining = Math.max(0, (a.slaDeadline - Date.now()) / 1000);
+    var slaMax = a.urgency === 'emergent' ? 300 : a.urgency === 'urgent' ? 900 : 1800;
+    var slaPercent = slaRemaining / slaMax;
+    var slaClass = slaPercent > 0.5 ? 'sla-ok' : slaPercent > 0.2 ? 'sla-warning' : 'sla-critical';
+    return '<div class="sim-approval-item ' + tierBorderClass(tierNum) + '">' +
+      '<div class="sim-approval-header"><div>' +
+        '<span class="sim-approval-urgency urgency-' + (a.urgency||'routine') + '">' + (a.urgency||'routine').toUpperCase() + '</span> ' +
+        '<span class="badge ' + tierClass(tierNum) + '">' + tier + '</span> ' +
+        '<span class="feed-tool">prescribe_medication</span>' +
+      '</div><span class="sla-timer ' + slaClass + '">SLA: ' + formatTime(slaRemaining) + '</span></div>' +
+      '<div class="sim-approval-body">' +
+        '<div class="sim-approval-patient">' + (a.patientName || a.patientId || 'Unknown') + '</div>' +
+        '<div class="sim-approval-action">' + a.action + '</div>' +
+        '<div style="margin-top:4px;font-size:12px;color:var(--text-muted);">' + (a.reason || '') + '</div>' +
+        (a.condition ? '<div style="margin-top:4px;font-size:12px;color:var(--text-muted);">Condition: ' + a.condition + '</div>' : '') +
+      '</div>' +
+      '<div class="sim-approval-actions" id="admin-actions-' + a.id + '">' +
+        '<button class="btn btn-success btn-sm" onclick="adminApproveAction(\'' + a.id + '\')">Approve</button>' +
+        '<button class="btn btn-warning btn-sm" onclick="adminShowRejectForm(\'' + a.id + '\')">Reject</button>' +
+      '</div></div>';
+  }).join('');
+}
+
+function adminApproveAction(id) {
+  fetch('/api/approvals/' + id + '/approve', {method:'POST'}).catch(function(){});
+  adminApprovals = adminApprovals.filter(function(a){ return a.id !== id; });
+  renderAdminApprovals();
+  var badge = document.getElementById('approvalBadge');
+  badge.textContent = state.pendingApprovals.length + adminApprovals.length;
+}
+
+function adminShowRejectForm(id) {
+  var container = document.getElementById('admin-actions-' + id);
+  if (!container) return;
+  rejectFormOpen = true;
+  container.innerHTML =
+    '<div class="reject-inline">' +
+      '<input type="text" id="reject-reason-' + id + '" placeholder="Rejection reason..." onkeydown="if(event.key===\'Enter\')adminRejectAction(\'' + id + '\')">' +
+      '<button class="reject-confirm-btn" onclick="adminRejectAction(\'' + id + '\')">Reject</button>' +
+      '<button class="reject-cancel-btn" onclick="rejectFormOpen=false;renderAdminApprovals()">Cancel</button>' +
+    '</div>';
+  document.getElementById('reject-reason-' + id).focus();
+}
+
+function adminRejectAction(id) {
+  var input = document.getElementById('reject-reason-' + id);
+  var reason = input ? input.value.trim() : '';
+  if (!reason) { if (input) { input.style.borderColor = '#ef4444'; input.placeholder = 'Please provide a reason...'; } return; }
+  rejectFormOpen = false;
+  fetch('/api/approvals/' + id + '/reject', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({reason:reason})}).catch(function(){});
+  adminApprovals = adminApprovals.filter(function(a){ return a.id !== id; });
+  showToast('Rejected: ' + reason, 'danger', 3500);
+  renderAdminApprovals();
+}
+
+// ══════════════════════════════════════════════════════════════
+// MODAL: Admin patient detail + Live sessions
+// ══════════════════════════════════════════════════════════════
+var currentPatient = null;
+var currentApproval = null;
+var modalIntervals = [];
+var liveSessionMsgCount = 0;
+var liveSessionEmrCount = 0;
+var liveSessionActionCount = 0;
+var liveSessionId = null;
+var emrGeneration = 0;
+var liveEMRHandle = null;
+
+function openLiveSession(sessionId) {
+  modalIntervals.forEach(clearInterval);
+  modalIntervals = [];
+  liveSessionId = sessionId;
+  liveSessionMsgCount = 0;
+  liveSessionEmrCount = 0;
+  liveSessionActionCount = 0;
+  liveEMRHandle = null;
+  document.getElementById('patient-modal').classList.add('active');
+  document.getElementById('approval-context').style.display = 'none';
+  document.getElementById('modal-title').textContent = 'Live Session';
+  updateTimeline(4);
+  document.querySelectorAll('.modal-panel').forEach(function(p) { p.classList.remove('active'); });
+  setActivePanel(0);
+  var panel = document.getElementById('conversation-panel');
+  panel.innerHTML = '<div style="color:#999;padding:12px;">Loading...</div>';
+  document.getElementById('reasoning-panel').innerHTML = '';
+  document.getElementById('emr-activity').innerHTML = '';
+  var vmContainer = document.getElementById('emr-panel').querySelector('.vm-container');
+  vmContainer.style.display = '';
+  document.getElementById('oemr-encounter-view').style.display = 'block';
+  document.getElementById('win-title').textContent = 'OpenEMR - Loading...';
+  document.getElementById('oemr-encounter-view').querySelectorAll('.oemr-value').forEach(function(f) {
+    f.classList.remove('filling','filled');
+    if (!f.textContent.includes('Select One')) f.textContent = '';
+  });
+  refreshLiveSession(sessionId, true);
+  var pollId = setInterval(function() {
+    if (liveSessionId !== sessionId) return;
+    refreshLiveSession(sessionId, false);
+  }, 3000);
+  modalIntervals.push(pollId);
+}
+
+function refreshLiveSession(sessionId, isInitial) {
+  var panel = document.getElementById('conversation-panel');
+  fetch('/api/sessions/' + sessionId).then(function(r){ return r.json(); }).then(function(data) {
+    var history = data.conversation_history || [];
+    if (!isInitial && history.length === liveSessionMsgCount) return;
+    document.getElementById('modal-title').textContent = (data.name || 'Unknown') + ' \u2022 Live Chat';
+    if (isInitial) {
+      panel.innerHTML = '';
+      renderLiveSessionFacts(panel, data.facts);
+      history.forEach(function(msg) { var el = createMsgEl(msg); if (el) panel.appendChild(el); });
+      liveSessionMsgCount = history.length;
+      panel.scrollTop = panel.scrollHeight;
+      startLiveEMRSimulation(data);
+    } else {
+      var existingFacts = panel.querySelector('.live-facts-banner');
+      if (existingFacts) existingFacts.remove();
+      renderLiveSessionFacts(panel, data.facts);
+      var newMsgs = history.slice(liveSessionMsgCount);
+      newMsgs.forEach(function(msg) { var el = createMsgEl(msg); if (!el) return; el.style.animation = 'fadeSlideIn .3s ease'; panel.appendChild(el); });
+      liveSessionMsgCount = history.length;
+      if (newMsgs.length > 0) panel.scrollTop = panel.scrollHeight;
+    }
+    updateModalReasoningPanel(data.facts);
+    var allEmr = data.emr_entries || [];
+    var allActions = data.actions || [];
+    // Push EMR entries
+    if (allEmr.length > liveSessionEmrCount && liveEMRHandle) {
+      liveEMRHandle.addEntries(allEmr.slice(liveSessionEmrCount));
+      liveSessionEmrCount = allEmr.length;
+    }
+    // Push clinical actions (vitals, differential, SOAP, prescriptions) as EMR activity
+    var prevActionCount = liveSessionActionCount || 0;
+    if (allActions.length > prevActionCount && liveEMRHandle) {
+      var newActions = allActions.slice(prevActionCount);
+      liveEMRHandle.addEntries(newActions.map(function(a) {
+        return { title: a.desc || a.tool, type: a.tool };
+      }));
+    }
+    liveSessionActionCount = allActions.length;
+    // Update OpenEMR form fields with vitals/differential/SOAP if available
+    if (data.vitals && liveEMRHandle) {
+      var v = data.vitals;
+      var fReason = document.getElementById('oemr-f-reason');
+      if (fReason && v.chief_complaint && !fReason.classList.contains('filled')) {
+        fReason.textContent = v.chief_complaint;
+        fReason.classList.add('filled');
+      }
+    }
+  }).catch(function() {
+    if (isInitial) panel.innerHTML = '<div style="color:#991b1b;padding:12px;">Failed to load session</div>';
+  });
+}
+
+function renderLiveSessionFacts(panel, facts) {
+  if (facts && facts.length > 0) {
+    var factsDiv = document.createElement('div');
+    factsDiv.className = 'live-facts-banner';
+    factsDiv.style.cssText = 'padding:8px 12px;margin-bottom:12px;background:#f0fdf4;border-radius:8px;font-size:12px;color:#065f46;';
+    factsDiv.innerHTML = '<strong>Remembered facts:</strong> ' + facts.join(' \u2022 ');
+    panel.insertBefore(factsDiv, panel.firstChild);
+  }
+}
+
+function isBootstrapMessage(msg) {
+  if (msg.role !== 'user') return false;
+  return /^my name is .{1,30}\.\s*(please\s+)?greet/i.test(msg.content);
+}
+
+function createMsgEl(msg) {
+  var type = msg.role === 'user' ? 'patient' : 'ai';
+  var ts = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',hour12:false}) : '';
+  var div = document.createElement('div');
+  if (isBootstrapMessage(msg)) return div;
+  div.className = 'chat-message ' + type;
+  div.innerHTML = '<div class="message-bubble">' + msg.content.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>') + '</div><div class="message-time">' + ts + '</div>';
+  return div;
+}
+
+function updateModalReasoningPanel(facts) {
+  var rp = document.getElementById('reasoning-panel');
+  if (facts && facts.length > 0) {
+    rp.innerHTML = '<div class="reasoning-item"><div class="reasoning-agent"><div class="reasoning-agent-icon">AI</div><div class="reasoning-agent-name">Memory Agent</div></div>' +
+      facts.map(function(f) { return '<div class="modal-reasoning-step">' + f + '</div>'; }).join('') + '</div>';
+  } else {
+    rp.innerHTML = '<div style="padding:16px;color:#999;">No facts extracted yet</div>';
+  }
+}
+
+function closeModal() {
+  document.getElementById('patient-modal').classList.remove('active');
+  document.getElementById('approval-context').style.display = 'none';
+  document.getElementById('modal-reject-form').style.display = 'none';
+  document.getElementById('modal-approval-actions').style.display = '';
+  currentPatient = null;
+  currentApproval = null;
+  liveSessionId = null;
+  emrGeneration++;
+  liveEMRHandle = null;
+  modalIntervals.forEach(clearInterval);
+  modalIntervals = [];
+}
+
+function updateTimeline(stage) {
+  var stages = ['intake','analysis','review','documentation'];
+  document.querySelectorAll('.timeline-step').forEach(function(step, i) {
+    step.classList.remove('active','completed');
+    if (i < stage) step.classList.add('completed');
+    else if (i === stage) step.classList.add('active');
+  });
+}
+
+function setActivePanel(index) {
+  document.querySelectorAll('.modal-panel').forEach(function(p, i) {
+    p.classList.toggle('active', i === index);
+  });
+}
+
+function openApprovalReview(approvalId) {
+  // For admin API approvals -- open modal with details
+  var approval = adminApprovals.find(function(a) { return a.id === approvalId; });
+  if (!approval) return;
+  currentApproval = approval;
+  document.getElementById('modal-title').textContent = (approval.patientId || 'Patient') + ' \u2022 Approval Review';
+  document.getElementById('approval-context').style.display = 'block';
+  document.getElementById('approval-action').textContent = approval.action;
+  document.getElementById('approval-reason').textContent = approval.reason || '';
+  document.getElementById('patient-modal').classList.add('active');
+}
+
+function approveActionFromModal() {
+  if (!currentApproval) return;
+  if (currentApproval._real) fetch('/api/approvals/' + currentApproval.id + '/approve', {method:'POST'}).catch(function(){});
+  adminApprovals = adminApprovals.filter(function(a) { return a.id !== currentApproval.id; });
+  renderAdminApprovals();
+  closeModal();
+}
+
+function showModalRejectForm() {
+  rejectFormOpen = true;
+  document.getElementById('modal-approval-actions').style.display = 'none';
+  document.getElementById('modal-reject-form').style.display = '';
+  var input = document.getElementById('modal-reject-reason');
+  input.value = '';
+  input.focus();
+}
+
+function cancelModalReject() {
+  rejectFormOpen = false;
+  document.getElementById('modal-reject-form').style.display = 'none';
+  document.getElementById('modal-approval-actions').style.display = '';
+}
+
+function confirmRejectFromModal() {
+  if (!currentApproval) return;
+  var reason = document.getElementById('modal-reject-reason').value.trim();
+  if (!reason) { document.getElementById('modal-reject-reason').style.borderColor = '#ef4444'; document.getElementById('modal-reject-reason').placeholder = 'Please provide a reason...'; return; }
+  rejectFormOpen = false;
+  if (currentApproval._real) fetch('/api/approvals/' + currentApproval.id + '/reject', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({reason:reason})}).catch(function(){});
+  adminApprovals = adminApprovals.filter(function(a) { return a.id !== currentApproval.id; });
+  showToast('Rejected: ' + reason, 'danger', 3500);
+  renderAdminApprovals();
+  closeModal();
+}
+
+function modifyAction() { alert('Modify action - would open editor'); }
+
+// ══════════════════════════════════════════════════════════════
+// MODAL: Conversation + Reasoning + EMR Simulations
+// ══════════════════════════════════════════════════════════════
+function startConversationSimulation() {
+  var panel = document.getElementById('conversation-panel');
+  var messages = [
+    {type:'patient', text:"I've been having chest pain and shortness of breath", time:'14:23'},
+    {type:'ai', text:'I understand. Can you describe the chest pain? Is it sharp, dull, or pressure-like?', time:'14:23'},
+    {type:'patient', text:'It feels like pressure, and it gets worse when I exert myself', time:'14:24'},
+    {type:'ai', text:'How long have you been experiencing these symptoms?', time:'14:24'},
+    {type:'patient', text:'About 3 days now', time:'14:24'},
+    {type:'ai', text:"Thank you. I'm going to recommend some tests and get you scheduled with a specialist.", time:'14:25'}
+  ];
+  panel.innerHTML = '';
+  setActivePanel(0);
+  var i = 0;
+  function typeMsg(text, element, callback) {
+    var ci = 0; element.textContent = '';
+    var interval = setInterval(function() {
+      if (ci < text.length) { element.textContent += text[ci]; ci++; panel.scrollTop = panel.scrollHeight; }
+      else { clearInterval(interval); callback(); }
+    }, 30);
+  }
+  function addMsg() {
+    if (i < messages.length) {
+      var msg = messages[i];
+      if (msg.type === 'ai' && i > 0) {
+        var td = document.createElement('div');
+        td.className = 'chat-message ai';
+        td.innerHTML = '<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+        panel.appendChild(td);
+        panel.scrollTop = panel.scrollHeight;
+        setTimeout(function() {
+          panel.removeChild(td);
+          var md = document.createElement('div');
+          md.className = 'chat-message ' + msg.type;
+          var bubble = document.createElement('div');
+          bubble.className = 'message-bubble';
+          var timeDiv = document.createElement('div');
+          timeDiv.className = 'message-time';
+          timeDiv.textContent = msg.time;
+          md.appendChild(bubble);
+          md.appendChild(timeDiv);
+          panel.appendChild(md);
+          typeMsg(msg.text, bubble, function() { i++; setTimeout(addMsg, 800); });
+        }, 1200);
+      } else {
+        var md = document.createElement('div');
+        md.className = 'chat-message ' + msg.type;
+        md.innerHTML = '<div class="message-bubble">' + msg.text + '</div><div class="message-time">' + msg.time + '</div>';
+        panel.appendChild(md);
+        panel.scrollTop = panel.scrollHeight;
+        i++;
+        setTimeout(addMsg, 600);
+      }
+    }
+  }
+  addMsg();
+}
+
+function startReasoningSimulation() {
+  var panel = document.getElementById('reasoning-panel');
+  var agents = [
+    {agent:'Clinician', steps:['Analyzing symptoms: chest pain + shortness of breath','Cross-referencing patient history','Symptom severity assessment','Differential diagnosis complete'], confidence:94, timeline:1},
+    {agent:'QA', steps:['Validating ICD-10 code selection','Checking guidelines compliance','Reviewing treatment plan'], confidence:97, timeline:2},
+    {agent:'Admin', steps:['Preparing EHR documentation','Scheduling follow-up','Finalizing encounter record'], confidence:100, timeline:3}
+  ];
+  panel.innerHTML = '';
+  var agentIdx = 0;
+  function addAgent() {
+    if (agentIdx < agents.length) {
+      setActivePanel(1);
+      updateTimeline(agents[agentIdx].timeline);
+      var agent = agents[agentIdx];
+      var itemDiv = document.createElement('div');
+      itemDiv.className = 'reasoning-item';
+      itemDiv.innerHTML = '<div class="reasoning-agent"><div class="reasoning-agent-icon">AI</div><div class="reasoning-agent-name">' + agent.agent + ' Agent</div></div>';
+      panel.appendChild(itemDiv);
+      var stepIdx = 0;
+      function addStep() {
+        if (stepIdx < agent.steps.length) {
+          var sd = document.createElement('div');
+          sd.className = 'modal-reasoning-step';
+          sd.style.opacity = '0.5';
+          sd.textContent = agent.steps[stepIdx];
+          itemDiv.appendChild(sd);
+          setTimeout(function() { sd.style.opacity = '1'; stepIdx++; addStep(); }, 800);
+        } else {
+          var cb = document.createElement('div');
+          cb.className = 'modal-confidence-bar';
+          var cf = document.createElement('div');
+          cf.className = 'modal-confidence-fill';
+          cf.style.width = '0%';
+          cb.appendChild(cf);
+          itemDiv.appendChild(cb);
+          var cl = document.createElement('div');
+          cl.className = 'confidence-label';
+          cl.textContent = 'Confidence: 0%';
+          itemDiv.appendChild(cl);
+          setTimeout(function() {
+            cf.style.width = agent.confidence + '%';
+            var cc = 0;
+            var ci = setInterval(function() {
+              if (cc < agent.confidence) { cc += 2; cl.textContent = 'Confidence: ' + Math.min(cc, agent.confidence) + '%'; }
+              else clearInterval(ci);
+            }, 30);
+          }, 100);
+          agentIdx++;
+          setTimeout(addAgent, 2500);
+        }
+      }
+      setTimeout(addStep, 500);
+    }
+  }
+  addAgent();
+}
+
+function startEMRSimulation() {
+  var activityPanel = document.getElementById('emr-activity');
+  var cursor = document.getElementById('vm-cursor');
+  var encounterView = document.getElementById('oemr-encounter-view');
+  var vmContainer = document.getElementById('emr-panel').querySelector('.vm-container');
+  vmContainer.style.display = '';
+  encounterView.style.display = 'block';
+  activityPanel.innerHTML = '';
+  document.getElementById('win-title').textContent = 'OpenEMR - New Encounter';
+  setActivePanel(2);
+  encounterView.querySelectorAll('.oemr-value').forEach(function(f) { f.classList.remove('filling','filled'); if (!f.textContent.includes('Select One')) f.textContent = ''; });
+  var condName = currentPatient ? currentPatient.condition.name : 'Chest Pain';
+  var condCode = currentPatient ? currentPatient.condition.code : 'R07.9';
+  var formSteps = [
+    {id:'oemr-f-visitcat', value:'New Patient', activity:'Setting visit category'},
+    {id:'oemr-f-class', value:'Virtual Encounter', activity:'Setting encounter class'},
+    {id:'oemr-f-sensitivity', value:'normal', activity:'Setting sensitivity'},
+    {id:'oemr-f-provider', value:'Dr. Sarah Mitchell, MD', activity:'Assigning provider'},
+    {id:'oemr-f-facility', value:'Riverside Medical Center', activity:'Setting facility'},
+    {id:'oemr-f-date', value:'2026-03-16 09:25', activity:'Recording date of service'},
+    {id:'oemr-f-reason', value:condName + ' - ' + condCode, activity:'Documenting reason for visit'}
+  ];
+  var stepIndex = 0;
+  function moveCursorTo(el) {
+    var sr = document.getElementById('vm-screen').getBoundingClientRect();
+    var fr = el.getBoundingClientRect();
+    cursor.style.top = (fr.top - sr.top + 8) + 'px';
+    cursor.style.left = (fr.left - sr.left + 8) + 'px';
+  }
+  function typeField(el, text, cb) {
+    el.classList.add('filling'); el.textContent = '';
+    var ci = 0;
+    var iv = setInterval(function() {
+      if (ci < text.length) { el.textContent += text[ci]; ci++; }
+      else { clearInterval(iv); el.classList.remove('filling'); el.classList.add('filled'); cb(); }
+    }, 40);
+  }
+  function fillNext() {
+    if (stepIndex < formSteps.length) {
+      var step = formSteps[stepIndex];
+      var el = document.getElementById(step.id);
+      if (!el) { stepIndex++; fillNext(); return; }
+      el.scrollIntoView({behavior:'smooth',block:'nearest'});
+      moveCursorTo(el);
+      setTimeout(function() {
+        typeField(el, step.value, function() {
+          activityPanel.innerHTML += '<div class="activity-item" style="animation:fadeSlideIn .3s"><span class="activity-icon">\u2713</span><span class="activity-text">' + step.activity + '</span><span class="activity-time">just now</span></div>';
+          stepIndex++;
+          setTimeout(fillNext, 600);
+        });
+      }, 400);
+    } else {
+      setTimeout(function() {
+        var sb = document.getElementById('oemr-save-btn');
+        moveCursorTo(sb);
+        setTimeout(function() {
+          sb.classList.add('clicked');
+          activityPanel.innerHTML += '<div class="activity-item" style="animation:fadeSlideIn .3s"><span class="activity-icon">\u2713</span><span class="activity-text"><strong>Encounter saved</strong></span><span class="activity-time">just now</span></div>';
+        }, 500);
+      }, 800);
+    }
+  }
+  setTimeout(fillNext, 1000);
+}
+
+function startLiveEMRSimulation(sessionData) {
+  var cursor = document.getElementById('vm-cursor');
+  var activityPanel = document.getElementById('emr-activity');
+  var encounterView = document.getElementById('oemr-encounter-view');
+  var patientName = sessionData.name || 'Unknown';
+  var displayName = patientName.charAt(0).toUpperCase() + patientName.slice(1);
+  var initials = patientName.split(/\s+/).map(function(w){return w[0];}).join('').toUpperCase().slice(0,2) || 'UN';
+  var facts = sessionData.facts || [];
+
+  document.getElementById('oemr-avatar').textContent = initials;
+  document.getElementById('oemr-pname').innerHTML = displayName + ' <span style="color:#6c757d">(1)</span> \u00d7';
+  document.getElementById('oemr-form-pname').textContent = displayName;
+  document.getElementById('win-title').textContent = 'OpenEMR - New Encounter';
+
+  var symptomFacts = facts.filter(function(f) { return !f.toLowerCase().startsWith('name:'); });
+  var chiefComplaint = symptomFacts.length > 0 ? symptomFacts.join('; ') : 'See conversation notes';
+
+  encounterView.querySelectorAll('.oemr-value').forEach(function(f) { f.classList.remove('filling','filled'); if (!f.textContent.includes('Select One')) f.textContent = ''; });
+  activityPanel.innerHTML = '';
+
+  var sessionDate = sessionData.last_active ? sessionData.last_active.slice(0,16).replace('T',' ') : '2026-03-16 09:25';
+  var formSteps = [
+    {id:'oemr-f-visitcat', value:'New Patient', activity:'Setting visit category'},
+    {id:'oemr-f-class', value:'Virtual Encounter', activity:'Setting encounter class'},
+    {id:'oemr-f-provider', value:'Dr. Sarah Mitchell, MD', activity:'Assigning provider'},
+    {id:'oemr-f-facility', value:'Riverside Medical Center', activity:'Setting facility'},
+    {id:'oemr-f-date', value:sessionDate, activity:'Recording date of service'},
+    {id:'oemr-f-reason', value:chiefComplaint, activity:'Documenting reason for visit'}
+  ];
+  var stepIndex = 0;
+  function moveCursorTo(el) {
+    var sr = document.getElementById('vm-screen').getBoundingClientRect();
+    var fr = el.getBoundingClientRect();
+    cursor.style.top = (fr.top - sr.top + 8) + 'px';
+    cursor.style.left = (fr.left - sr.left + 8) + 'px';
+  }
+  function typeField(el, text, cb) {
+    el.classList.add('filling'); el.textContent = '';
+    var ci = 0;
+    var iv = setInterval(function() {
+      if (ci < text.length) { el.textContent += text[ci]; ci++; }
+      else { clearInterval(iv); el.classList.remove('filling'); el.classList.add('filled'); cb(); }
+    }, 40);
+  }
+  function fillNext() {
+    if (liveSessionId !== sessionData.session_id) return;
+    if (stepIndex < formSteps.length) {
+      var step = formSteps[stepIndex];
+      var el = document.getElementById(step.id);
+      if (!el) { stepIndex++; fillNext(); return; }
+      el.scrollIntoView({behavior:'smooth',block:'nearest'});
+      moveCursorTo(el);
+      setTimeout(function() {
+        typeField(el, step.value, function() {
+          activityPanel.innerHTML += '<div class="activity-item" style="animation:fadeSlideIn .3s"><span class="activity-icon">\u2713</span><span class="activity-text">' + step.activity + '</span><span class="activity-time">just now</span></div>';
+          stepIndex++;
+          setTimeout(fillNext, 600);
+        });
+      }, 400);
+    } else {
+      setTimeout(function() {
+        var sb = document.getElementById('oemr-save-btn');
+        moveCursorTo(sb);
+        setTimeout(function() {
+          sb.classList.add('clicked');
+          activityPanel.innerHTML += '<div class="activity-item" style="animation:fadeSlideIn .3s"><span class="activity-icon">\u2713</span><span class="activity-text"><strong>Encounter saved</strong></span><span class="activity-time">just now</span></div>';
+          // Expose handle for polling to push new EMR entries
+          emrGeneration++;
+          var myGen = emrGeneration;
+          liveEMRHandle = {
+            gen: myGen,
+            addEntries: function(entries) {
+              if (myGen !== emrGeneration) return;
+              entries.forEach(function(e) {
+                activityPanel.innerHTML += '<div class="activity-item" style="animation:fadeSlideIn .3s"><span class="activity-icon">\u2713</span><span class="activity-text">' + (e.title || 'EMR Entry') + '</span><span class="activity-time">just now</span></div>';
+              });
+            }
+          };
+        }, 500);
+      }, 800);
+    }
+  }
+  setTimeout(fillNext, 1000);
+}
+
+// ══════════════════════════════════════════════════════════════
+// INITIALIZATION
+// ══════════════════════════════════════════════════════════════
+function initDashboard() {
+  // Fetch live data from API
+  fetchLiveSessions();
+  fetchAdminApprovals();
+
+  // Poll for live data
+  setInterval(fetchLiveSessions, 15000);
+  setInterval(fetchAdminApprovals, 10000);
+
+  // Initial render
+  renderCurrentView();
+}
+
+function startDemo() {
+  document.getElementById('welcomeOverlay').classList.add('hidden');
+  state.started = true;
+  startSimulation();
+  showToast('Simulation started \u2014 3 concurrent encounters in progress', 'info', 4000);
+}
+
+// Event listeners
+document.querySelectorAll('.autonomy-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() { setAutonomy(parseInt(btn.dataset.level)); });
+});
+document.querySelectorAll('.speed-btn').forEach(function(btn) {
+  btn.addEventListener('click', function() { setSpeed(parseFloat(btn.dataset.speed)); });
+});
+
+// Keyboard shortcuts
+document.addEventListener('keydown', function(e) {
+  if (e.key === ' ' && !e.target.matches('input,textarea,select,button')) { e.preventDefault(); togglePause(); }
+  if (e.key === '1') switchView('feed');
+  if (e.key === '2') switchView('approvals');
+  if (e.key === '3') switchView('patients');
+  if (e.key === '4') switchView('encounter');
+  if (e.key === '5') switchView('analytics');
+  if (e.key === '6') switchView('config');
+  if (e.key === 'Escape') closeModal();
+});
+
+// Initialize dashboard on load
+initDashboard();
+  </script>
+</body>
+</html>
