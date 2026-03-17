@@ -1,0 +1,50 @@
+{#
+  badge(label, variant, extra_class='', id='')
+  ─────────────────────────────────────────────────────────────
+  Renders a single badge / pill.
+
+  Parameters:
+    label        (str)  Text shown inside the badge. Required.
+    variant      (str)  Visual style. One of:
+                          tier values  : 't1' | 't2' | 't3' | 't4'
+                          status       : 'success' | 'danger' | 'info' | 'muted'
+                          nav counter  : 'nav'            → .nav-badge (red dot)
+                          live session : 'live'           → .live-badge with animated dot
+                          urgency      : 'routine' | 'urgent' | 'emergent'
+                          autonomy     : 'l0'|'l1'|'l2'|'l3'|'l4'
+    extra_class  (str)  Additional CSS classes appended to the element.
+    id           (str)  Optional HTML id attribute.
+
+  CSS classes produced per variant:
+    't1'       → badge badge-t1
+    't2'       → badge badge-t2
+    't3'       → badge badge-t3
+    't4'       → badge badge-t4
+    'success'  → badge badge-success
+    'danger'   → badge badge-danger
+    'info'     → badge badge-info
+    'muted'    → badge badge-muted
+    'nav'      → nav-badge
+    'live'     → live-badge  (prepends animated <span class="live-dot">)
+    'routine'  → urgency-badge urgency-routine
+    'urgent'   → urgency-badge urgency-urgent
+    'emergent' → urgency-badge urgency-emergent
+    'l0'…'l4'  → autonomy-badge l0 … l4
+  ─────────────────────────────────────────────────────────────
+#}
+{% macro badge(label, variant='info', extra_class='', id='') %}
+  {%- set id_attr = ' id="' ~ id ~ '"' if id else '' -%}
+  {%- if variant == 'live' -%}
+    <span class="live-badge{{ ' ' ~ extra_class if extra_class }}"{{ id_attr }}><span class="live-dot"></span>{{ label }}</span>
+  {%- elif variant == 'nav' -%}
+    <span class="nav-badge{{ ' ' ~ extra_class if extra_class }}"{{ id_attr }}>{{ label }}</span>
+  {%- elif variant in ('routine', 'urgent', 'emergent') -%}
+    <span class="urgency-badge urgency-{{ variant }}{{ ' ' ~ extra_class if extra_class }}"{{ id_attr }}>{{ label }}</span>
+  {%- elif variant in ('l0', 'l1', 'l2', 'l3', 'l4') -%}
+    <span class="autonomy-badge {{ variant }}{{ ' ' ~ extra_class if extra_class }}"{{ id_attr }}>{{ label }}</span>
+  {%- elif variant in ('t1', 't2', 't3', 't4') -%}
+    <span class="badge badge-{{ variant }}{{ ' ' ~ extra_class if extra_class }}"{{ id_attr }}>{{ label }}</span>
+  {%- else -%}
+    <span class="badge badge-{{ variant }}{{ ' ' ~ extra_class if extra_class }}"{{ id_attr }}>{{ label }}</span>
+  {%- endif %}
+{% endmacro %}

@@ -952,6 +952,20 @@ select.config-select { padding: var(--space-3) var(--space-5); border: 1px solid
 
 
 /* ── Tier border accents (left border on order items) ── */
+/* ── Keyboard hint ── */
+.kbd-hint {
+  display: inline-block;
+  font-family: var(--code-font);
+  font-size: var(--text-base-2);
+  line-height: 1;
+  padding: 2px var(--space-3);
+  background: var(--surface-tertiary);
+  border: 1px solid var(--border-default);
+  border-bottom-width: 2px;
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+}
+
 .tier-border-1 { border-left: 3px solid var(--tier-1); }
 .tier-border-2 { border-left: 3px solid var(--tier-2); }
 .tier-border-3 { border-left: 3px solid var(--tier-3); }

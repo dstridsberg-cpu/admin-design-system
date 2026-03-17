@@ -1,0 +1,33 @@
+{#
+  button(label, variant, size, onclick, type, id, extra_class, disabled, icon_html)
+  ─────────────────────────────────────────────────────────────
+  Renders a <button> element.
+
+  Parameters:
+    label        (str)  Button text. Required.
+    variant      (str)  'primary' | 'danger' | 'success' | 'warning' | 'outline'
+                        Default: 'primary'
+    size         (str)  '' (default) | 'sm' | 'xs'
+    onclick      (str)  Raw JS for onclick attribute.
+    type         (str)  HTML type attr: 'button' (default) | 'submit' | 'reset'
+    id           (str)  Optional HTML id.
+    extra_class  (str)  Additional CSS classes.
+    disabled     (bool) Adds disabled attribute when true.
+    icon_html    (str)  Raw SVG/HTML prepended before label (already trusted).
+
+  CSS classes produced:
+    btn btn-{variant}  [btn-{size} if size given]  [extra_class]
+  ─────────────────────────────────────────────────────────────
+#}
+{% macro button(label, variant='primary', size='', onclick='', type='button',
+                id='', extra_class='', disabled=false, icon_html='') %}
+  {%- set size_cls = ' btn-' ~ size if size else '' -%}
+  {%- set id_attr = ' id="' ~ id ~ '"' if id else '' -%}
+  {%- set onclick_attr = ' onclick="' ~ onclick ~ '"' if onclick else '' -%}
+  {%- set disabled_attr = ' disabled' if disabled else '' -%}
+  <button class="btn btn-{{ variant }}{{ size_cls }}{{ ' ' ~ extra_class if extra_class }}"
+          type="{{ type }}"{{ id_attr }}{{ onclick_attr }}{{ disabled_attr }}>
+    {%- if icon_html %}{{ icon_html | safe }}{% endif -%}
+    {{ label }}
+  </button>
+{% endmacro %}

@@ -1,0 +1,93 @@
+{#
+  sidebar(active_view)
+  ─────────────────────────────────────────────────────────────
+  Full left sidebar with three sections:
+    1. Dashboard — Activity Feed, Pending Approvals, Patient Panel, Encounter Detail
+    2. System    — Analytics, Configuration
+    3. Encounters — Three fixed patient links + dynamic #live-sidebar-items slot
+
+  Parameters:
+    active_view  (str)  Currently active view name. Default 'feed'.
+                        One of: 'feed' | 'approvals' | 'patients' | 'encounter'
+                              | 'analytics' | 'config'
+
+  CSS classes: sidebar > sidebar-section > sidebar-label  nav-item  nav-badge  pulse-dot
+  IDs: approvalBadge, live-sidebar-items
+  ─────────────────────────────────────────────────────────────
+#}
+{% from 'components/atoms/section_label.html' import section_label %}
+{% from 'components/molecules/nav_item.html' import nav_item, encounter_nav_item %}
+
+{% macro sidebar(active_view='feed') %}
+<nav class="sidebar">
+
+  <div class="sidebar-section">
+    {{ section_label('Dashboard') }}
+
+    {{ nav_item(
+        label='Activity Feed',
+        view='feed',
+        icon_svg='<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3h12M3 7h12M3 11h8M3 15h5"/></svg>',
+        active=(active_view == 'feed'),
+        onclick="switchView('feed')"
+    ) }}
+
+    {{ nav_item(
+        label='Pending Approvals',
+        view='approvals',
+        icon_svg='<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 1v4M5 3l1.5 2M13 3l-1.5 2M3 9h12v6a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg>',
+        active=(active_view == 'approvals'),
+        onclick="switchView('approvals')",
+        badge_count=0,
+        badge_id='approvalBadge'
+    ) }}
+
+    {{ nav_item(
+        label='Patient Panel',
+        view='patients',
+        icon_svg='<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="5" r="3"/><path d="M3 17v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>',
+        active=(active_view == 'patients'),
+        onclick="switchView('patients')"
+    ) }}
+
+    {{ nav_item(
+        label='Encounter Detail',
+        view='encounter',
+        icon_svg='<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 2h10a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2zM6 6h6M6 9h6M6 12h3"/></svg>',
+        active=(active_view == 'encounter'),
+        onclick="switchView('encounter')"
+    ) }}
+  </div>
+
+  <div class="sidebar-section">
+    {{ section_label('System') }}
+
+    {{ nav_item(
+        label='Analytics',
+        view='analytics',
+        icon_svg='<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 15V9M7 15V5M11 15V8M15 15V3"/></svg>',
+        active=(active_view == 'analytics'),
+        onclick="switchView('analytics')"
+    ) }}
+
+    {{ nav_item(
+        label='Configuration',
+        view='config',
+        icon_svg='<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="9" r="3"/><path d="M9 1v3M9 14v3M1 9h3M14 9h3M3.3 3.3l2.1 2.1M12.6 12.6l2.1 2.1M3.3 14.7l2.1-2.1M12.6 5.4l2.1-2.1"/></svg>',
+        active=(active_view == 'config'),
+        onclick="switchView('config')"
+    ) }}
+  </div>
+
+  <div class="sidebar-section" style="margin-top:auto;padding-top:16px;border-top:1px solid var(--border);">
+    {{ section_label('Encounters') }}
+
+    {{ encounter_nav_item("M. Thompson, 58F", "selectPatient('thompson'); switchView('encounter')", 'active') }}
+    {{ encounter_nav_item("J. Rodriguez, 34M", "selectPatient('rodriguez'); switchView('encounter')", 'active') }}
+    {{ encounter_nav_item("A. Patel, 71F",    "selectPatient('patel'); switchView('encounter')",    'danger') }}
+
+    <div id="live-sidebar-items"></div>
+  </div>
+
+</nav>
+{% endmacro %}

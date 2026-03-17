@@ -1,0 +1,15 @@
+{#
+  code_label(text, extra_class='')
+  ─────────────────────────────────────────────────────────────
+  Monospace action-type chip rendered as .feed-tool.
+  Used to display tool names (e.g. "orders.lab_order") in the activity feed
+  and approval cards.
+
+  Parameters:
+    text         (str)  Tool/action string. Required.
+    extra_class  (str)  Additional CSS classes.
+  ─────────────────────────────────────────────────────────────
+#}
+{% macro code_label(text, extra_class='') %}
+<span class="feed-tool{{ ' ' ~ extra_class if extra_class }}">{{ text }}</span>
+{% endmacro %}

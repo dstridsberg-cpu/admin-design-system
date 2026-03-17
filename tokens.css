@@ -184,9 +184,9 @@
   --surface-sidebar:  rgba(255,255,255,0.92); /* sidebar (translucent) */
 
   /* ── Background decoration (gradient, blobs) ── */
-  --bg-gradient:      linear-gradient(135deg, #B8E8E3 0%, #E8F5F3 50%, #F5F5F5 100%);
-  --bg-blob-1:        rgba(184, 232, 227, 0.3);
-  --bg-blob-2:        rgba(232, 245, 243, 0.4);
+  --bg-gradient:      var(--grey-100);
+  --bg-blob-1:        transparent;
+  --bg-blob-2:        transparent;
 
   /* ── Text ── */
   --text-primary:     var(--grey-900);        /* headings, names, emphasis */

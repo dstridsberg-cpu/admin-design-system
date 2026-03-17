@@ -1,0 +1,1261 @@
+{% from 'components/atoms/badge.html'              import badge %}
+{% from 'components/atoms/button.html'             import button %}
+{% from 'components/atoms/toggle_pill_group.html'  import autonomy_switcher, speed_control %}
+{% from 'components/atoms/status_indicator.html'   import status_indicator, pulse_dot %}
+{% from 'components/atoms/section_label.html'      import section_label %}
+{% from 'components/atoms/code_label.html'         import code_label %}
+{% from 'components/atoms/confidence_indicator.html' import confidence_indicator %}
+{% from 'components/atoms/text_input.html'         import text_input %}
+{% from 'components/atoms/kbd_hint.html'           import kbd_hint %}
+{% from 'components/molecules/nav_item.html'       import nav_item, encounter_nav_item %}
+{% from 'components/molecules/feed_item.html'      import feed_item %}
+{% from 'components/molecules/approval_card.html'  import sim_approval_card, admin_approval_card %}
+{% from 'components/molecules/patient_card.html'   import patient_card %}
+{% from 'components/molecules/toast.html'          import toast %}
+{% from 'components/molecules/alert_banner.html'   import alert_banner, paused_banner %}
+{% from 'components/molecules/metric_card.html'    import metric_card %}
+{% from 'components/organisms/top_bar.html'        import top_bar %}
+{% from 'components/organisms/sidebar.html'        import sidebar %}
+{% from 'components/organisms/toast_stack.html'    import toast_stack %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Admin.ai — Design System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/tokens.css">
+  <link rel="stylesheet" href="/static/components.css">
+  <style>
+    /* ── Showcase chrome ── */
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      height: 100%;
+    }
+    body {
+      background: var(--surface-bg);
+      font-family: var(--body-font);
+      font-size: var(--text-lg);
+      color: var(--text-primary);
+      overflow-y: scroll;
+    }
+
+    /* Top bar */
+    .sc-header {
+      position: sticky; top: 0; z-index: 200;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 var(--space-12);
+      height: 52px;
+      background: var(--surface-header);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-strong);
+    }
+    .sc-header-left { display: flex; align-items: center; gap: var(--space-8); }
+    .sc-wordmark { font-family: var(--heading-font); font-size: var(--text-3xl); color: var(--text-primary); }
+    .sc-wordmark span { color: var(--text-tertiary); font-style: italic; font-size: var(--text-xl); }
+    .sc-header-pills { display: flex; gap: var(--space-2); }
+    .sc-header-pill {
+      padding: var(--space-2) var(--space-6);
+      border-radius: var(--badge-radius);
+      font-size: var(--text-base);
+      font-weight: 500;
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: all var(--ease-default);
+    }
+    .sc-header-pill:hover { background: var(--surface-tertiary); color: var(--text-primary); }
+
+    /* Dark toggle */
+    .sc-toggle {
+      display: flex; align-items: center; gap: var(--space-4);
+      font-size: var(--text-md); color: var(--text-secondary);
+      cursor: pointer; user-select: none;
+      padding: var(--space-2) var(--space-5);
+      border-radius: var(--badge-radius);
+      border: 1px solid var(--border-default);
+      background: var(--surface-primary);
+      transition: all var(--ease-default);
+    }
+    .sc-toggle:hover { border-color: var(--border-strong); }
+    .sc-toggle-knob {
+      width: 28px; height: 16px;
+      background: var(--grey-300);
+      border-radius: var(--radius-full);
+      position: relative; transition: background var(--ease-default);
+    }
+    .sc-toggle-knob::after {
+      content: ''; position: absolute;
+      width: 12px; height: 12px;
+      background: white; border-radius: 50%;
+      top: 2px; left: 2px;
+      transition: transform var(--ease-default);
+    }
+    body.dark .sc-toggle-knob { background: var(--accent); }
+    body.dark .sc-toggle-knob::after { transform: translateX(12px); }
+
+    /* Layout */
+    .sc-layout {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      min-height: calc(100vh - 52px);
+    }
+
+    /* Side nav */
+    .sc-nav {
+      position: sticky; top: 52px;
+      height: calc(100vh - 52px);
+      overflow-y: auto;
+      padding: var(--space-12) 0;
+      border-right: 1px solid var(--border-default);
+      background: var(--surface-primary);
+    }
+    .sc-nav-section {
+      padding: 0 var(--space-8);
+      margin-bottom: var(--space-8);
+    }
+    .sc-nav-label {
+      font-size: var(--text-sm);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-tertiary);
+      padding: 0 var(--space-4);
+      margin-bottom: var(--space-3);
+    }
+    .sc-nav-link {
+      display: block;
+      padding: var(--space-3) var(--space-4);
+      border-radius: var(--radius-md);
+      font-size: var(--text-md);
+      color: var(--text-secondary);
+      text-decoration: none;
+      transition: all var(--ease-default);
+    }
+    .sc-nav-link:hover { background: var(--surface-secondary); color: var(--text-primary); }
+    .sc-nav-link.active { background: var(--accent-bg); color: var(--accent); font-weight: 500; }
+
+    /* Main content */
+    .sc-main {
+      padding: var(--space-16) var(--space-16) var(--space-24);
+      max-width: none;
+    }
+
+    /* Sections */
+    .sc-section { margin-bottom: 72px; }
+    .sc-section-header {
+      display: flex; align-items: baseline; gap: var(--space-8);
+      margin-bottom: var(--space-16);
+      padding-bottom: var(--space-8);
+      border-bottom: 2px solid var(--border-default);
+    }
+    .sc-section-title {
+      font-family: var(--heading-font);
+      font-size: var(--text-6xl);
+      font-weight: 400;
+      margin: 0;
+    }
+    .sc-section-desc { font-size: var(--text-md); color: var(--text-secondary); margin: 0; }
+
+    /* Component block */
+    .sc-component {
+      background: var(--surface-primary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--card-radius);
+      margin-bottom: var(--space-12);
+      overflow: hidden;
+    }
+    .sc-component-header {
+      display: flex; align-items: baseline; gap: var(--space-6);
+      padding: var(--space-8) var(--space-10);
+      border-bottom: 1px solid var(--border-default);
+      background: var(--surface-secondary);
+    }
+    .sc-component-name {
+      font-family: var(--code-font);
+      font-size: var(--text-2xl);
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0;
+    }
+    .sc-component-file {
+      font-size: var(--text-sm);
+      color: var(--text-tertiary);
+      font-family: var(--code-font);
+    }
+    .sc-component-desc {
+      font-size: var(--text-md);
+      color: var(--text-secondary);
+      margin: 0;
+      margin-left: auto;
+    }
+
+    /* Variant group */
+    .sc-variant { padding: var(--space-10); border-bottom: 1px solid var(--border-default); }
+    .sc-variant:last-child { border-bottom: none; }
+    .sc-variant-label {
+      font-size: var(--text-sm);
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-tertiary);
+      margin-bottom: var(--space-8);
+    }
+    .sc-preview {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: flex-start;
+      gap: var(--space-6);
+      margin-bottom: var(--space-8);
+    }
+    .sc-preview-col { display: flex; flex-direction: column; gap: var(--space-6); }
+
+    /* Code snippet */
+    .sc-code {
+      display: block;
+      font-family: var(--code-font);
+      font-size: var(--text-base-2);
+      line-height: 1.7;
+      color: var(--text-secondary);
+      background: var(--surface-tertiary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      padding: var(--space-5) var(--space-8);
+      white-space: pre;
+      overflow-x: auto;
+    }
+
+    /* ── Token section ── */
+    .sc-token-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+      gap: var(--space-4);
+    }
+    .sc-swatch {
+      display: flex; flex-direction: column; align-items: center; gap: var(--space-3);
+    }
+    .sc-swatch-box {
+      width: 100%; height: 48px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+    }
+    .sc-swatch-name {
+      font-family: var(--code-font);
+      font-size: var(--text-xs);
+      color: var(--text-tertiary);
+      text-align: center;
+      word-break: break-all;
+    }
+    .sc-swatch-val {
+      font-size: var(--text-xs);
+      color: var(--text-tertiary);
+      text-align: center;
+      font-family: var(--code-font);
+    }
+    .sc-token-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-12);
+      margin-bottom: var(--space-10);
+    }
+    .sc-token-scale {
+      display: flex; flex-direction: column; gap: var(--space-3);
+    }
+    .sc-scale-item {
+      display: flex; align-items: center; gap: var(--space-6);
+    }
+    .sc-scale-name {
+      font-family: var(--code-font); font-size: var(--text-xs);
+      color: var(--text-tertiary); width: 90px; flex-shrink: 0;
+    }
+    .sc-space-bar { height: 8px; border-radius: var(--radius-xs); background: var(--accent); }
+    .sc-scale-val { font-size: var(--text-xs); color: var(--text-tertiary); font-family: var(--code-font); }
+    .sc-shadow-box {
+      background: var(--surface-primary);
+      border-radius: var(--radius-md);
+      padding: var(--space-8) var(--space-10);
+      font-size: var(--text-md);
+      font-family: var(--code-font);
+      color: var(--text-secondary);
+    }
+
+    /* Radius demos */
+    .sc-radius-box {
+      width: 60px; height: 40px;
+      background: var(--accent-bg);
+      border: 2px solid var(--accent);
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    /* Organism preview frame */
+    .sc-org-frame {
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background: var(--surface-bg);
+    }
+    .sc-org-scaler {
+      transform-origin: top left;
+    }
+    .sc-org-inner {
+      width: 100%;
+      pointer-events: none;
+    }
+
+    /* Force paused-banner visible in showcase */
+    .sc-show-banner .paused-banner { display: block !important; }
+
+    /* standalone toast (not position:fixed) */
+    .sc-toast-preview .toast-container {
+      position: static !important;
+    }
+
+    /* Separator */
+    .sc-divider { height: 1px; background: var(--border-default); margin: var(--space-10) 0; }
+  </style>
+</head>
+<body>
+
+<!-- ── Showcase header ── -->
+<header class="sc-header">
+  <div class="sc-header-left">
+    <span class="sc-wordmark">Admin.ai <span>Design System</span></span>
+    <nav class="sc-header-pills">
+      <a class="sc-header-pill" href="#tokens">Tokens</a>
+      <a class="sc-header-pill" href="#atoms">Atoms</a>
+      <a class="sc-header-pill" href="#molecules">Molecules</a>
+      <a class="sc-header-pill" href="#organisms">Organisms</a>
+    </nav>
+  </div>
+  <button class="sc-toggle" onclick="document.body.classList.toggle('dark')">
+    <div class="sc-toggle-knob"></div>
+    Dark mode
+  </button>
+</header>
+
+<div class="sc-layout">
+
+  <!-- ── Side nav ── -->
+  <nav class="sc-nav">
+    <div class="sc-nav-section">
+      <div class="sc-nav-label">Tokens</div>
+      <a class="sc-nav-link" href="#tokens-color">Color</a>
+      <a class="sc-nav-link" href="#tokens-semantic">Semantic</a>
+      <a class="sc-nav-link" href="#tokens-spacing">Spacing</a>
+      <a class="sc-nav-link" href="#tokens-type">Type</a>
+      <a class="sc-nav-link" href="#tokens-radius">Radius</a>
+      <a class="sc-nav-link" href="#tokens-shadow">Shadow</a>
+    </div>
+    <div class="sc-nav-section">
+      <div class="sc-nav-label">Atoms</div>
+      <a class="sc-nav-link" href="#atom-badge">badge</a>
+      <a class="sc-nav-link" href="#atom-button">button</a>
+      <a class="sc-nav-link" href="#atom-pills">toggle pills</a>
+      <a class="sc-nav-link" href="#atom-status">status indicator</a>
+      <a class="sc-nav-link" href="#atom-section-label">section label</a>
+      <a class="sc-nav-link" href="#atom-code-label">code label</a>
+      <a class="sc-nav-link" href="#atom-confidence">confidence</a>
+      <a class="sc-nav-link" href="#atom-text-input">text input</a>
+      <a class="sc-nav-link" href="#atom-kbd">kbd hint</a>
+    </div>
+    <div class="sc-nav-section">
+      <div class="sc-nav-label">Molecules</div>
+      <a class="sc-nav-link" href="#mol-nav-item">nav item</a>
+      <a class="sc-nav-link" href="#mol-feed-item">feed item</a>
+      <a class="sc-nav-link" href="#mol-approval">approval card</a>
+      <a class="sc-nav-link" href="#mol-patient">patient card</a>
+      <a class="sc-nav-link" href="#mol-toast">toast</a>
+      <a class="sc-nav-link" href="#mol-alert">alert banner</a>
+      <a class="sc-nav-link" href="#mol-metric">metric card</a>
+    </div>
+    <div class="sc-nav-section">
+      <div class="sc-nav-label">Organisms</div>
+      <a class="sc-nav-link" href="#org-topbar">top bar</a>
+      <a class="sc-nav-link" href="#org-sidebar">sidebar</a>
+      <a class="sc-nav-link" href="#org-toast-stack">toast stack</a>
+    </div>
+  </nav>
+
+  <!-- ── Main content ── -->
+  <main class="sc-main">
+
+
+    <!-- ════════════════════════════════════════════════════════
+         TOKENS
+         ════════════════════════════════════════════════════════ -->
+    <section class="sc-section" id="tokens">
+      <div class="sc-section-header">
+        <h2 class="sc-section-title">Tokens</h2>
+        <p class="sc-section-desc">Every visual decision. Defined in <code>tokens.css</code>.</p>
+      </div>
+
+      <!-- Color primitives -->
+      <div class="sc-component" id="tokens-color">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">Color Primitives</h3>
+          <span class="sc-component-file">tokens.css § 1</span>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">Grey scale</div>
+          <div class="sc-token-grid">
+            {% for name, val in [
+              ('--grey-0','#ffffff'),('--grey-50','#fafafa'),('--grey-100','#f5f5f5'),
+              ('--grey-150','#f0f0f0'),('--grey-200','#e5e7eb'),('--grey-300','#d1d5db'),
+              ('--grey-400','#9ca3af'),('--grey-500','#6b7280'),('--grey-600','#4b5563'),
+              ('--grey-700','#374151'),('--grey-800','#1f2937'),('--grey-900','#111827'),
+              ('--grey-950','#0b0d0f')
+            ] %}
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var({{ name }});"></div>
+              <div class="sc-swatch-name">{{ name }}</div>
+              <div class="sc-swatch-val">{{ val }}</div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">Status colors</div>
+          <div class="sc-token-grid">
+            {% for name, val in [
+              ('--green-50','#f0fdf4'),('--green-100','#d1fae5'),('--green-500','#10b981'),('--green-600','#059669'),
+              ('--amber-50','#fffbeb'),('--amber-100','#fef3c7'),('--amber-500','#f59e0b'),('--amber-600','#d97706'),
+              ('--red-50','#fef2f2'),('--red-100','#fee2e2'),('--red-500','#ef4444'),('--red-600','#dc2626'),
+              ('--orange-50','#fff7ed'),('--orange-100','#ffedd5'),('--orange-500','#f97316'),('--orange-600','#ea580c'),
+              ('--blue-50','#eff6ff'),('--blue-100','#dbeafe'),('--blue-500','#3b82f6'),('--blue-600','#2563eb'),
+              ('--purple-100','#ede9fe'),('--purple-200','#ddd6fe'),('--purple-500','#8b5cf6'),('--purple-600','#7c3aed')
+            ] %}
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var({{ name }});"></div>
+              <div class="sc-swatch-name">{{ name }}</div>
+              <div class="sc-swatch-val">{{ val }}</div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Semantic tokens -->
+      <div class="sc-component" id="tokens-semantic">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">Semantic Tokens</h3>
+          <span class="sc-component-file">tokens.css § 2</span>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">Surfaces &amp; Text</div>
+          <div class="sc-token-grid">
+            {% for name in ['--surface-bg','--surface-primary','--surface-secondary',
+                            '--surface-tertiary','--surface-header','--surface-sidebar'] %}
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var({{ name }});border:1px solid var(--border-default);"></div>
+              <div class="sc-swatch-name">{{ name }}</div>
+            </div>
+            {% endfor %}
+            {% for name in ['--text-primary','--text-secondary','--text-tertiary','--text-inverse',
+                            '--text-link','--accent','--accent-hover','--accent-bg'] %}
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var({{ name }});border:1px solid var(--border-default);"></div>
+              <div class="sc-swatch-name">{{ name }}</div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">Status semantic</div>
+          <div class="sc-token-grid">
+            {% for name in [
+              '--status-success','--status-success-bg','--status-success-text',
+              '--status-warning','--status-warning-bg','--status-warning-text',
+              '--status-danger','--status-danger-bg','--status-danger-text',
+              '--status-info','--status-info-bg','--status-info-text'
+            ] %}
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var({{ name }});border:1px solid var(--border-default);"></div>
+              <div class="sc-swatch-name">{{ name }}</div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">Tier system</div>
+          <div class="sc-token-grid">
+            {% for name in ['--tier-1','--tier-1-bg','--tier-1-text',
+                            '--tier-2','--tier-2-bg','--tier-2-text',
+                            '--tier-3','--tier-3-bg','--tier-3-text',
+                            '--tier-4','--tier-4-bg','--tier-4-text'] %}
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var({{ name }});border:1px solid var(--border-default);"></div>
+              <div class="sc-swatch-name">{{ name }}</div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">Autonomy levels</div>
+          <div class="sc-token-grid">
+            {% for name in ['--autonomy-l0','--autonomy-l0-text',
+                            '--autonomy-l1','--autonomy-l1-text',
+                            '--autonomy-l2','--autonomy-l2-text',
+                            '--autonomy-l3','--autonomy-l3-text',
+                            '--autonomy-l4','--autonomy-l4-text'] %}
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var({{ name }});border:1px solid var(--border-default);"></div>
+              <div class="sc-swatch-name">{{ name }}</div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Spacing -->
+      <div class="sc-component" id="tokens-spacing">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">Spacing</h3>
+          <span class="sc-component-file">--space-*</span>
+        </div>
+        <div class="sc-variant">
+          <div class="sc-token-scale">
+            {% for name, px in [
+              ('--space-1','2px'),('--space-2','4px'),('--space-3','6px'),
+              ('--space-4','8px'),('--space-5','10px'),('--space-6','12px'),
+              ('--space-8','16px'),('--space-10','20px'),('--space-12','24px'),
+              ('--space-16','32px'),('--space-20','40px'),('--space-24','48px')
+            ] %}
+            <div class="sc-scale-item">
+              <div class="sc-scale-name">{{ name }}</div>
+              <div class="sc-space-bar" style="width:var({{ name }});min-width:2px;"></div>
+              <div class="sc-scale-val">{{ px }}</div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Type scale -->
+      <div class="sc-component" id="tokens-type">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">Type Scale</h3>
+          <span class="sc-component-file">--text-*</span>
+        </div>
+        <div class="sc-variant">
+          <div class="sc-token-scale">
+            {% for name, px in [
+              ('--text-2xs','7px'),('--text-xs','8px'),('--text-sm-2','9px'),('--text-sm','10px'),
+              ('--text-base-2','11px'),('--text-base','12px'),('--text-md','13px'),
+              ('--text-lg','14px'),('--text-xl','15px'),('--text-2xl','16px'),
+              ('--text-3xl','18px'),('--text-4xl','20px'),('--text-5xl','24px'),
+              ('--text-6xl','28px'),('--text-7xl','32px')
+            ] %}
+            <div class="sc-scale-item">
+              <div class="sc-scale-name">{{ name }}</div>
+              <div style="font-size:var({{ name }});color:var(--text-primary);line-height:1.2;">
+                The quick brown fox
+              </div>
+              <div class="sc-scale-val">{{ px }}</div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Radius -->
+      <div class="sc-component" id="tokens-radius">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">Border Radius</h3>
+          <span class="sc-component-file">--radius-*</span>
+        </div>
+        <div class="sc-variant">
+          <div class="sc-preview" style="align-items:center;">
+            {% for name, px in [
+              ('none','0px'),('xs','2px'),('sm','4px'),('md','6px'),
+              ('lg','8px'),('xl','10px'),('2xl','12px'),('3xl','16px'),
+              ('4xl','20px'),('full','9999px')
+            ] %}
+            <div style="display:flex;flex-direction:column;align-items:center;gap:var(--space-3);">
+              <div class="sc-radius-box" style="border-radius:var(--radius-{{ name }});"></div>
+              <div style="font-size:var(--text-xs);color:var(--text-tertiary);font-family:var(--code-font);">--radius-{{ name }}</div>
+              <div style="font-size:var(--text-xs);color:var(--text-tertiary);">{{ px }}</div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Shadows -->
+      <div class="sc-component" id="tokens-shadow">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">Shadows</h3>
+          <span class="sc-component-file">--shadow-*</span>
+        </div>
+        <div class="sc-variant">
+          <div class="sc-preview">
+            {% for name in ['xs','sm','md','lg','xl'] %}
+            <div style="display:flex;flex-direction:column;align-items:center;gap:var(--space-4);">
+              <div class="sc-shadow-box" style="box-shadow:var(--shadow-{{ name }});">--shadow-{{ name }}</div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- ════════════════════════════════════════════════════════
+         ATOMS
+         ════════════════════════════════════════════════════════ -->
+    <section class="sc-section" id="atoms">
+      <div class="sc-section-header">
+        <h2 class="sc-section-title">Atoms</h2>
+        <p class="sc-section-desc">Smallest composable units. 9 macros in <code>templates/components/atoms/</code>.</p>
+      </div>
+
+
+      <!-- badge -->
+      <div class="sc-component" id="atom-badge">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">badge</h3>
+          <span class="sc-component-file">atoms/badge.html</span>
+          <span class="sc-component-desc">badge(label, variant, extra_class, id)</span>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">Tier — t1 t2 t3 t4</div>
+          <div class="sc-preview">
+            {{ badge('T1', 't1') }}
+            {{ badge('T2', 't2') }}
+            {{ badge('T3', 't3') }}
+            {{ badge('T4', 't4') }}
+          </div>
+          <code class="sc-code">{% raw %}{{ badge('T1', 't1') }}  {{ badge('T2', 't2') }}  {{ badge('T3', 't3') }}  {{ badge('T4', 't4') }}{% endraw %}</code>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">Status — success danger info muted</div>
+          <div class="sc-preview">
+            {{ badge('Approved', 'success') }}
+            {{ badge('Rejected', 'danger') }}
+            {{ badge('Pending', 'info') }}
+            {{ badge('Archived', 'muted') }}
+          </div>
+          <code class="sc-code">{% raw %}{{ badge('Approved', 'success') }}  {{ badge('Rejected', 'danger') }}  {{ badge('Pending', 'info') }}  {{ badge('Archived', 'muted') }}{% endraw %}</code>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">Urgency — routine urgent emergent</div>
+          <div class="sc-preview">
+            {{ badge('ROUTINE', 'routine') }}
+            {{ badge('URGENT', 'urgent') }}
+            {{ badge('EMERGENT', 'emergent') }}
+          </div>
+          <code class="sc-code">{% raw %}{{ badge('ROUTINE', 'routine') }}  {{ badge('URGENT', 'urgent') }}  {{ badge('EMERGENT', 'emergent') }}{% endraw %}</code>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">Autonomy — l0 l1 l2 l3 l4</div>
+          <div class="sc-preview">
+            {{ badge('L0', 'l0') }}
+            {{ badge('L1', 'l1') }}
+            {{ badge('L2', 'l2') }}
+            {{ badge('L3', 'l3') }}
+            {{ badge('L4', 'l4') }}
+          </div>
+          <code class="sc-code">{% raw %}{{ badge('L0', 'l0') }}  {{ badge('L1', 'l1') }}  {{ badge('L2', 'l2') }}  {{ badge('L3', 'l3') }}  {{ badge('L4', 'l4') }}{% endraw %}</code>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">Special — live  nav</div>
+          <div class="sc-preview">
+            {{ badge('LIVE', 'live') }}
+            {{ badge('3', 'nav') }}
+          </div>
+          <code class="sc-code">{% raw %}{{ badge('LIVE', 'live') }}   {{ badge('3', 'nav') }}{% endraw %}</code>
+        </div>
+      </div>
+
+
+      <!-- button -->
+      <div class="sc-component" id="atom-button">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">button</h3>
+          <span class="sc-component-file">atoms/button.html</span>
+          <span class="sc-component-desc">button(label, variant, size, onclick, type, id, extra_class, disabled, icon_html)</span>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">Variants</div>
+          <div class="sc-preview">
+            {{ button('Primary', 'primary') }}
+            {{ button('Danger', 'danger') }}
+            {{ button('Success', 'success') }}
+            {{ button('Warning', 'warning') }}
+            {{ button('Outline', 'outline') }}
+          </div>
+          <code class="sc-code">{% raw %}{{ button('Primary', 'primary') }}
+{{ button('Danger', 'danger') }}
+{{ button('Success', 'success') }}
+{{ button('Warning', 'warning') }}
+{{ button('Outline', 'outline') }}{% endraw %}</code>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">Sizes — default  sm  xs</div>
+          <div class="sc-preview" style="align-items:center;">
+            {{ button('Default', 'primary') }}
+            {{ button('Small', 'primary', 'sm') }}
+            {{ button('XSmall', 'primary', 'xs') }}
+          </div>
+          <code class="sc-code">{% raw %}{{ button('Default', 'primary') }}
+{{ button('Small',   'primary', 'sm') }}
+{{ button('XSmall',  'primary', 'xs') }}{% endraw %}</code>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">Disabled state</div>
+          <div class="sc-preview">
+            {{ button('Disabled', 'primary', '', '', 'button', '', '', true) }}
+            {{ button('Disabled', 'danger',  '', '', 'button', '', '', true) }}
+          </div>
+          <code class="sc-code">{% raw %}{{ button('Disabled', 'primary', '', '', 'button', '', '', true) }}{% endraw %}</code>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">With icon</div>
+          <div class="sc-preview">
+            {{ button('Pause', 'danger', '', '', 'button', '', 'pause-btn', false,
+               '<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><rect x="2" y="1" width="3.5" height="12" rx="1"/><rect x="8.5" y="1" width="3.5" height="12" rx="1"/></svg>') }}
+          </div>
+          <code class="sc-code">{% raw %}{{ button('Pause', 'danger', '', '', 'button', '', 'pause-btn', false, '<svg .../>') }}{% endraw %}</code>
+        </div>
+      </div>
+
+
+      <!-- toggle pills -->
+      <div class="sc-component" id="atom-pills">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">autonomy_switcher / speed_control</h3>
+          <span class="sc-component-file">atoms/toggle_pill_group.html</span>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">Autonomy switcher — active_level=2</div>
+          <div class="sc-preview">
+            {{ autonomy_switcher(2) }}
+          </div>
+          <code class="sc-code">{% raw %}{{ autonomy_switcher(active_level=2) }}{% endraw %}</code>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">Speed control — active_speed='1'</div>
+          <div class="sc-preview">
+            {{ speed_control('1') }}
+          </div>
+          <code class="sc-code">{% raw %}{{ speed_control(active_speed='1') }}{% endraw %}</code>
+        </div>
+      </div>
+
+
+      <!-- status_indicator / pulse_dot -->
+      <div class="sc-component" id="atom-status">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">status_indicator / pulse_dot</h3>
+          <span class="sc-component-file">atoms/status_indicator.html</span>
+          <span class="sc-component-desc">status_indicator(text, state, id, text_id)</span>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">status_indicator — active  paused</div>
+          <div class="sc-preview" style="gap:var(--space-12);align-items:center;">
+            {{ status_indicator('Agent Active', 'active') }}
+            {{ status_indicator('Agent Paused', 'paused') }}
+          </div>
+          <code class="sc-code">{% raw %}{{ status_indicator('Agent Active', 'active') }}
+{{ status_indicator('Agent Paused', 'paused') }}{% endraw %}</code>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">pulse_dot — active  danger  inactive — sizes 6px 8px 10px</div>
+          <div class="sc-preview" style="align-items:center;gap:var(--space-8);">
+            {{ pulse_dot('6px', 'active') }}
+            {{ pulse_dot('8px', 'active') }}
+            {{ pulse_dot('10px', 'active') }}
+            <div style="width:1px;height:24px;background:var(--border-default);"></div>
+            {{ pulse_dot('8px', 'danger') }}
+            <div style="width:1px;height:24px;background:var(--border-default);"></div>
+            {{ pulse_dot('8px', 'inactive') }}
+          </div>
+          <code class="sc-code">{% raw %}{{ pulse_dot('8px', 'active') }}   {{ pulse_dot('8px', 'danger') }}   {{ pulse_dot('8px', 'inactive') }}{% endraw %}</code>
+        </div>
+      </div>
+
+
+      <!-- section_label -->
+      <div class="sc-component" id="atom-section-label">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">section_label</h3>
+          <span class="sc-component-file">atoms/section_label.html</span>
+          <span class="sc-component-desc">section_label(text, extra_class)</span>
+        </div>
+        <div class="sc-variant">
+          <div class="sc-preview">
+            {{ section_label('Dashboard') }}
+            {{ section_label('System') }}
+            {{ section_label('Encounters') }}
+          </div>
+          <code class="sc-code">{% raw %}{{ section_label('Dashboard') }}{% endraw %}</code>
+        </div>
+      </div>
+
+
+      <!-- code_label -->
+      <div class="sc-component" id="atom-code-label">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">code_label</h3>
+          <span class="sc-component-file">atoms/code_label.html</span>
+          <span class="sc-component-desc">code_label(text, extra_class)</span>
+        </div>
+        <div class="sc-variant">
+          <div class="sc-preview">
+            {{ code_label('orders.lab_order') }}
+            {{ code_label('vitals.record') }}
+            {{ code_label('diagnosis.icd10') }}
+            {{ code_label('rx.prescribe') }}
+          </div>
+          <code class="sc-code">{% raw %}{{ code_label('orders.lab_order') }}{% endraw %}</code>
+        </div>
+      </div>
+
+
+      <!-- confidence_indicator -->
+      <div class="sc-component" id="atom-confidence">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">confidence_indicator</h3>
+          <span class="sc-component-file">atoms/confidence_indicator.html</span>
+          <span class="sc-component-desc">confidence_indicator(value, show_label=true)</span>
+        </div>
+        <div class="sc-variant">
+          <div class="sc-variant-label">High ≥ 0.90 · Medium ≥ 0.70 · Low &lt; 0.70</div>
+          <div class="sc-preview sc-preview-col">
+            {{ confidence_indicator(0.95) }}
+            {{ confidence_indicator(0.78) }}
+            {{ confidence_indicator(0.52) }}
+          </div>
+          <code class="sc-code">{% raw %}{{ confidence_indicator(0.95) }}   {# green  #}
+{{ confidence_indicator(0.78) }}   {# amber  #}
+{{ confidence_indicator(0.52) }}   {# red    #}{% endraw %}</code>
+        </div>
+      </div>
+
+
+      <!-- text_input -->
+      <div class="sc-component" id="atom-text-input">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">text_input</h3>
+          <span class="sc-component-file">atoms/text_input.html</span>
+          <span class="sc-component-desc">text_input(id, placeholder, extra_class, type, name, value, required)</span>
+        </div>
+        <div class="sc-variant">
+          <div class="sc-variant-label">text · textarea (rendered inside .approval-hero context)</div>
+          <div class="sc-preview sc-preview-col" style="max-width:380px;">
+            <div class="approval-hero">
+              {{ text_input('sc-input-1', 'Reason for rejection…') }}
+              {{ text_input('sc-input-2', 'Multi-line notes…', '', 'textarea') }}
+            </div>
+          </div>
+          <code class="sc-code">{% raw %}{{ text_input('reject-reason', 'Reason for rejection…') }}
+{{ text_input('notes',         'Multi-line notes…', '', 'textarea') }}{% endraw %}</code>
+        </div>
+      </div>
+
+
+      <!-- kbd_hint -->
+      <div class="sc-component" id="atom-kbd">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">kbd_hint</h3>
+          <span class="sc-component-file">atoms/kbd_hint.html</span>
+          <span class="sc-component-desc">kbd_hint(key, extra_class)</span>
+        </div>
+        <div class="sc-variant">
+          <div class="sc-preview" style="align-items:center;">
+            {{ kbd_hint('Esc') }}
+            {{ kbd_hint('⌘K') }}
+            {{ kbd_hint('Enter') }}
+            {{ kbd_hint('⌘⇧P') }}
+            {{ kbd_hint('Tab') }}
+          </div>
+          <code class="sc-code">{% raw %}{{ kbd_hint('Esc') }}   {{ kbd_hint('⌘K') }}   {{ kbd_hint('Enter') }}{% endraw %}</code>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- ════════════════════════════════════════════════════════
+         MOLECULES
+         ════════════════════════════════════════════════════════ -->
+    <section class="sc-section" id="molecules">
+      <div class="sc-section-header">
+        <h2 class="sc-section-title">Molecules</h2>
+        <p class="sc-section-desc">Composites of atoms. 7 components in <code>templates/components/molecules/</code>.</p>
+      </div>
+
+
+      <!-- nav_item + encounter_nav_item -->
+      <div class="sc-component" id="mol-nav-item">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">nav_item / encounter_nav_item</h3>
+          <span class="sc-component-file">molecules/nav_item.html</span>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">nav_item — active · inactive · with badge counter</div>
+          <div class="sc-preview sc-preview-col" style="max-width:220px;background:var(--surface-sidebar);border-radius:var(--radius-lg);padding:var(--space-6);">
+            {{ nav_item('Activity Feed',
+              'feed',
+              '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3h12M3 7h12M3 11h8M3 15h5"/></svg>',
+              true) }}
+            {{ nav_item('Pending Approvals',
+              'approvals',
+              '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 1v4M5 3l1.5 2M13 3l-1.5 2M3 9h12v6a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg>',
+              false, '', 5, 'sc-badge-demo') }}
+            {{ nav_item('Patient Panel',
+              'patients',
+              '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="5" r="3"/><path d="M3 17v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>') }}
+          </div>
+          <code class="sc-code">{% raw %}{{ nav_item('Activity Feed', 'feed', '<svg …/>', active=true) }}
+{{ nav_item('Pending Approvals', 'approvals', '<svg …/>', badge_count=5, badge_id='approvalBadge') }}{% endraw %}</code>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">encounter_nav_item — active dot · danger dot</div>
+          <div class="sc-preview sc-preview-col" style="max-width:220px;background:var(--surface-sidebar);border-radius:var(--radius-lg);padding:var(--space-6);">
+            {{ encounter_nav_item('M. Thompson, 58F', '', 'active') }}
+            {{ encounter_nav_item('J. Rodriguez, 34M', '', 'active') }}
+            {{ encounter_nav_item('A. Patel, 71F', '', 'danger') }}
+          </div>
+          <code class="sc-code">{% raw %}{{ encounter_nav_item('M. Thompson, 58F', "selectPatient('thompson')", 'active') }}
+{{ encounter_nav_item('A. Patel, 71F',   "selectPatient('patel')",    'danger') }}{% endraw %}</code>
+        </div>
+      </div>
+
+
+      <!-- feed_item -->
+      <div class="sc-component" id="mol-feed-item">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">feed_item</h3>
+          <span class="sc-component-file">molecules/feed_item.html</span>
+          <span class="sc-component-desc">feed_item(patient_name, tool, tier, description, status, confidence, …)</span>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">T1 auto-approved · T2 approved · T3 pending · T4 escalated</div>
+          <div class="sc-preview sc-preview-col">
+            {{ feed_item('M. Thompson', 'vitals.record', 1,
+               'Recorded vitals: HR 92, BP 128/82, SpO2 94%',
+               'auto-approved', 0.97, '0:12') }}
+            {{ feed_item('J. Rodriguez', 'orders.lab_order', 2,
+               'CBC, CMP, Urinalysis ordered',
+               'approved', 0.84, '1:05') }}
+            {{ feed_item('M. Thompson', 'orders.imaging', 3,
+               'Chest X-ray — PA and lateral views',
+               'pending', 0.73, '2:30') }}
+            {{ feed_item('A. Patel', 'escalation.cardiac', 4,
+               'Cardiac event risk detected — mandatory physician review',
+               'escalated', 0.61, '3:44', false, true) }}
+          </div>
+          <code class="sc-code">{% raw %}{{ feed_item('M. Thompson', 'vitals.record', 1,
+  'Recorded vitals: HR 92, BP 128/82, SpO2 94%',
+  'auto-approved', 0.97, '0:12') }}
+
+{{ feed_item('A. Patel', 'escalation.cardiac', 4,
+  'Cardiac event risk detected — mandatory physician review',
+  'escalated', 0.61, '3:44', is_escalation=true) }}{% endraw %}</code>
+        </div>
+      </div>
+
+
+      <!-- approval_card -->
+      <div class="sc-component" id="mol-approval">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">sim_approval_card / admin_approval_card</h3>
+          <span class="sc-component-file">molecules/approval_card.html</span>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">sim_approval_card — standard T2 · escalation T4</div>
+          <div class="sc-preview sc-preview-col">
+            {{ sim_approval_card(
+               'sc-demo-1', 'J. Rodriguez', 'orders.lab_order', 2, 'urgent',
+               'CBC, CMP, Urinalysis — routine infection workup', 0.84,
+               '12:00', 'sla-ok') }}
+            {{ sim_approval_card(
+               'sc-demo-2', 'A. Patel', 'escalation.cardiac', 4, 'emergent',
+               'Cardiac event escalation — immediate physician takeover required', 0.61,
+               '02:15', 'sla-critical', true) }}
+          </div>
+          <code class="sc-code">{% raw %}{{ sim_approval_card('item-1', 'J. Rodriguez', 'orders.lab_order', 2, 'urgent',
+  'CBC, CMP, Urinalysis', 0.84, '12:00', 'sla-ok') }}
+
+{{ sim_approval_card('item-2', 'A. Patel', 'escalation.cardiac', 4, 'emergent',
+  'Cardiac escalation', 0.61, '02:15', 'sla-critical', is_escalation=true) }}{% endraw %}</code>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">admin_approval_card — routine · emergent real</div>
+          <div class="sc-preview sc-preview-col">
+            {{ admin_approval_card(
+               'sc-adm-1', 'PT-1847', 'James Rodriguez',
+               'Prescribe azithromycin 500mg × 3 days', 'T2', 'routine',
+               'Simple UTI with no contraindications noted.') }}
+            {{ admin_approval_card(
+               'sc-adm-2', 'PT-2091', 'Aisha Patel',
+               'Emergency cardiology consult + troponin series', 'T4', 'emergent',
+               'Chest tightness, diaphoresis, elevated risk score.', true) }}
+          </div>
+          <code class="sc-code">{% raw %}{{ admin_approval_card('item-id', 'PT-1847', 'James Rodriguez',
+  'Prescribe azithromycin 500mg', 'T2', 'routine', 'Context…') }}{% endraw %}</code>
+        </div>
+      </div>
+
+
+      <!-- patient_card -->
+      <div class="sc-component" id="mol-patient">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">patient_card</h3>
+          <span class="sc-component-file">molecules/patient_card.html</span>
+          <span class="sc-component-desc">patient_card(patient, current_step, is_complete, is_escalated, is_live, onclick)</span>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">In-progress · Complete · Escalated · Live session</div>
+          {% set pt_thompson = {
+            'name': 'Margaret Thompson', 'age': '58', 'sex': 'F',
+            'mrn': 'MRN-0041', 'chief': 'Community-acquired pneumonia',
+            'vitals': {'temp': '38.2°C', 'hr': '92', 'bp': '128/82', 'spo2': '94%'}
+          } %}
+          {% set pt_rodriguez = {
+            'name': 'James Rodriguez', 'age': '34', 'sex': 'M',
+            'mrn': 'MRN-0052', 'chief': 'Suspected urinary tract infection',
+            'vitals': {'temp': '37.1°C', 'hr': '74', 'bp': '118/76', 'spo2': '99%'}
+          } %}
+          {% set pt_patel = {
+            'name': 'Aisha Patel', 'age': '71', 'sex': 'F',
+            'mrn': 'MRN-0063', 'chief': 'Chest tightness with cardiac risks',
+            'vitals': {'temp': '36.8°C', 'hr': '108', 'bp': '158/94', 'spo2': '91%'}
+          } %}
+          {% set pt_live = {
+            'name': 'Sam Chen', 'age': '45', 'sex': 'M',
+            'mrn': 'MRN-0077', 'chief': 'Follow-up hypertension management',
+            'vitals': {}, '_messageCount': 12
+          } %}
+          <div class="patient-grid" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr));">
+            {{ patient_card(pt_thompson, 3) }}
+            {{ patient_card(pt_rodriguez, 7, true) }}
+            {{ patient_card(pt_patel, 2, false, true) }}
+            {{ patient_card(pt_live, 1, false, false, true) }}
+          </div>
+          <code class="sc-code">{% raw %}{{ patient_card(patient, current_step=3) }}
+{{ patient_card(patient, current_step=7, is_complete=true) }}
+{{ patient_card(patient, current_step=2, is_escalated=true) }}
+{{ patient_card(patient, current_step=1, is_live=true) }}{% endraw %}</code>
+        </div>
+      </div>
+
+
+      <!-- toast -->
+      <div class="sc-component" id="mol-toast">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">toast</h3>
+          <span class="sc-component-file">molecules/toast.html</span>
+          <span class="sc-component-desc">toast(message, type, dismissible)</span>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">info · success · warning · danger — dismissible</div>
+          <div class="sc-preview sc-preview-col" style="max-width:420px;">
+            {{ toast('Lab results received for M. Thompson', 'info') }}
+            {{ toast('Prescription sent to pharmacy', 'success') }}
+            {{ toast('SLA approaching — 3 approvals pending', 'warning') }}
+            {{ toast('A. Patel: Cardiac escalation required', 'danger') }}
+          </div>
+          <code class="sc-code">{% raw %}{{ toast('Lab results received', 'info') }}
+{{ toast('Prescription sent',    'success') }}
+{{ toast('SLA approaching',      'warning') }}
+{{ toast('Cardiac escalation',   'danger') }}
+{{ toast('No close button',      'info', dismissible=false) }}{% endraw %}</code>
+        </div>
+      </div>
+
+
+      <!-- alert_banner -->
+      <div class="sc-component" id="mol-alert">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">alert_banner / paused_banner</h3>
+          <span class="sc-component-file">molecules/alert_banner.html</span>
+          <span class="sc-component-desc">alert_banner(message, type, id, extra_class)</span>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">alert_banner — warning · danger · info · success</div>
+          <div class="sc-preview sc-preview-col">
+            {{ alert_banner('Autonomy level set to L3 — most actions will auto-execute.', 'warning') }}
+            {{ alert_banner('Critical: A. Patel requires immediate physician review.', 'danger') }}
+            {{ alert_banner('Simulation running at 2× speed.', 'info') }}
+            {{ alert_banner('All 3 patient encounters completed successfully.', 'success') }}
+          </div>
+          <code class="sc-code">{% raw %}{{ alert_banner('Autonomy level set to L3 — most actions auto-execute.', 'warning') }}
+{{ alert_banner('Critical: patient requires immediate review.', 'danger') }}{% endraw %}</code>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">paused_banner (shown — normally display:none until JS toggles)</div>
+          <div class="sc-show-banner">
+            {{ paused_banner() }}
+          </div>
+          <code class="sc-code">{% raw %}{{ paused_banner() }}   {# shown when togglePause() fires #}{% endraw %}</code>
+        </div>
+      </div>
+
+
+      <!-- metric_card -->
+      <div class="sc-component" id="mol-metric">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">metric_card</h3>
+          <span class="sc-component-file">molecules/metric_card.html</span>
+          <span class="sc-component-desc">metric_card(value, label, sublabel, id_value, id_sublabel)</span>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">With sublabel · Without sublabel · JS-updatable ids</div>
+          <div class="metrics-grid" style="grid-template-columns:repeat(4,1fr);">
+            {{ metric_card('247', 'Actions Taken', 'this session', 'sc-m1', 'sc-m1-sub') }}
+            {{ metric_card('94%', 'Auto-approval Rate') }}
+            {{ metric_card('1.8s', 'Avg Decision Time', 'per action') }}
+            {{ metric_card('3', 'Active Encounters', '', 'sc-m4') }}
+          </div>
+          <code class="sc-code">{% raw %}{{ metric_card('247', 'Actions Taken', 'this session', 'totalActions', 'actionsSub') }}
+{{ metric_card('94%', 'Auto-approval Rate') }}{% endraw %}</code>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- ════════════════════════════════════════════════════════
+         ORGANISMS
+         ════════════════════════════════════════════════════════ -->
+    <section class="sc-section" id="organisms">
+      <div class="sc-section-header">
+        <h2 class="sc-section-title">Organisms</h2>
+        <p class="sc-section-desc">Full app chrome sections. 3 components in <code>templates/components/organisms/</code>.</p>
+      </div>
+
+
+      <!-- top_bar -->
+      <div class="sc-component" id="org-topbar">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">top_bar</h3>
+          <span class="sc-component-file">organisms/top_bar.html</span>
+          <span class="sc-component-desc">top_bar(active_autonomy=2, active_speed='1')</span>
+        </div>
+        <div class="sc-variant">
+          <div class="sc-variant-label">active_autonomy=2, active_speed='1'</div>
+          <div class="sc-org-frame">
+            <div style="pointer-events:none;">
+              {{ top_bar(2, '1') }}
+            </div>
+          </div>
+          <code class="sc-code" style="margin-top:var(--space-8);">{% raw %}{{ top_bar(active_autonomy=2, active_speed='1') }}{% endraw %}</code>
+        </div>
+      </div>
+
+
+      <!-- sidebar -->
+      <div class="sc-component" id="org-sidebar">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">sidebar</h3>
+          <span class="sc-component-file">organisms/sidebar.html</span>
+          <span class="sc-component-desc">sidebar(active_view='feed')</span>
+        </div>
+        <div class="sc-variant">
+          <div class="sc-variant-label">active_view='feed'</div>
+          <div class="sc-org-frame">
+            <div style="pointer-events:none;">
+              {{ sidebar('feed') }}
+            </div>
+          </div>
+          <code class="sc-code" style="margin-top:var(--space-8);">{% raw %}{{ sidebar(active_view='feed') }}{% endraw %}</code>
+        </div>
+      </div>
+
+
+      <!-- toast_stack -->
+      <div class="sc-component" id="org-toast-stack">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">toast_stack</h3>
+          <span class="sc-component-file">organisms/toast_stack.html</span>
+          <span class="sc-component-desc">toast_stack()</span>
+        </div>
+        <div class="sc-variant">
+          <div class="sc-variant-label">Empty container — populated at runtime by showToast()</div>
+          <div class="sc-preview">
+            <div style="background:var(--surface-secondary);border:2px dashed var(--border-default);border-radius:var(--radius-md);padding:var(--space-8) var(--space-12);font-size:var(--text-md);color:var(--text-tertiary);font-family:var(--code-font);">
+              &lt;div class="toast-container" id="toastContainer"&gt;&lt;/div&gt;
+              <br>
+              <span style="font-style:italic;color:var(--text-tertiary);font-family:var(--body-font);font-size:var(--text-sm);">— JS appends .toast elements here via showToast()</span>
+            </div>
+          </div>
+          <code class="sc-code">{% raw %}{{ toast_stack() }}
+{# In JS: showToast(message, type, duration) appends to #toastContainer #}{% endraw %}</code>
+        </div>
+      </div>
+
+    </section>
+
+
+  </main>
+</div>
+
+<script>
+  // Highlight active nav link on scroll
+  const sections = document.querySelectorAll('[id]');
+  const navLinks = document.querySelectorAll('.sc-nav-link');
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector('.sc-nav-link[href="#' + entry.target.id + '"]');
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-10% 0px -80% 0px' });
+
+  sections.forEach(s => observer.observe(s));
+
+  // Resolve & display token values in swatches
+  document.querySelectorAll('.sc-swatch').forEach(swatch => {
+    const box = swatch.querySelector('.sc-swatch-box');
+    if (!box) return;
+    const styleAttr = box.getAttribute('style') || '';
+    const m = styleAttr.match(/background:var\((--[\w-]+)\)/);
+    if (!m) return;
+    const computed = getComputedStyle(document.documentElement).getPropertyValue(m[1]).trim();
+    let valEl = swatch.querySelector('.sc-swatch-val');
+    if (!valEl) {
+      valEl = document.createElement('div');
+      valEl.className = 'sc-swatch-val';
+      swatch.appendChild(valEl);
+    }
+    valEl.textContent = computed;
+  });
+</script>
+
+</body>
+</html>

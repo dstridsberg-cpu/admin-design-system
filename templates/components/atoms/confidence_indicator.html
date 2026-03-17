@@ -1,0 +1,28 @@
+{#
+  confidence_indicator(value, show_label=true)
+  ─────────────────────────────────────────────────────────────
+  Horizontal progress bar showing a confidence percentage.
+
+  Parameters:
+    value        (float) Confidence score 0.0–1.0. Required.
+    show_label   (bool)  Append "XX%" text after the bar. Default true.
+
+  Colour thresholds (mirrors JS confidenceColor()):
+    ≥ 0.90  → var(--status-success)
+    ≥ 0.70  → var(--status-warning)
+    <  0.70 → var(--status-danger)
+  ─────────────────────────────────────────────────────────────
+#}
+{% macro confidence_indicator(value, show_label=true) %}
+  {%- set pct = (value * 100) | int -%}
+  {%- if value >= 0.9 -%}
+    {%- set color = 'var(--status-success)' -%}
+  {%- elif value >= 0.7 -%}
+    {%- set color = 'var(--status-warning)' -%}
+  {%- else -%}
+    {%- set color = 'var(--status-danger)' -%}
+  {%- endif -%}
+<span>Confidence: <span class="confidence-bar"><span class="confidence-fill"
+  style="width:{{ pct }}%;background:{{ color }};"></span></span>
+  {%- if show_label %} {{ pct }}%{% endif %}</span>
+{% endmacro %}

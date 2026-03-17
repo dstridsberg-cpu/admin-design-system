@@ -1,0 +1,74 @@
+{#
+  patient_card(patient, current_step, is_complete, is_escalated,
+               is_live, onclick)
+  ─────────────────────────────────────────────────────────────
+  Patient panel card with workflow stepper and vitals badges.
+
+  Parameters:
+    patient       (dict)  Patient data object with keys:
+                            id, name, age, sex, mrn, chief, vitals
+                            vitals: {temp, hr, bp, spo2}
+    current_step  (int)   Active workflow step index (0–6). Default -1.
+    is_complete   (bool)  Show "Complete" badge. Default false.
+    is_escalated  (bool)  Show "ESCALATED" danger badge. Default false.
+    is_live       (bool)  Show LIVE indicator. Default false.
+    onclick       (str)   JS click handler. Default ''.
+
+  workflow_steps — fixed list used for stepper:
+    Intake | History | Assessment | Investigation | Diagnosis | Treatment | Documentation
+  ─────────────────────────────────────────────────────────────
+#}
+{% from 'components/atoms/badge.html' import badge %}
+
+{% set WORKFLOW_STEPS = ['Intake','History','Assessment','Investigation','Diagnosis','Treatment','Documentation'] %}
+
+{% macro patient_card(patient, current_step=-1, is_complete=false,
+                      is_escalated=false, is_live=false, onclick='') %}
+  {%- set onclick_attr = ' onclick="' ~ onclick ~ '"' if onclick else '' -%}
+<div class="card patient-card{{ ' live-session' if is_live }}"{{ onclick_attr }}>
+  <div class="flex items-center justify-between mb-2">
+    <div>
+      <div class="patient-name">
+        {{ patient.name }}
+        {%- if is_live %} {{ badge('LIVE', 'live') }}{% endif %}
+      </div>
+      <div class="patient-demo">
+        {{ patient.age }}{{ patient.sex }}
+        {%- if is_live %} · {{ patient.get('_messageCount', 0) }} messages
+        {%- else %} · {{ patient.mrn }}{% endif %}
+      </div>
+    </div>
+    {%- if is_escalated %}
+      {{ badge('ESCALATED', 'danger') }}
+    {%- elif is_complete %}
+      {{ badge('Complete', 'success') }}
+    {%- else %}
+      {{ badge('In Progress', 'info') }}
+    {%- endif %}
+  </div>
+
+  <div class="patient-chief">{{ patient.chief }}</div>
+
+  <div class="stepper">
+    {%- for step in WORKFLOW_STEPS %}
+      {%- if loop.index0 < current_step %}
+        <div class="step done">{{ step }}</div>
+      {%- elif loop.index0 == current_step %}
+        <div class="step active">{{ step }}</div>
+      {%- else %}
+        <div class="step">{{ step }}</div>
+      {%- endif %}
+    {%- endfor %}
+  </div>
+
+  {%- if patient.vitals and (patient.vitals.temp or patient.vitals.hr) %}
+  <div style="display:flex;gap:var(--space-4);margin-top:var(--space-5);flex-wrap:wrap;">
+    <span class="text-sm text-muted">Vitals:</span>
+    {%- if patient.vitals.temp %}{{ badge(patient.vitals.temp, 'muted') }}{% endif %}
+    {%- if patient.vitals.hr %}{{ badge('HR ' ~ patient.vitals.hr, 'muted') }}{% endif %}
+    {%- if patient.vitals.bp %}{{ badge(patient.vitals.bp, 'muted') }}{% endif %}
+    {%- if patient.vitals.spo2 %}{{ badge('SpO2 ' ~ patient.vitals.spo2, 'muted') }}{% endif %}
+  </div>
+  {%- endif %}
+</div>
+{% endmacro %}

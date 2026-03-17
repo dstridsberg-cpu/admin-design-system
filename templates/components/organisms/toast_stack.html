@@ -1,0 +1,16 @@
+{#
+  toast_stack()
+  ─────────────────────────────────────────────────────────────
+  Fixed-position toast container. JS appends individual .toast
+  elements here via showToast(). Renders empty on page load.
+
+  No parameters — JS owns this container at runtime.
+
+  CSS classes: toast-container
+  ID: toastContainer
+  ─────────────────────────────────────────────────────────────
+#}
+
+{% macro toast_stack() %}
+<div class="toast-container" id="toastContainer"></div>
+{% endmacro %}

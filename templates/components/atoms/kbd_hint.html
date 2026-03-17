@@ -1,0 +1,15 @@
+{#
+  kbd_hint(key, extra_class='')
+  ─────────────────────────────────────────────────────────────
+  Keyboard shortcut badge rendered as a <kbd> element.
+  Styled with var(--surface-tertiary), var(--border-default),
+  var(--text-secondary), var(--font-mono).
+
+  Parameters:
+    key          (str)   Key label, e.g. 'Esc', '⌘K', 'Enter'. Required.
+    extra_class  (str)   Additional CSS classes.
+  ─────────────────────────────────────────────────────────────
+#}
+{% macro kbd_hint(key, extra_class='') %}
+<kbd class="kbd-hint{{ ' ' ~ extra_class if extra_class }}">{{ key }}</kbd>
+{% endmacro %}

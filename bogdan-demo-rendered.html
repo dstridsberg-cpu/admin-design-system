@@ -17,96 +17,118 @@
     <div class="app">
       <!-- Top Nav -->
       <header class="top-nav">
-        <div class="nav-left">
-          <div class="nav-logo"><span></span><span></span><span></span><span></span></div>
-          <select class="company-dropdown"><option>Company A</option></select>
-        </div>
-        <div class="nav-center">
-          <div class="autonomy-switcher">
-            <label>Autonomy</label>
-            <div class="autonomy-btns" id="autonomyBtns">
-              <button class="autonomy-btn" data-level="0">L0</button>
-              <button class="autonomy-btn" data-level="1">L1</button>
-              <button class="autonomy-btn active" data-level="2">L2</button>
-              <button class="autonomy-btn" data-level="3">L3</button>
-              <button class="autonomy-btn" data-level="4">L4</button>
-            </div>
-          </div>
-          <div class="speed-control">
-            <span>Speed:</span>
-            <button class="speed-btn" data-speed="0.5">0.5x</button>
-            <button class="speed-btn active" data-speed="1">1x</button>
-            <button class="speed-btn" data-speed="2">2x</button>
-            <button class="speed-btn" data-speed="0">Instant</button>
-          </div>
-          <div class="header-status" id="agentStatus">
-            <span class="pulse-dot"></span>
-            <span id="statusText">Agent Active</span>
-          </div>
-        </div>
-        <div class="nav-right">
-          <button class="btn btn-danger pause-btn" id="pauseBtn" onclick="togglePause()">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><rect x="2" y="1" width="3.5" height="12" rx="1"/><rect x="8.5" y="1" width="3.5" height="12" rx="1"/></svg>
-            Pause
-          </button>
-          <a href="#">API Keys</a>
-        </div>
-      </header>
+  <div class="nav-left">
+    <div class="nav-logo"><span></span><span></span><span></span><span></span></div>
+    <select class="company-dropdown"><option>Company A</option></select>
+  </div>
+  <div class="nav-center">
+    <div class="autonomy-switcher">
+  <label>Autonomy</label>
+  <div class="autonomy-btns" id="autonomyBtns">    <button class="autonomy-btn"
+            data-level="0">L0</button>    <button class="autonomy-btn"
+            data-level="1">L1</button>    <button class="autonomy-btn active"
+            data-level="2">L2</button>    <button class="autonomy-btn"
+            data-level="3">L3</button>    <button class="autonomy-btn"
+            data-level="4">L4</button>  </div>
+</div>
+
+    <div class="speed-control">
+  <span>Speed:</span>  <button class="speed-btn"
+          data-speed="0.5">0.5x</button>  <button class="speed-btn active"
+          data-speed="1">1x</button>  <button class="speed-btn"
+          data-speed="2">2x</button>  <button class="speed-btn"
+          data-speed="0">Instant</button></div>
+
+    <div class="header-status" id="agentStatus">
+  <span class="pulse-dot"></span>
+  <span id="statusText">Agent Active</span>
+</div>
+
+  </div>
+  <div class="nav-right">
+    <button class="btn btn-danger pause-btn" id="pauseBtn" onclick="togglePause()">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><rect x="2" y="1" width="3.5" height="12" rx="1"/><rect x="8.5" y="1" width="3.5" height="12" rx="1"/></svg>
+      Pause
+    </button>
+    <a href="#">API Keys</a>
+  </div>
+</header>
+
 
       <!-- Sidebar -->
       <nav class="sidebar">
-        <div class="sidebar-section">
-          <div class="sidebar-label">Dashboard</div>
-          <div class="nav-item active" data-view="feed" onclick="switchView('feed')">
-            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3h12M3 7h12M3 11h8M3 15h5"/></svg>
-            Activity Feed
-          </div>
-          <div class="nav-item" data-view="approvals" onclick="switchView('approvals')">
-            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 1v4M5 3l1.5 2M13 3l-1.5 2M3 9h12v6a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg>
-            Pending Approvals
-            <span class="nav-badge" id="approvalBadge">0</span>
-          </div>
-          <div class="nav-item" data-view="patients" onclick="switchView('patients')">
-            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="5" r="3"/><path d="M3 17v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>
-            Patient Panel
-          </div>
-          <div class="nav-item" data-view="encounter" onclick="switchView('encounter')">
-            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 2h10a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2zM6 6h6M6 9h6M6 12h3"/></svg>
-            Encounter Detail
-          </div>
-        </div>
-        <div class="sidebar-section">
-          <div class="sidebar-label">System</div>
-          <div class="nav-item" data-view="analytics" onclick="switchView('analytics')">
-            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 15V9M7 15V5M11 15V8M15 15V3"/></svg>
-            Analytics
-          </div>
-          <div class="nav-item" data-view="config" onclick="switchView('config')">
-            <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="9" r="3"/><path d="M9 1v3M9 14v3M1 9h3M14 9h3M3.3 3.3l2.1 2.1M12.6 12.6l2.1 2.1M3.3 14.7l2.1-2.1M12.6 5.4l2.1-2.1"/></svg>
-            Configuration
-          </div>
-        </div>
-        <div class="sidebar-section" style="margin-top: auto; padding-top: 16px; border-top: 1px solid var(--border);">
-          <div class="sidebar-label">Encounters</div>
-          <div class="nav-item" style="font-size:12px;" onclick="selectPatient('thompson'); switchView('encounter')">
-            <span class="pulse-dot" style="width:6px;height:6px;"></span>
-            M. Thompson, 58F
-          </div>
-          <div class="nav-item" style="font-size:12px;" onclick="selectPatient('rodriguez'); switchView('encounter')">
-            <span class="pulse-dot" style="width:6px;height:6px;"></span>
-            J. Rodriguez, 34M
-          </div>
-          <div class="nav-item" style="font-size:12px;" onclick="selectPatient('patel'); switchView('encounter')">
-            <span class="pulse-dot" style="width:6px;height:6px;background:var(--danger);animation:none;"></span>
-            A. Patel, 71F
-          </div>
-          <div id="live-sidebar-items"></div>
-        </div>
-      </nav>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">Dashboard</div>
+
+
+    <div class="nav-item active"
+      data-view="feed" onclick="switchView('feed')"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3h12M3 7h12M3 11h8M3 15h5"/></svg>Activity Feed</div>
+
+
+    <div class="nav-item"
+      data-view="approvals" onclick="switchView('approvals')"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 1v4M5 3l1.5 2M13 3l-1.5 2M3 9h12v6a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg>Pending Approvals  <span class="nav-badge" id="approvalBadge"
+        style="display:none">0</span></div>
+
+
+    <div class="nav-item"
+      data-view="patients" onclick="switchView('patients')"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="5" r="3"/><path d="M3 17v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>Patient Panel</div>
+
+
+    <div class="nav-item"
+      data-view="encounter" onclick="switchView('encounter')"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 2h10a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2zM6 6h6M6 9h6M6 12h3"/></svg>Encounter Detail</div>
+
+  </div>
+
+  <div class="sidebar-section">
+    <div class="sidebar-label">System</div>
+
+
+    <div class="nav-item"
+      data-view="analytics" onclick="switchView('analytics')"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 15V9M7 15V5M11 15V8M15 15V3"/></svg>Analytics</div>
+
+
+    <div class="nav-item"
+      data-view="config" onclick="switchView('config')"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="9" r="3"/><path d="M9 1v3M9 14v3M1 9h3M14 9h3M3.3 3.3l2.1 2.1M12.6 12.6l2.1 2.1M3.3 14.7l2.1-2.1M12.6 5.4l2.1-2.1"/></svg>Configuration</div>
+
+  </div>
+
+  <div class="sidebar-section" style="margin-top:auto;padding-top:16px;border-top:1px solid var(--border);">
+    <div class="sidebar-label">Encounters</div>
+
+
+    <div class="nav-item" style="font-size:12px;"
+     onclick="selectPatient('thompson'); switchView('encounter')">
+  <span class="pulse-dot" style="width:6px;height:6px;"></span>
+  M. Thompson, 58F
+</div>
+
+    <div class="nav-item" style="font-size:12px;"
+     onclick="selectPatient('rodriguez'); switchView('encounter')">
+  <span class="pulse-dot" style="width:6px;height:6px;"></span>
+  J. Rodriguez, 34M
+</div>
+
+    <div class="nav-item" style="font-size:12px;"
+     onclick="selectPatient('patel'); switchView('encounter')">
+  <span class="pulse-dot"
+          style="width:6px;height:6px;background:var(--status-danger);animation:none;"></span>
+  A. Patel, 71F
+</div>
+
+
+    <div id="live-sidebar-items"></div>
+  </div>
+
+</nav>
+
 
       <!-- Main Content -->
       <main class="main">
-        <div class="paused-banner" id="pausedBanner">AGENT PAUSED -- All activity suspended. Click Resume to continue.</div>
+        <div class="paused-banner" id="pausedBanner">
+  AGENT PAUSED — All activity suspended. Click Resume to continue.
+</div>
+
 
         <!-- Activity Feed View -->
         <div class="view active" id="view-feed">
@@ -324,6 +346,7 @@
 
   <!-- Toast Container -->
   <div class="toast-container" id="toastContainer"></div>
+
 
   <!-- Welcome Overlay -->
   <div class="overlay" id="welcomeOverlay">

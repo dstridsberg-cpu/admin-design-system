@@ -1,0 +1,91 @@
+{#
+  sim_approval_card(item_id, patient_name, tool, tier, urgency, description,
+                    confidence, sla_display, sla_class, escalation_html)
+  admin_approval_card(item_id, patient_id, patient_name, action, tier,
+                      urgency, context, is_real)
+  ─────────────────────────────────────────────────────────────
+  Two variants of approval card:
+
+  sim_approval_card — simulation queue card:
+    item_id       (str)   Unique id for JS action callbacks.
+    patient_name  (str)   Full patient name.
+    tool          (str)   Tool identifier.
+    tier          (int)   Risk tier 1–4.
+    urgency       (str)   'routine' | 'urgent' | 'emergent'
+    description   (str)   Human-readable action text.
+    confidence    (float) 0.0–1.0
+    sla_display   (str)   Pre-formatted SLA countdown (e.g. '14:32').
+    sla_class     (str)   'sla-ok' | 'sla-warning' | 'sla-critical'
+    is_escalation (bool)  Shows Take Over button instead of Reject.
+    escalation_html (str) Pre-rendered escalation alert HTML.
+
+  admin_approval_card — live API approval card:
+    item_id       (str)   Unique id.
+    patient_id    (str)   Short patient ID (e.g. 'PT-1847').
+    patient_name  (str)   Full name.
+    action        (str)   Action string.
+    tier          (str)   'T1'–'T4'
+    urgency       (str)   'routine' | 'urgent' | 'emergent'
+    context       (str)   Clinical context text.
+    is_real       (bool)  Marks card as real (vs simulated).
+  ─────────────────────────────────────────────────────────────
+#}
+{% from 'components/atoms/badge.html' import badge %}
+{% from 'components/atoms/button.html' import button %}
+{% from 'components/atoms/code_label.html' import code_label %}
+
+{% macro sim_approval_card(item_id, patient_name, tool, tier, urgency,
+                            description, confidence, sla_display='',
+                            sla_class='sla-ok', is_escalation=false,
+                            escalation_html='') %}
+<div class="sim-approval-item tier-border-t{{ tier }}">
+  <div class="sim-approval-header">
+    <div>
+      {{ badge(urgency | upper, urgency) }}
+      {{ badge('T' ~ tier, 't' ~ tier) }}
+      {{ code_label(tool) }}
+    </div>
+    {%- if sla_display %}
+    <span class="sla-timer {{ sla_class }}">SLA: {{ sla_display }}</span>
+    {%- endif %}
+  </div>
+  <div class="sim-approval-body">
+    <div class="sim-approval-patient">{{ patient_name }}</div>
+    <div class="sim-approval-action">{{ description }}</div>
+    {%- if escalation_html %}{{ escalation_html | safe }}{% endif %}
+    <div style="margin-top:var(--space-3);font-size:var(--text-sm);color:var(--text-secondary);">
+      Confidence: {{ (confidence * 100) | int }}%
+    </div>
+  </div>
+  <div class="sim-approval-actions" id="sim-actions-{{ item_id }}">
+    {{ button('Approve', 'success', 'sm', 'simApproveAction(\'' ~ item_id ~ '\')') }}
+    {%- if is_escalation %}
+    {{ button('Take Over', 'primary', 'sm', 'takeOverEncounter(\'' ~ item_id ~ '\')') }}
+    {%- else %}
+    {{ button('Reject', 'warning', 'sm', 'simShowRejectForm(\'' ~ item_id ~ '\')') }}
+    {%- endif %}
+  </div>
+</div>
+{% endmacro %}
+
+{% macro admin_approval_card(item_id, patient_id, patient_name, action, tier,
+                              urgency, context, is_real=false) %}
+<div class="approval-item{{ ' real-approval' if is_real }} tier-border-{{ tier | lower }}">
+  <div class="approval-content">
+    <div class="approval-patient">
+      <span class="approval-patient-id">{{ patient_id }}</span>
+      <span class="approval-patient-name">{{ patient_name }}</span>
+    </div>
+    <div class="approval-action">{{ action }}</div>
+    <div class="approval-reason">{{ context }}</div>
+    <div class="approval-meta">
+      {{ badge(tier, 't' ~ tier[1]) }}
+      {{ badge(urgency | upper, urgency) }}
+    </div>
+  </div>
+  <div class="approval-actions">
+    {{ button('Approve', 'success', 'sm', 'approveAdminAction(\'' ~ item_id ~ '\')') }}
+    {{ button('Reject', 'danger', 'sm', 'rejectAdminAction(\'' ~ item_id ~ '\')') }}
+  </div>
+</div>
+{% endmacro %}

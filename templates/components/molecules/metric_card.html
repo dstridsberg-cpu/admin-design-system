@@ -1,0 +1,26 @@
+{#
+  metric_card(value, label, sublabel, id_value, id_sublabel)
+  ─────────────────────────────────────────────────────────────
+  Stat card used in the Analytics view.
+
+  Parameters:
+    value        (str)   Large displayed number/value. Default '—'.
+    label        (str)   Short descriptor below value. Required.
+    sublabel     (str)   Optional smaller second line. Default ''.
+    id_value     (str)   id on the value element so JS can update it.
+    id_sublabel  (str)   id on the sublabel element.
+
+  CSS classes: metric-card > metric-value  metric-label  metric-sublabel
+  ─────────────────────────────────────────────────────────────
+#}
+{% macro metric_card(value='—', label='', sublabel='', id_value='', id_sublabel='') %}
+  {%- set val_id = ' id="' ~ id_value ~ '"' if id_value else '' -%}
+  {%- set sub_id = ' id="' ~ id_sublabel ~ '"' if id_sublabel else '' -%}
+<div class="metric-card">
+  <div class="metric-value"{{ val_id }}>{{ value }}</div>
+  <div class="metric-label">{{ label }}</div>
+  {%- if sublabel or id_sublabel %}
+  <div class="metric-sublabel"{{ sub_id }}>{{ sublabel }}</div>
+  {%- endif %}
+</div>
+{% endmacro %}

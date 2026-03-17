@@ -1,0 +1,30 @@
+{#
+  text_input(id, placeholder, extra_class, type, name, value, required)
+  ─────────────────────────────────────────────────────────────
+  Single-line text / textarea input used in forms (e.g. rejection reason box).
+
+  Parameters:
+    id           (str)   HTML id. Required for JS targeting.
+    placeholder  (str)   Placeholder text. Default ''.
+    extra_class  (str)   Additional CSS classes. Default ''.
+    type         (str)   Input type: 'text' (default) | 'email' | 'search' etc.
+                         Pass 'textarea' for a multi-line box.
+    name         (str)   name attribute. Default ''.
+    value        (str)   Pre-filled value. Default ''.
+    required     (bool)  Adds required attribute. Default false.
+  ─────────────────────────────────────────────────────────────
+#}
+{% macro text_input(id, placeholder='', extra_class='', type='text',
+                    name='', value='', required=false) %}
+  {%- set name_attr = ' name="' ~ name ~ '"' if name else '' -%}
+  {%- set req_attr = ' required' if required else '' -%}
+  {%- if type == 'textarea' -%}
+<textarea id="{{ id }}" class="hero-reject-input{{ ' ' ~ extra_class if extra_class }}"
+          placeholder="{{ placeholder }}"{{ name_attr }}{{ req_attr }}>{{ value }}</textarea>
+  {%- else -%}
+<input type="{{ type }}" id="{{ id }}"
+       class="hero-reject-input{{ ' ' ~ extra_class if extra_class }}"
+       placeholder="{{ placeholder }}"{{ name_attr }}
+       value="{{ value }}"{{ req_attr }}>
+  {%- endif %}
+{% endmacro %}

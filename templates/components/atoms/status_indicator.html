@@ -1,0 +1,39 @@
+{#
+  status_indicator(text, state, id, text_id)
+  ─────────────────────────────────────────────────────────────
+  Animated pulse-dot + status label used in the top bar and sidebar.
+
+  Parameters:
+    text         (str)   Label next to the dot. Default 'Agent Active'.
+    state        (str)   'active' (default, green pulse) | 'paused' (red, no animation)
+    id           (str)   Optional id on wrapper element.
+    text_id      (str)   Optional id on the inner <span> for JS updates.
+
+  pulse_dot(size, state, id):
+    Standalone dot only, for sidebar encounter list items.
+    size  (str) CSS value for width & height. Default '8px'.
+    state (str) 'active' | 'danger' | 'inactive' (no animation)
+    id    (str) Optional id.
+  ─────────────────────────────────────────────────────────────
+#}
+{% macro status_indicator(text='Agent Active', state='active', id='', text_id='') %}
+  {%- set id_attr = ' id="' ~ id ~ '"' if id else '' -%}
+  {%- set text_id_attr = ' id="' ~ text_id ~ '"' if text_id else '' -%}
+<div class="header-status"{{ id_attr }}>
+  <span class="pulse-dot{{ ' paused' if state == 'paused' }}"></span>
+  <span{{ text_id_attr }}>{{ text }}</span>
+</div>
+{% endmacro %}
+
+{% macro pulse_dot(size='8px', state='active', id='') %}
+  {%- set id_attr = ' id="' ~ id ~ '"' if id else '' -%}
+  {%- if state == 'danger' -%}
+    <span class="pulse-dot"
+          style="width:{{ size }};height:{{ size }};background:var(--status-danger);animation:none;"{{ id_attr }}></span>
+  {%- elif state == 'inactive' -%}
+    <span class="pulse-dot"
+          style="width:{{ size }};height:{{ size }};animation:none;"{{ id_attr }}></span>
+  {%- else -%}
+    <span class="pulse-dot" style="width:{{ size }};height:{{ size }};"{{ id_attr }}></span>
+  {%- endif %}
+{% endmacro %}

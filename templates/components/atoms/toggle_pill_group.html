@@ -1,0 +1,39 @@
+{#
+  autonomy_switcher(active_level)
+  speed_control(active_speed)
+  ─────────────────────────────────────────────────────────────
+  Two macros for the top-bar pill-group selectors.
+
+  autonomy_switcher:
+    active_level (int)  Currently active level: 0 | 1 | 2 | 3 | 4.  Default 2.
+
+  speed_control:
+    active_speed (str)  Currently active speed string: '0.5' | '1' | '2' | '0'.
+                        '0' renders as "Instant". Default '1'.
+
+  Both emit the wrapper divs including their JS id hooks so the simulation
+  engine can re-read them.
+  ─────────────────────────────────────────────────────────────
+#}
+{% macro autonomy_switcher(active_level=2) %}
+<div class="autonomy-switcher">
+  <label>Autonomy</label>
+  <div class="autonomy-btns" id="autonomyBtns">
+    {%- for level in [0, 1, 2, 3, 4] %}
+    <button class="autonomy-btn{{ ' active' if level == active_level }}"
+            data-level="{{ level }}">L{{ level }}</button>
+    {%- endfor %}
+  </div>
+</div>
+{% endmacro %}
+
+{% macro speed_control(active_speed='1') %}
+{%- set speeds = [('0.5', '0.5x'), ('1', '1x'), ('2', '2x'), ('0', 'Instant')] -%}
+<div class="speed-control">
+  <span>Speed:</span>
+  {%- for value, label in speeds %}
+  <button class="speed-btn{{ ' active' if value == active_speed }}"
+          data-speed="{{ value }}">{{ label }}</button>
+  {%- endfor %}
+</div>
+{% endmacro %}

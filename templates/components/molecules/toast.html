@@ -1,0 +1,22 @@
+{#
+  toast(message, type, dismissible)
+  ─────────────────────────────────────────────────────────────
+  Single toast notification. In the demo these are JS-created;
+  this macro is used for any server-rendered initial toasts.
+
+  Parameters:
+    message      (str)   Notification text. Required.
+    type         (str)   'info' (default) | 'success' | 'warning' | 'danger'
+    dismissible  (bool)  Show × close button. Default true.
+
+  CSS classes: toast toast-{type}
+  ─────────────────────────────────────────────────────────────
+#}
+{% macro toast(message, type='info', dismissible=true) %}
+<div class="toast toast-{{ type }}">
+  <span>{{ message }}</span>
+  {%- if dismissible %}
+  <button class="toast-close" onclick="this.parentElement.remove()">&#215;</button>
+  {%- endif %}
+</div>
+{% endmacro %}

@@ -1,0 +1,49 @@
+{#
+  nav_item(label, view, icon_svg, active, onclick, badge_count, badge_id,
+           font_size, extra_class)
+  ─────────────────────────────────────────────────────────────
+  A single sidebar navigation row: icon + label + optional counter badge.
+
+  Parameters:
+    label        (str)   Display text. Required.
+    view         (str)   Value for data-view attr, used by switchView(). Default ''.
+    icon_svg     (str)   Raw inline SVG string (trusted). Default '' (no icon).
+    active       (bool)  Adds .active class. Default false.
+    onclick      (str)   Raw JS for onclick. Default ''.
+    badge_count  (int)   Number shown in nav badge. 0 = hidden. Default 0.
+    badge_id     (str)   id on the badge <span> so JS can update it.
+    font_size    (str)   Optional inline font-size override (e.g. '12px').
+                         Used for encounter mini-items. Default ''.
+    extra_class  (str)   Additional CSS classes on wrapper. Default ''.
+
+  encounter_nav_item(label, onclick, dot_state):
+    Compact patient encounter link with animated pulse dot.
+    dot_state (str) 'active' | 'danger' — matches pulse_dot atom states.
+  ─────────────────────────────────────────────────────────────
+#}
+{% from 'components/atoms/status_indicator.html' import pulse_dot %}
+
+{% macro nav_item(label, view='', icon_svg='', active=false, onclick='',
+                  badge_count=0, badge_id='', font_size='', extra_class='') %}
+  {%- set active_cls = ' active' if active else '' -%}
+  {%- set view_attr = ' data-view="' ~ view ~ '"' if view else '' -%}
+  {%- set onclick_attr = ' onclick="' ~ onclick ~ '"' if onclick else '' -%}
+  {%- set style_attr = ' style="font-size:' ~ font_size ~ ';"' if font_size else '' -%}
+<div class="nav-item{{ active_cls }}{{ ' ' ~ extra_class if extra_class }}"
+     {{ view_attr }}{{ onclick_attr }}{{ style_attr }}>
+  {%- if icon_svg %}{{ icon_svg | safe }}{% endif -%}
+  {{ label }}
+  {%- if badge_count is defined and badge_id %}
+  <span class="nav-badge" id="{{ badge_id }}"
+        style="{{ 'display:none' if badge_count == 0 }}">{{ badge_count }}</span>
+  {%- endif %}
+</div>
+{% endmacro %}
+
+{% macro encounter_nav_item(label, onclick='', dot_state='active') %}
+<div class="nav-item" style="font-size:12px;"
+     {{ 'onclick="' ~ onclick ~ '"' if onclick | safe }}>
+  {{ pulse_dot(size='6px', state=dot_state) }}
+  {{ label }}
+</div>
+{% endmacro %}
