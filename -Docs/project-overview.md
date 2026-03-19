@@ -12,15 +12,42 @@ The product is early-stage. Rather than designing screens in isolation, we're bu
 
 The showcase also serves as a living reference: what does a button look like? What's our heading scale? What color means "warning"? It answers these questions in the browser, with real rendered output, not static mockups.
 
+## Where did it come from?
+
+The design system grew out of a working prototype built by Bogdan — a fully functional interactive demo of the Supervisor Console, written as a single self-contained HTML file with all styles defined inline in a `<style>` block.
+
+The inline approach was fine for prototyping, but it made visual control difficult: changing a color or font size meant hunting through hundreds of hardcoded values scattered across the file. There was no single place to make a design decision — every change had to be applied manually, in multiple places, with no guarantee of consistency.
+
+The first major step was extracting all of those inline styles into two separate CSS files: `tokens.css` and `components.css`. Every hardcoded color, font size, spacing value, border radius, and shadow was replaced with a CSS custom property (a variable). This meant that a decision like "what is our primary text color?" now lives in exactly one place — and changing it updates the entire interface instantly.
+
+This gave the designer (rather than just the developer) direct control over the visual language. Adjusting the type scale, redefining a color, or changing the border radius of cards is now a one-line edit in `tokens.css`, with no risk of missing an instance.
+
 ## What does it consist of?
 
 **Two CSS files** drive everything:
-- `tokens.css` — all design decisions as variables: color, type scale, spacing, radius, shadows, icons
-- `components.css` — all UI components, built entirely from those tokens
+- `-styles/tokens.css` — all design decisions as variables: color, type scale, spacing, radius, shadows, icons
+- `-styles/components.css` — all UI components, built entirely from those tokens
 
-**A showcase** (`-showcase/`) — a Flask-served HTML page that documents every token and component with live rendered examples and usage specs. Think of it as a Storybook, but simpler.
+Any page that links both files in order gets the full design system. Visual changes are made exclusively in these files — the HTML never needs to change for a design update.
 
-**A demo** (`bogdan-demo-rendered.html`) — a standalone interactive prototype of the Supervisor Console: the main product surface. Physicians can watch AI agents work through patient encounters, approve actions, and manage multiple cases simultaneously.
+This approach was chosen for designer control. Having all styles in two predictable files makes it straightforward to find, change, and reason about any visual decision without touching component markup. Anton has noted that the longer-term ambition is to allow macros to carry their own inline CSS using CSS variables — keeping styles closer to the component they belong to. For now, the centralised two-file approach is the right tradeoff: it's simpler to manage and gives the designer a clear single place to work.
+
+**A showcase** (`-showcase/`) — a Flask-served HTML page that documents every token and component with live rendered examples and usage specs. Think of it as a Storybook, but simpler. Served locally at `localhost:5001`.
+
+**A demo** (`bogdan-demo-rendered.html`) — Bogdan's original prototype, now refactored to consume the design system. It's a standalone HTML file (no server needed) showing the Supervisor Console working end-to-end: live agent activity, patient encounters, approvals, analytics, and configuration.
+
+### Jinja compatibility
+
+The showcase and its components are built with **Jinja2** templating, served by a small Flask app. Each UI component is a Jinja macro — a reusable template function that accepts parameters and renders HTML. This means components are defined once and can be composed to build new screens, much like a component library in React or SwiftUI, but staying entirely within HTML and CSS.
+
+For example, the top bar is a single macro call:
+```
+{{ top_bar(active_autonomy=2, active_speed='1') }}
+```
+
+The macro handles all the internal structure. Changing how the top bar looks means editing the macro and the CSS — every screen using it updates automatically.
+
+This architecture means the design system can grow into a real front-end framework for Admin's UI: new screens are assembled from existing macros, styled by existing tokens, with no redundant code.
 
 ## Where are we as of 2026-03-19?
 
