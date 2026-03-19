@@ -1,7 +1,7 @@
 from flask import Flask, render_template, redirect, send_from_directory
 import os
 
-BASE = os.path.dirname(__file__)
+BASE = os.path.dirname(os.path.dirname(__file__))  # project root
 app = Flask(__name__, template_folder='templates', static_folder=BASE, static_url_path='/static')
 
 @app.route('/')

@@ -22,10 +22,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Admin.ai — Design System</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/static/tokens.css">
-  <link rel="stylesheet" href="/static/components.css">
+  <title>Admin — Design System</title>
+  <!-- Load Aktiv Grotesk from your font provider (Adobe Fonts, Fonts.com, or @font-face) -->
+  <!-- <link rel="stylesheet" href="YOUR_AKTIV_GROTESK_URL"> -->
+  <!-- Tiempos Headline Light — used via --brand-font for optional brand accent headings -->
+  <link href="https://db.onlinewebfonts.com/c/e4b6f66c5987eea12c8847782bc851f6?family=Tiempos+Headline+Light" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="/static/-styles/tokens.css">
+  <link rel="stylesheet" href="/static/-styles/components.css">
   <style>
     /* ── Showcase chrome ── */
     * { box-sizing: border-box; }
@@ -37,7 +41,8 @@
     body {
       background: var(--surface-bg);
       font-family: var(--body-font);
-      font-size: var(--text-lg);
+      font-size: var(--text-md);
+      line-height: 1.5;
       color: var(--text-primary);
       overflow-y: scroll;
     }
@@ -54,13 +59,12 @@
     }
     .sc-header-left { display: flex; align-items: center; gap: var(--space-8); }
     .sc-wordmark { font-family: var(--heading-font); font-size: var(--text-3xl); color: var(--text-primary); }
-    .sc-wordmark span { color: var(--text-tertiary); font-style: italic; font-size: var(--text-xl); }
+    .sc-wordmark span { color: var(--text-tertiary); font-size: var(--text-3xl); }
     .sc-header-pills { display: flex; gap: var(--space-2); }
     .sc-header-pill {
       padding: var(--space-2) var(--space-6);
       border-radius: var(--badge-radius);
-      font-size: var(--text-base);
-      font-weight: 500;
+      font-size: var(--text-md);
       color: var(--text-secondary);
       text-decoration: none;
       transition: all var(--ease-default);
@@ -107,34 +111,159 @@
       position: sticky; top: 52px;
       height: calc(100vh - 52px);
       overflow-y: auto;
-      padding: var(--space-12) 0;
+      width: 200px;
+      flex-shrink: 0;
+      padding: var(--space-8) 0 var(--space-16);
       border-right: 1px solid var(--border-default);
       background: var(--surface-primary);
     }
     .sc-nav-section {
-      padding: 0 var(--space-8);
-      margin-bottom: var(--space-8);
+      padding: 0 var(--space-6);
+      margin-bottom: var(--space-4);
+    }
+    .sc-nav-section + .sc-nav-section {
+      margin-top: var(--space-4);
+      padding-top: var(--space-4);
+      border-top: 1px solid var(--border-default);
     }
     .sc-nav-label {
       font-size: var(--text-sm);
-      font-weight: 700;
+      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
       color: var(--text-tertiary);
-      padding: 0 var(--space-4);
-      margin-bottom: var(--space-3);
+      padding: var(--space-2) var(--space-3);
+      margin-bottom: var(--space-2);
+    }
+    .sc-nav-group-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-2) var(--space-3);
+      margin-bottom: var(--space-1);
+      font-size: var(--text-md);
+      font-weight: 500;
+      color: var(--text-primary);
+      text-decoration: none;
+    }
+    .sc-nav-count {
+      font-size: var(--text-md);
+      color: var(--text-tertiary);
+      background: var(--surface-tertiary);
+      padding: 1px 6px;
+      border-radius: var(--radius-full);
+      font-weight: 400;
     }
     .sc-nav-link {
       display: block;
-      padding: var(--space-3) var(--space-4);
+      padding: var(--space-2) var(--space-3);
       border-radius: var(--radius-md);
       font-size: var(--text-md);
       color: var(--text-secondary);
       text-decoration: none;
       transition: all var(--ease-default);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .sc-nav-link:hover { background: var(--surface-secondary); color: var(--text-primary); }
     .sc-nav-link.active { background: var(--accent-bg); color: var(--accent); font-weight: 500; }
+    .sc-nav-children {
+      padding-left: var(--space-3);
+      border-left: 1px solid var(--border-default);
+      margin-left: var(--space-3);
+      margin-bottom: var(--space-2);
+    }
+    .sc-nav-children .sc-nav-link {
+      font-size: var(--text-md);
+      color: var(--text-tertiary);
+      padding: var(--space-1) var(--space-3);
+    }
+    .sc-nav-children .sc-nav-link:hover { color: var(--text-primary); background: var(--surface-secondary); }
+    .sc-nav-children .sc-nav-link.active { color: var(--accent); background: var(--accent-bg); font-weight: 500; }
+
+    /* Intro section */
+    .sc-intro {
+      max-width: 720px;
+      margin-bottom: 72px;
+    }
+    .sc-intro-title {
+      margin: 0 0 var(--space-4);
+      font-family: var(--brand-font);
+      font-weight: 300;
+      letter-spacing: -0.5px;
+    }
+    .sc-intro-subtitle {
+      font-size: var(--text-3xl);
+      color: var(--text-secondary);
+      font-weight: 400;
+      line-height: 1.6;
+      margin: 0 0 var(--space-12);
+    }
+    .sc-intro-body {
+      font-size: var(--text-md);
+      color: var(--text-secondary);
+      line-height: 1.5;
+      margin: 0 0 var(--space-10);
+    }
+    .sc-intro-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-6);
+      margin-bottom: var(--space-12);
+    }
+    .sc-intro-card {
+      background: var(--surface-primary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--card-radius);
+      padding: var(--space-10);
+    }
+    .sc-intro-card-label {
+      font-size: var(--text-sm);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-tertiary);
+      margin-bottom: var(--space-4);
+    }
+    .sc-intro-card-title {
+      font-size: var(--text-lg);
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: var(--space-3);
+    }
+    .sc-intro-card-body {
+      font-size: var(--text-md);
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+    .sc-intro-divider {
+      border: none;
+      border-top: 1px solid var(--border-default);
+      margin: var(--space-12) 0;
+    }
+    .sc-intro-meta {
+      display: flex;
+      gap: var(--space-8);
+      flex-wrap: wrap;
+    }
+    .sc-intro-meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-1);
+    }
+    .sc-intro-meta-label {
+      font-size: var(--text-sm);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-tertiary);
+    }
+    .sc-intro-meta-value {
+      font-size: var(--text-md);
+      color: var(--text-primary);
+      font-weight: 500;
+    }
 
     /* Main content */
     .sc-main {
@@ -151,9 +280,6 @@
       border-bottom: 2px solid var(--border-default);
     }
     .sc-section-title {
-      font-family: var(--heading-font);
-      font-size: var(--text-6xl);
-      font-weight: 400;
       margin: 0;
     }
     .sc-section-desc { font-size: var(--text-md); color: var(--text-secondary); margin: 0; }
@@ -172,23 +298,48 @@
       border-bottom: 1px solid var(--border-default);
       background: var(--surface-secondary);
     }
-    .sc-component-name {
-      font-family: var(--code-font);
-      font-size: var(--text-2xl);
-      font-weight: 600;
-      color: var(--text-primary);
-      margin: 0;
+    .sc-component-name { margin: 0; }
+    .sc-component-file { color: var(--text-tertiary); margin-left: var(--space-2); }
+    .sc-component-desc { color: var(--text-secondary); margin: 0; margin-left: auto; }
+
+    /* Text styles */
+    .sc-text-style {
+      display: grid;
+      grid-template-columns: 140px 1fr auto;
+      align-items: baseline;
+      gap: var(--space-8);
+      padding: var(--space-8) var(--space-10);
+      border-bottom: 1px solid var(--border-default);
     }
-    .sc-component-file {
+    .sc-text-style:last-child { border-bottom: none; }
+    .sc-text-style-name {
       font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding-top: 2px;
+    }
+    .sc-text-style-spec {
+      font-size: var(--text-base-2);
       color: var(--text-tertiary);
       font-family: var(--code-font);
+      text-align: right;
+      white-space: nowrap;
     }
-    .sc-component-desc {
+
+    .sc-category-desc {
       font-size: var(--text-md);
       color: var(--text-secondary);
+      padding: var(--space-6) var(--space-10);
       margin: 0;
-      margin-left: auto;
+      border-bottom: 1px solid var(--border-default);
+    }
+    .sc-swatch-usage {
+      font-size: var(--text-base-2);
+      color: var(--text-tertiary);
+      margin-top: var(--space-1);
+      line-height: 1.4;
     }
 
     /* Variant group */
@@ -196,9 +347,9 @@
     .sc-variant:last-child { border-bottom: none; }
     .sc-variant-label {
       font-size: var(--text-sm);
-      font-weight: 700;
+      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 0.5px;
       color: var(--text-tertiary);
       margin-bottom: var(--space-8);
     }
@@ -320,7 +471,7 @@
 <!-- ── Showcase header ── -->
 <header class="sc-header">
   <div class="sc-header-left">
-    <span class="sc-wordmark">Admin.ai <span>Design System</span></span>
+    <span class="sc-wordmark">Admin <span>Design System</span></span>
     <nav class="sc-header-pills">
       <a class="sc-header-pill" href="#tokens">Tokens</a>
       <a class="sc-header-pill" href="#atoms">Atoms</a>
@@ -337,48 +488,144 @@
 <div class="sc-layout">
 
   <!-- ── Side nav ── -->
-  <nav class="sc-nav">
+  <nav class="sc-nav" id="sc-nav">
+
     <div class="sc-nav-section">
-      <div class="sc-nav-label">Tokens</div>
-      <a class="sc-nav-link" href="#tokens-color">Color</a>
-      <a class="sc-nav-link" href="#tokens-semantic">Semantic</a>
-      <a class="sc-nav-link" href="#tokens-spacing">Spacing</a>
-      <a class="sc-nav-link" href="#tokens-type">Type</a>
-      <a class="sc-nav-link" href="#tokens-radius">Radius</a>
-      <a class="sc-nav-link" href="#tokens-shadow">Shadow</a>
+      <a class="sc-nav-group-header" href="#intro">Overview</a>
     </div>
+
     <div class="sc-nav-section">
-      <div class="sc-nav-label">Atoms</div>
-      <a class="sc-nav-link" href="#atom-badge">badge</a>
-      <a class="sc-nav-link" href="#atom-button">button</a>
-      <a class="sc-nav-link" href="#atom-pills">toggle pills</a>
-      <a class="sc-nav-link" href="#atom-status">status indicator</a>
-      <a class="sc-nav-link" href="#atom-section-label">section label</a>
-      <a class="sc-nav-link" href="#atom-code-label">code label</a>
-      <a class="sc-nav-link" href="#atom-confidence">confidence</a>
-      <a class="sc-nav-link" href="#atom-text-input">text input</a>
-      <a class="sc-nav-link" href="#atom-kbd">kbd hint</a>
+      <div class="sc-nav-label">Foundations</div>
+
+      <div class="sc-nav-group-header">Color</div>
+      <div class="sc-nav-children">
+        <a class="sc-nav-link" href="#tokens-color">Primitives</a>
+        <a class="sc-nav-link" href="#tokens-surfaces">Surfaces</a>
+        <a class="sc-nav-link" href="#tokens-text">Text</a>
+        <a class="sc-nav-link" href="#tokens-borders">Borders</a>
+        <a class="sc-nav-link" href="#tokens-interactive">Interactive</a>
+        <a class="sc-nav-link" href="#tokens-status">Status</a>
+        <a class="sc-nav-link" href="#tokens-tier">Tier system</a>
+        <a class="sc-nav-link" href="#tokens-autonomy">Autonomy</a>
+      </div>
+
+      <div class="sc-nav-group-header">Typography</div>
+      <div class="sc-nav-children">
+        <a class="sc-nav-link" href="#tokens-type">Type scale</a>
+        <a class="sc-nav-link" href="#tokens-typography">Typefaces</a>
+        <a class="sc-nav-link" href="#tokens-heading-scale">Heading scale</a>
+        <a class="sc-nav-link" href="#tokens-text-styles">Text styles</a>
+      </div>
+
+      <a class="sc-nav-group-header" href="#tokens-spacing">Spacing</a>
+      <a class="sc-nav-group-header" href="#tokens-radius">Radius</a>
+      <a class="sc-nav-group-header" href="#tokens-shadow">Shadow</a>
+      <a class="sc-nav-group-header" href="#tokens-icons">Icons</a>
     </div>
+
     <div class="sc-nav-section">
-      <div class="sc-nav-label">Molecules</div>
-      <a class="sc-nav-link" href="#mol-nav-item">nav item</a>
-      <a class="sc-nav-link" href="#mol-feed-item">feed item</a>
-      <a class="sc-nav-link" href="#mol-approval">approval card</a>
-      <a class="sc-nav-link" href="#mol-patient">patient card</a>
-      <a class="sc-nav-link" href="#mol-toast">toast</a>
-      <a class="sc-nav-link" href="#mol-alert">alert banner</a>
-      <a class="sc-nav-link" href="#mol-metric">metric card</a>
+      <div class="sc-nav-label">Components</div>
+
+      <div class="sc-nav-group-header">
+        Atoms <span class="sc-nav-count">9</span>
+      </div>
+      <div class="sc-nav-children">
+        <a class="sc-nav-link" href="#atom-badge">Badge</a>
+        <a class="sc-nav-link" href="#atom-button">Button</a>
+        <a class="sc-nav-link" href="#atom-pills">Toggle pills</a>
+        <a class="sc-nav-link" href="#atom-status">Status indicator</a>
+        <a class="sc-nav-link" href="#atom-section-label">Section label</a>
+        <a class="sc-nav-link" href="#atom-code-label">Code label</a>
+        <a class="sc-nav-link" href="#atom-confidence">Confidence</a>
+        <a class="sc-nav-link" href="#atom-text-input">Text input</a>
+        <a class="sc-nav-link" href="#atom-kbd">Kbd hint</a>
+      </div>
+
+      <div class="sc-nav-group-header">
+        Molecules <span class="sc-nav-count">7</span>
+      </div>
+      <div class="sc-nav-children">
+        <a class="sc-nav-link" href="#mol-nav-item">Nav item</a>
+        <a class="sc-nav-link" href="#mol-feed-item">Feed item</a>
+        <a class="sc-nav-link" href="#mol-approval">Approval card</a>
+        <a class="sc-nav-link" href="#mol-patient">Patient card</a>
+        <a class="sc-nav-link" href="#mol-toast">Toast</a>
+        <a class="sc-nav-link" href="#mol-alert">Alert banner</a>
+        <a class="sc-nav-link" href="#mol-metric">Metric card</a>
+      </div>
+
+      <div class="sc-nav-group-header">
+        Organisms <span class="sc-nav-count">3</span>
+      </div>
+      <div class="sc-nav-children">
+        <a class="sc-nav-link" href="#org-topbar">Top bar</a>
+        <a class="sc-nav-link" href="#org-sidebar">Sidebar</a>
+        <a class="sc-nav-link" href="#org-toast-stack">Toast stack</a>
+      </div>
     </div>
-    <div class="sc-nav-section">
-      <div class="sc-nav-label">Organisms</div>
-      <a class="sc-nav-link" href="#org-topbar">top bar</a>
-      <a class="sc-nav-link" href="#org-sidebar">sidebar</a>
-      <a class="sc-nav-link" href="#org-toast-stack">toast stack</a>
-    </div>
+
   </nav>
 
   <!-- ── Main content ── -->
   <main class="sc-main">
+
+
+    <!-- ════════════════════════════════════════════════════════
+         INTRO
+         ════════════════════════════════════════════════════════ -->
+    <section id="intro" class="sc-intro">
+
+      <h1 class="sc-intro-title">Admin Design System</h1>
+      <p class="sc-intro-subtitle">Everything you need to build a new demo consistently and quickly.</p>
+
+      <p class="sc-intro-body">
+        This showcase is the reference for all visual components used across demos. Every component is implemented as a <strong>Jinja2 macro</strong> — import what you need, call it with parameters, and the HTML renders correctly styled without writing any CSS. All visual decisions live in <code>tokens.css</code>, which is the only file the designer updates. Pull the latest version of that file and your demo automatically reflects the current design.
+      </p>
+
+      <div class="sc-intro-grid">
+        <div class="sc-intro-card">
+          <div class="sc-intro-card-label">Starting a new demo</div>
+          <div class="sc-intro-card-title">Link two files</div>
+          <div class="sc-intro-card-body">Add <code>tokens.css</code> and <code>components.css</code> to your HTML head. That's the full styling setup — no build step, no npm, no preprocessor required.</div>
+        </div>
+        <div class="sc-intro-card">
+          <div class="sc-intro-card-label">Using components</div>
+          <div class="sc-intro-card-title">Jinja2 macros</div>
+          <div class="sc-intro-card-body">Each component lives in <code>-showcase/templates/components/</code> as a <code>.html</code> macro file. Import the macro at the top of your template, then call it anywhere with the parameters shown in this showcase.</div>
+        </div>
+        <div class="sc-intro-card">
+          <div class="sc-intro-card-label">Keeping up with design</div>
+          <div class="sc-intro-card-title">Pull tokens.css</div>
+          <div class="sc-intro-card-body">The designer updates <code>tokens.css</code> only. Pull the latest version into your demo and all colors, spacing, typography, and radii update in one go — no component changes needed.</div>
+        </div>
+      </div>
+
+      <hr class="sc-intro-divider">
+
+      <div class="sc-intro-meta">
+        <div class="sc-intro-meta-item">
+          <span class="sc-intro-meta-label">Templating</span>
+          <span class="sc-intro-meta-value">Jinja2 / Flask</span>
+        </div>
+        <div class="sc-intro-meta-item">
+          <span class="sc-intro-meta-label">Styling</span>
+          <span class="sc-intro-meta-value">tokens.css + components.css</span>
+        </div>
+        <div class="sc-intro-meta-item">
+          <span class="sc-intro-meta-label">Icons</span>
+          <span class="sc-intro-meta-value">Lucide (CDN)</span>
+        </div>
+        <div class="sc-intro-meta-item">
+          <span class="sc-intro-meta-label">Components</span>
+          <span class="sc-intro-meta-value">19 total — 9 atoms, 7 molecules, 3 organisms</span>
+        </div>
+        <div class="sc-intro-meta-item">
+          <span class="sc-intro-meta-label">Themes</span>
+          <span class="sc-intro-meta-value">Light + Dark</span>
+        </div>
+      </div>
+
+    </section>
 
 
     <!-- ════════════════════════════════════════════════════════
@@ -423,7 +670,6 @@
               ('--green-50','#f0fdf4'),('--green-100','#d1fae5'),('--green-500','#10b981'),('--green-600','#059669'),
               ('--amber-50','#fffbeb'),('--amber-100','#fef3c7'),('--amber-500','#f59e0b'),('--amber-600','#d97706'),
               ('--red-50','#fef2f2'),('--red-100','#fee2e2'),('--red-500','#ef4444'),('--red-600','#dc2626'),
-              ('--orange-50','#fff7ed'),('--orange-100','#ffedd5'),('--orange-500','#f97316'),('--orange-600','#ea580c'),
               ('--blue-50','#eff6ff'),('--blue-100','#dbeafe'),('--blue-500','#3b82f6'),('--blue-600','#2563eb'),
               ('--purple-100','#ede9fe'),('--purple-200','#ddd6fe'),('--purple-500','#8b5cf6'),('--purple-600','#7c3aed')
             ] %}
@@ -437,76 +683,291 @@
         </div>
       </div>
 
-      <!-- Semantic tokens -->
-      <div class="sc-component" id="tokens-semantic">
+      <!-- Surfaces -->
+      <div class="sc-component" id="tokens-surfaces">
         <div class="sc-component-header">
-          <h3 class="sc-component-name">Semantic Tokens</h3>
-          <span class="sc-component-file">tokens.css § 2</span>
+          <h3 class="sc-component-name">Surfaces</h3>
+          <span class="sc-component-file">--surface-*</span>
         </div>
-
+        <p class="sc-category-desc">Background layers that create depth in the UI. Stack from darkest (outermost) to lightest (innermost). Never use grey primitives directly — always reference a surface token.</p>
         <div class="sc-variant">
-          <div class="sc-variant-label">Surfaces &amp; Text</div>
           <div class="sc-token-grid">
-            {% for name in ['--surface-bg','--surface-primary','--surface-secondary',
-                            '--surface-tertiary','--surface-header','--surface-sidebar'] %}
             <div class="sc-swatch">
-              <div class="sc-swatch-box" style="background:var({{ name }});border:1px solid var(--border-default);"></div>
-              <div class="sc-swatch-name">{{ name }}</div>
+              <div class="sc-swatch-box" style="background:var(--surface-bg);border:1px solid var(--border-default);"></div>
+              <div class="sc-swatch-name">--surface-bg</div>
+              <div class="sc-swatch-usage">Page/viewport background. The outermost layer.</div>
             </div>
-            {% endfor %}
-            {% for name in ['--text-primary','--text-secondary','--text-tertiary','--text-inverse',
-                            '--text-link','--accent','--accent-hover','--accent-bg'] %}
             <div class="sc-swatch">
-              <div class="sc-swatch-box" style="background:var({{ name }});border:1px solid var(--border-default);"></div>
-              <div class="sc-swatch-name">{{ name }}</div>
+              <div class="sc-swatch-box" style="background:var(--surface-primary);border:1px solid var(--border-default);"></div>
+              <div class="sc-swatch-name">--surface-primary</div>
+              <div class="sc-swatch-usage">Cards, panels, modals, dropdowns.</div>
+            </div>
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--surface-secondary);border:1px solid var(--border-default);"></div>
+              <div class="sc-swatch-name">--surface-secondary</div>
+              <div class="sc-swatch-usage">Hover states, nested surfaces, table row hover.</div>
+            </div>
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--surface-tertiary);border:1px solid var(--border-default);"></div>
+              <div class="sc-swatch-name">--surface-tertiary</div>
+              <div class="sc-swatch-usage">Active/selected states, code blocks, inset areas.</div>
+            </div>
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--surface-header);border:1px solid var(--border-default);"></div>
+              <div class="sc-swatch-name">--surface-header</div>
+              <div class="sc-swatch-usage">Top navigation bar. Translucent with backdrop blur.</div>
+            </div>
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--surface-sidebar);border:1px solid var(--border-default);"></div>
+              <div class="sc-swatch-name">--surface-sidebar</div>
+              <div class="sc-swatch-usage">Left sidebar. Translucent with backdrop blur.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Text -->
+      <div class="sc-component" id="tokens-text">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">Text</h3>
+          <span class="sc-component-file">--text-*</span>
+        </div>
+        <p class="sc-category-desc">Text color roles. Always use these — never reference grey primitives directly in text. The three main roles (primary, secondary, tertiary) form a hierarchy of emphasis.</p>
+        <div class="sc-variant">
+          <div class="sc-token-grid">
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--text-primary);border:1px solid var(--border-default);"></div>
+              <div class="sc-swatch-name">--text-primary</div>
+              <div class="sc-swatch-usage">Headings, names, key data. Highest emphasis.</div>
+            </div>
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--text-secondary);border:1px solid var(--border-default);"></div>
+              <div class="sc-swatch-name">--text-secondary</div>
+              <div class="sc-swatch-usage">Body text, descriptions. Medium emphasis.</div>
+            </div>
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--text-tertiary);border:1px solid var(--border-default);"></div>
+              <div class="sc-swatch-name">--text-tertiary</div>
+              <div class="sc-swatch-usage">Labels, timestamps, placeholders. Lowest emphasis.</div>
+            </div>
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--text-inverse);border:1px solid var(--border-default);"></div>
+              <div class="sc-swatch-name">--text-inverse</div>
+              <div class="sc-swatch-usage">Text on dark or filled backgrounds (e.g. filled buttons).</div>
+            </div>
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--text-link);border:1px solid var(--border-default);"></div>
+              <div class="sc-swatch-name">--text-link</div>
+              <div class="sc-swatch-usage">Clickable inline text links.</div>
+            </div>
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--text-on-dark);border:1px solid var(--border-default);"></div>
+              <div class="sc-swatch-name">--text-on-dark</div>
+              <div class="sc-swatch-usage">Text inside the AI agent dark panel and code blocks.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Borders -->
+      <div class="sc-component" id="tokens-borders">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">Borders</h3>
+          <span class="sc-component-file">--border-*</span>
+        </div>
+        <p class="sc-category-desc">Border and divider colors at three levels of visibility. Use subtle for floating elements, default for standard structure, strong for prominent dividers.</p>
+        <div class="sc-variant">
+          <div class="sc-token-grid">
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--border-subtle);border:1px solid var(--border-default);"></div>
+              <div class="sc-swatch-name">--border-subtle</div>
+              <div class="sc-swatch-usage">Very faint borders on floating cards and overlays.</div>
+            </div>
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--border-default);border:1px solid var(--border-default);"></div>
+              <div class="sc-swatch-name">--border-default</div>
+              <div class="sc-swatch-usage">Standard borders on inputs, cards, and containers.</div>
+            </div>
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--border-strong);border:1px solid var(--border-default);"></div>
+              <div class="sc-swatch-name">--border-strong</div>
+              <div class="sc-swatch-usage">Prominent dividers, header bottom edge, section breaks.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive -->
+      <div class="sc-component" id="tokens-interactive">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">Interactive</h3>
+          <span class="sc-component-file">--accent-*</span>
+        </div>
+        <p class="sc-category-desc">The primary interactive color. Used for focus rings, active nav items, primary buttons, and links. All interactive states are derived from this single accent hue.</p>
+        <div class="sc-variant">
+          <div class="sc-token-grid">
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--accent);border:1px solid var(--border-default);"></div>
+              <div class="sc-swatch-name">--accent</div>
+              <div class="sc-swatch-usage">Primary action color. Buttons, links, active indicators, focus rings.</div>
+            </div>
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--accent-hover);border:1px solid var(--border-default);"></div>
+              <div class="sc-swatch-name">--accent-hover</div>
+              <div class="sc-swatch-usage">Hover state of accent-colored elements.</div>
+            </div>
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--accent-bg);border:1px solid var(--border-default);"></div>
+              <div class="sc-swatch-name">--accent-bg</div>
+              <div class="sc-swatch-usage">Accent tint background. Active nav item fill, selected rows.</div>
+            </div>
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--accent-subtle);border:1px solid var(--border-default);"></div>
+              <div class="sc-swatch-name">--accent-subtle</div>
+              <div class="sc-swatch-usage">Very faint accent tint. Hover backgrounds on interactive elements.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status -->
+      <div class="sc-component" id="tokens-status">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">Status</h3>
+          <span class="sc-component-file">--status-*</span>
+        </div>
+        <p class="sc-category-desc">Semantic status colors mapped to clinical outcomes. Each status has three roles: the foreground color (icons, dots, borders), a background tint (pill/badge fill), and a text color (label inside the tint).</p>
+        <div class="sc-variant">
+          <div class="sc-variant-label">Success — Routine</div>
+          <div class="sc-token-grid">
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--status-success);"></div>
+              <div class="sc-swatch-name">--status-success</div>
+              <div class="sc-swatch-usage">Foreground: status dots, icons, badge borders.</div>
+            </div>
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--status-success-bg);border:1px solid var(--border-default);"></div>
+              <div class="sc-swatch-name">--status-success-bg</div>
+              <div class="sc-swatch-usage">Background: badge/pill fill, alert banner background.</div>
+            </div>
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--status-success-text);"></div>
+              <div class="sc-swatch-name">--status-success-text</div>
+              <div class="sc-swatch-usage">Text: label text inside success-tinted backgrounds.</div>
+            </div>
+          </div>
+        </div>
+        <div class="sc-variant">
+          <div class="sc-variant-label">Warning — Attention</div>
+          <div class="sc-token-grid">
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--status-warning);"></div>
+              <div class="sc-swatch-name">--status-warning</div>
+              <div class="sc-swatch-usage">Foreground: status dots, icons, badge borders.</div>
+            </div>
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--status-warning-bg);border:1px solid var(--border-default);"></div>
+              <div class="sc-swatch-name">--status-warning-bg</div>
+              <div class="sc-swatch-usage">Background: badge/pill fill, alert banner background.</div>
+            </div>
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--status-warning-text);"></div>
+              <div class="sc-swatch-name">--status-warning-text</div>
+              <div class="sc-swatch-usage">Text: label text inside warning-tinted backgrounds.</div>
+            </div>
+          </div>
+        </div>
+        <div class="sc-variant">
+          <div class="sc-variant-label">Danger — High Risk</div>
+          <div class="sc-token-grid">
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--status-danger);"></div>
+              <div class="sc-swatch-name">--status-danger</div>
+              <div class="sc-swatch-usage">Foreground: status dots, icons, badge borders.</div>
+            </div>
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--status-danger-bg);border:1px solid var(--border-default);"></div>
+              <div class="sc-swatch-name">--status-danger-bg</div>
+              <div class="sc-swatch-usage">Background: badge/pill fill, alert banner background.</div>
+            </div>
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--status-danger-text);"></div>
+              <div class="sc-swatch-name">--status-danger-text</div>
+              <div class="sc-swatch-usage">Text: label text inside danger-tinted backgrounds.</div>
+            </div>
+          </div>
+        </div>
+        <div class="sc-variant">
+          <div class="sc-variant-label">Info — Informational</div>
+          <div class="sc-token-grid">
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--status-info);"></div>
+              <div class="sc-swatch-name">--status-info</div>
+              <div class="sc-swatch-usage">Foreground: status dots, icons, badge borders.</div>
+            </div>
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--status-info-bg);border:1px solid var(--border-default);"></div>
+              <div class="sc-swatch-name">--status-info-bg</div>
+              <div class="sc-swatch-usage">Background: badge/pill fill, info banner background.</div>
+            </div>
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--status-info-text);"></div>
+              <div class="sc-swatch-name">--status-info-text</div>
+              <div class="sc-swatch-usage">Text: label text inside info-tinted backgrounds.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tier System -->
+      <div class="sc-component" id="tokens-tier">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">Tier System</h3>
+          <span class="sc-component-file">--tier-*</span>
+        </div>
+        <p class="sc-category-desc">Clinical risk tiers T1–T4, ordered low to high severity. Each tier has three roles: foreground (dot/icon), background tint (pill fill), and text (label inside tint). Used in patient cards, sidebar indicators, and badges.</p>
+        <div class="sc-variant">
+          <div class="sc-token-grid">
+            {% for tier, label in [('1','T1 — Routine'),('2','T2 — Attention'),('3','T3 — Elevated'),('4','T4 — Critical')] %}
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--tier-{{ tier }});"></div>
+              <div class="sc-swatch-name">--tier-{{ tier }}</div>
+              <div class="sc-swatch-usage">{{ label }} — foreground</div>
+            </div>
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--tier-{{ tier }}-bg);border:1px solid var(--border-default);"></div>
+              <div class="sc-swatch-name">--tier-{{ tier }}-bg</div>
+              <div class="sc-swatch-usage">{{ label }} — background tint</div>
+            </div>
+            <div class="sc-swatch">
+              <div class="sc-swatch-box" style="background:var(--tier-{{ tier }}-text);"></div>
+              <div class="sc-swatch-name">--tier-{{ tier }}-text</div>
+              <div class="sc-swatch-usage">{{ label }} — text on tint</div>
             </div>
             {% endfor %}
           </div>
         </div>
+      </div>
 
-        <div class="sc-variant">
-          <div class="sc-variant-label">Status semantic</div>
-          <div class="sc-token-grid">
-            {% for name in [
-              '--status-success','--status-success-bg','--status-success-text',
-              '--status-warning','--status-warning-bg','--status-warning-text',
-              '--status-danger','--status-danger-bg','--status-danger-text',
-              '--status-info','--status-info-bg','--status-info-text'
-            ] %}
-            <div class="sc-swatch">
-              <div class="sc-swatch-box" style="background:var({{ name }});border:1px solid var(--border-default);"></div>
-              <div class="sc-swatch-name">{{ name }}</div>
-            </div>
-            {% endfor %}
-          </div>
+      <!-- Autonomy Levels -->
+      <div class="sc-component" id="tokens-autonomy">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">Autonomy Levels</h3>
+          <span class="sc-component-file">--autonomy-*</span>
         </div>
-
+        <p class="sc-category-desc">AI autonomy levels L0–L4. Used in the autonomy switcher (top bar) and level indicators. Each level has a background fill and a text color for the active button state.</p>
         <div class="sc-variant">
-          <div class="sc-variant-label">Tier system</div>
           <div class="sc-token-grid">
-            {% for name in ['--tier-1','--tier-1-bg','--tier-1-text',
-                            '--tier-2','--tier-2-bg','--tier-2-text',
-                            '--tier-3','--tier-3-bg','--tier-3-text',
-                            '--tier-4','--tier-4-bg','--tier-4-text'] %}
+            {% for level, label in [('l0','L0 — Off'),('l1','L1 — Suggest'),('l2','L2 — Assisted'),('l3','L3 — Supervised'),('l4','L4 — Autonomous')] %}
             <div class="sc-swatch">
-              <div class="sc-swatch-box" style="background:var({{ name }});border:1px solid var(--border-default);"></div>
-              <div class="sc-swatch-name">{{ name }}</div>
+              <div class="sc-swatch-box" style="background:var(--autonomy-{{ level }});border:1px solid var(--border-default);"></div>
+              <div class="sc-swatch-name">--autonomy-{{ level }}</div>
+              <div class="sc-swatch-usage">{{ label }} — active button background</div>
             </div>
-            {% endfor %}
-          </div>
-        </div>
-
-        <div class="sc-variant">
-          <div class="sc-variant-label">Autonomy levels</div>
-          <div class="sc-token-grid">
-            {% for name in ['--autonomy-l0','--autonomy-l0-text',
-                            '--autonomy-l1','--autonomy-l1-text',
-                            '--autonomy-l2','--autonomy-l2-text',
-                            '--autonomy-l3','--autonomy-l3-text',
-                            '--autonomy-l4','--autonomy-l4-text'] %}
             <div class="sc-swatch">
-              <div class="sc-swatch-box" style="background:var({{ name }});border:1px solid var(--border-default);"></div>
-              <div class="sc-swatch-name">{{ name }}</div>
+              <div class="sc-swatch-box" style="background:var(--autonomy-{{ level }}-text);"></div>
+              <div class="sc-swatch-name">--autonomy-{{ level }}-text</div>
+              <div class="sc-swatch-usage">{{ label }} — active button text</div>
             </div>
             {% endfor %}
           </div>
@@ -564,6 +1025,152 @@
         </div>
       </div>
 
+      <!-- Typography -->
+      <div class="sc-component" id="tokens-typography">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">Typography</h3>
+          <span class="sc-component-file">--font-*</span>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">Body — <code>--font-sans</code> — Aktiv Grotesk</div>
+          <div style="display:flex;flex-direction:column;gap:var(--space-4);">
+            <div style="font-family:var(--font-sans);font-size:var(--text-lg);font-weight:400;color:var(--text-primary);">Regular 400 — Used for body text, descriptions, UI labels</div>
+            <div style="font-family:var(--font-sans);font-size:var(--text-lg);font-weight:500;color:var(--text-primary);">Medium 500 — Used for emphasized labels, nav items</div>
+            <div style="font-family:var(--font-sans);font-size:var(--text-lg);font-weight:600;color:var(--text-primary);">Semibold 600 — Used for uppercase labels, badges, emphasis</div>
+          </div>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">Heading — <code>--font-display</code> — Aktiv Grotesk</div>
+          <div style="display:flex;flex-direction:column;gap:var(--space-4);">
+            <div style="font-family:var(--heading-font);font-size:var(--text-4xl);font-weight:500;color:var(--text-primary);">Section Heading — 20px / 500</div>
+            <div style="font-family:var(--heading-font);font-size:var(--text-2xl);font-weight:500;color:var(--text-primary);">Card Title — 16px / 500</div>
+            <div style="font-family:var(--heading-font);font-size:var(--text-lg);font-weight:500;color:var(--text-primary);">Subsection — 14px / 500</div>
+          </div>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">Brand — <code>--brand-font</code> — Tiempos Headline Light</div>
+          <p class="sc-category-desc" style="border:none;padding:0;margin-bottom:var(--space-6);">Optional accent typeface. Not part of the default UI — apply deliberately where brand expression is needed. Always use at weight 300 (Light). Reference the token <code>--brand-font</code>, never the font name directly.</p>
+          <div style="display:flex;flex-direction:column;gap:var(--space-6);">
+            <div style="font-family:var(--brand-font);font-size:var(--text-7xl);font-weight:300;color:var(--text-primary);line-height:1.1;">The quick brown fox</div>
+            <div style="font-family:var(--brand-font);font-size:var(--text-5xl);font-weight:300;color:var(--text-primary);line-height:1.2;">The quick brown fox</div>
+            <div style="font-family:var(--brand-font);font-size:var(--text-4xl);font-weight:300;color:var(--text-secondary);line-height:1.3;">The quick brown fox</div>
+          </div>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">Mono — <code>--font-mono</code> — SF Mono / Fira Code</div>
+          <div style="display:flex;flex-direction:column;gap:var(--space-4);">
+            <div style="font-family:var(--font-mono);font-size:var(--text-base);font-weight:400;color:var(--text-primary);">Regular 400 — Used for code labels, token names, IDs</div>
+            <div style="font-family:var(--font-mono);font-size:var(--text-sm);font-weight:400;color:var(--text-tertiary);">tokens.css · components.css · --border-default · 0px 2px 8px</div>
+          </div>
+        </div>
+
+        <div class="sc-variant" id="tokens-heading-scale">
+          <div class="sc-variant-label">Heading scale — H1 to H6</div>
+          <div style="display:flex;flex-direction:column;gap:0;">
+            {% for tag, size, lh, font, spec in [
+              ('H1', 'var(--text-7xl)',  '1.1', 'var(--heading-font)', 'text-7xl · 32px · 500 · lh 1.1 · ls -0.02em · heading-font'),
+              ('H2', 'var(--text-5xl)',  '1.1', 'var(--heading-font)', 'text-5xl · 24px · 500 · lh 1.1 · ls -0.02em · heading-font'),
+              ('H3', 'var(--text-4xl)',  '1.2', 'var(--heading-font)', 'text-4xl · 20px · 500 · lh 1.2 · ls -0.02em · heading-font'),
+              ('H4', 'var(--text-2xl)',  '1.2', 'var(--body-font)',    'text-2xl · 16px · 500 · lh 1.2 · ls -0.02em · body-font'),
+              ('H5', 'var(--text-lg)',   '1.3', 'var(--body-font)',    'text-lg  · 14px · 500 · lh 1.3 · ls -0.01em · body-font'),
+              ('H6', 'var(--text-base)', '1.3', 'var(--body-font)',    'text-base · 12px · 600 · uppercase · ls 0.5px · body-font')
+            ] %}
+            <div style="display:grid;grid-template-columns:32px 1fr auto;align-items:baseline;gap:var(--space-8);padding:var(--space-6) 0;border-bottom:1px solid var(--border-default);">
+              <div style="font-family:var(--code-font);font-size:var(--text-xs);color:var(--text-tertiary);">{{ tag }}</div>
+              <div style="font-family:{{ font }};font-size:{{ size }};font-weight:{% if tag == 'H6' %}600{% else %}500{% endif %};line-height:{{ lh }};letter-spacing:{% if tag == 'H6' %}0.5px{% elif tag == 'H5' %}-0.01em{% else %}-0.02em{% endif %};{% if tag == 'H6' %}text-transform:uppercase;{% endif %}color:var(--text-primary);">The quick brown fox</div>
+              <div style="font-family:var(--code-font);font-size:var(--text-base-2);color:var(--text-tertiary);white-space:nowrap;">{{ spec }}</div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Text styles -->
+      <div class="sc-component" id="tokens-text-styles">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">Text Styles</h3>
+          <span class="sc-component-file">Named styles — typeface + scale + spacing + leading</span>
+        </div>
+        <p class="sc-category-desc">The 12 recurring text roles found across all components. Each style defines the full typographic spec — not just size, but weight, line-height, letter-spacing, and transform. Use these names when specifying text in design handoff.</p>
+
+        <div class="sc-text-style">
+          <div class="sc-text-style-name">Display</div>
+          <div style="font-family:var(--body-font);font-size:var(--text-7xl);font-weight:600;line-height:1;color:var(--text-primary);">97%</div>
+          <div class="sc-text-style-spec">text-7xl · 700 · lh 1.0 · body-font</div>
+        </div>
+
+        <div class="sc-text-style">
+          <div class="sc-text-style-name">Subtitle</div>
+          <div style="font-family:var(--body-font);font-size:var(--text-lg);font-weight:500;line-height:1.4;color:var(--text-primary);">Initiate structured history-taking</div>
+          <div class="sc-text-style-spec">text-lg · 500 · lh 1.4 · body-font</div>
+        </div>
+
+        <div class="sc-text-style">
+          <div class="sc-text-style-name">Body</div>
+          <div style="font-family:var(--body-font);font-size:var(--text-md);font-weight:400;line-height:1.5;color:var(--text-primary);">History: 2 days dysuria, frequency, urgency. No fever or flank pain.</div>
+          <div class="sc-text-style-spec">text-md · 400 · lh 1.5 · body-font</div>
+        </div>
+
+        <div class="sc-text-style">
+          <div class="sc-text-style-name">Body Strong</div>
+          <div style="font-family:var(--body-font);font-size:var(--text-md);font-weight:600;line-height:1.5;color:var(--text-primary);">James Rodriguez</div>
+          <div class="sc-text-style-spec">text-md · 600 · lh 1.5 · body-font</div>
+        </div>
+
+        <div class="sc-text-style">
+          <div class="sc-text-style-name">Label</div>
+          <div style="font-family:var(--body-font);font-size:var(--text-sm);font-weight:600;line-height:1;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-tertiary);">Dashboard</div>
+          <div class="sc-text-style-spec">text-sm · 700 · lh 1.0 · uppercase · ls 0.5px</div>
+        </div>
+
+        <div class="sc-text-style">
+          <div class="sc-text-style-name">Caption</div>
+          <div style="font-family:var(--body-font);font-size:var(--text-base-2);font-weight:400;line-height:1.4;color:var(--text-secondary);">58F · MRN 00421 · just now</div>
+          <div class="sc-text-style-spec">text-base-2 · 400 · lh 1.4 · body-font</div>
+        </div>
+
+        <div class="sc-text-style">
+          <div class="sc-text-style-name">Badge</div>
+          <div style="font-family:var(--body-font);font-size:var(--text-sm);font-weight:600;line-height:1;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-primary);">T1 · Routine · Auto-approved</div>
+          <div class="sc-text-style-spec">text-sm · 600 · lh 1.0 · uppercase · ls 0.5px</div>
+        </div>
+
+        <div class="sc-text-style">
+          <div class="sc-text-style-name">Code</div>
+          <div style="font-family:var(--code-font);font-size:var(--text-base-2);font-weight:400;line-height:1;color:var(--text-secondary);">comm.message_patient</div>
+          <div class="sc-text-style-spec">text-base-2 · 400 · lh 1.0 · code-font</div>
+        </div>
+
+        <div class="sc-text-style">
+          <div class="sc-text-style-name">Button</div>
+          <div style="font-family:var(--body-font);font-size:var(--text-md);font-weight:500;line-height:1;color:var(--text-primary);">Approve · Reject · Resume</div>
+          <div class="sc-text-style-spec">text-md · 500 · lh 1.0 · body-font</div>
+        </div>
+
+        <div class="sc-text-style">
+          <div class="sc-text-style-name">Status</div>
+          <div style="font-family:var(--body-font);font-size:var(--text-md);font-weight:400;line-height:1;color:var(--status-success);">Agent Active</div>
+          <div class="sc-text-style-spec">text-md · 400 · lh 1.0 · color varies by state</div>
+        </div>
+
+        <div class="sc-text-style">
+          <div class="sc-text-style-name">Lead</div>
+          <div style="font-family:var(--body-font);font-size:var(--text-3xl);font-weight:400;line-height:1.6;color:var(--text-secondary);">Introductory subtitle or section lead copy</div>
+          <div class="sc-text-style-spec">text-3xl · 400 · lh 1.6 · body-font</div>
+        </div>
+
+        <div class="sc-text-style">
+          <div class="sc-text-style-name">Code Micro</div>
+          <div style="font-family:var(--code-font);font-size:var(--text-xs);font-weight:400;line-height:1;color:var(--text-tertiary);">--token-name · 12px</div>
+          <div class="sc-text-style-spec">text-xs · 400 · lh 1.0 · code-font</div>
+        </div>
+
+      </div>
+
       <!-- Radius -->
       <div class="sc-component" id="tokens-radius">
         <div class="sc-component-header">
@@ -598,6 +1205,48 @@
             {% for name in ['xs','sm','md','lg','xl'] %}
             <div style="display:flex;flex-direction:column;align-items:center;gap:var(--space-4);">
               <div class="sc-shadow-box" style="box-shadow:var(--shadow-{{ name }});">--shadow-{{ name }}</div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Icons -->
+      <div class="sc-component" id="tokens-icons">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">Icons</h3>
+          <span class="sc-component-file">Lucide · --icon-size-* · --icon-stroke</span>
+        </div>
+
+        <!-- Sizes -->
+        <div class="sc-variant">
+          <div class="sc-variant-label">Sizes</div>
+          <div class="sc-preview" style="align-items:flex-end;gap:var(--space-12);">
+            {% for label, cls, size, token in [
+              ('sm', 'icon icon-sm', '14px', '--icon-size-sm'),
+              ('md', 'icon',        '16px', '--icon-size-md'),
+              ('lg', 'icon icon-lg','18px', '--icon-size-lg')
+            ] %}
+            <div style="display:flex;flex-direction:column;align-items:center;gap:var(--space-4);">
+              <i data-lucide="bell" class="{{ cls }}"></i>
+              <div style="font-family:var(--code-font);font-size:var(--text-xs);color:var(--text-tertiary);">{{ token }}</div>
+              <div style="font-family:var(--code-font);font-size:var(--text-xs);color:var(--text-tertiary);">{{ size }}</div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Stroke -->
+        <div class="sc-variant">
+          <div class="sc-variant-label">Stroke width — <code>--icon-stroke: 2</code></div>
+          <div class="sc-preview" style="gap:var(--space-8);flex-wrap:wrap;">
+            {% for name in ['activity','alert-circle','bell','check','chevron-down','chevron-right',
+                            'clock','eye','file-text','home','info','lock','log-out','mail',
+                            'pause','play','plus','search','settings','sliders','trash-2',
+                            'user','x','zap'] %}
+            <div style="display:flex;flex-direction:column;align-items:center;gap:var(--space-2);">
+              <i data-lucide="{{ name }}" class="icon"></i>
+              <div style="font-family:var(--code-font);font-size:var(--text-2xs);color:var(--text-tertiary);">{{ name }}</div>
             </div>
             {% endfor %}
           </div>
@@ -705,13 +1354,15 @@
         </div>
 
         <div class="sc-variant">
-          <div class="sc-variant-label">Sizes — default  sm  xs</div>
-          <div class="sc-preview" style="align-items:center;">
+          <div class="sc-variant-label">Sizes — lg  default  sm  xs</div>
+          <div class="sc-preview" style="align-items:center;flex-wrap:wrap;">
+            {{ button('Large', 'primary', 'lg') }}
             {{ button('Default', 'primary') }}
             {{ button('Small', 'primary', 'sm') }}
             {{ button('XSmall', 'primary', 'xs') }}
           </div>
-          <code class="sc-code">{% raw %}{{ button('Default', 'primary') }}
+          <code class="sc-code">{% raw %}{{ button('Large',   'primary', 'lg') }}
+{{ button('Default', 'primary') }}
 {{ button('Small',   'primary', 'sm') }}
 {{ button('XSmall',  'primary', 'xs') }}{% endraw %}</code>
         </div>
@@ -918,15 +1569,15 @@
           <div class="sc-preview sc-preview-col" style="max-width:220px;background:var(--surface-sidebar);border-radius:var(--radius-lg);padding:var(--space-6);">
             {{ nav_item('Activity Feed',
               'feed',
-              '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3h12M3 7h12M3 11h8M3 15h5"/></svg>',
+              '<i data-lucide="activity" class="icon"></i>',
               true) }}
             {{ nav_item('Pending Approvals',
               'approvals',
-              '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 1v4M5 3l1.5 2M13 3l-1.5 2M3 9h12v6a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg>',
+              '<i data-lucide="bell" class="icon"></i>',
               false, '', 5, 'sc-badge-demo') }}
             {{ nav_item('Patient Panel',
               'patients',
-              '<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="5" r="3"/><path d="M3 17v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>') }}
+              '<i data-lucide="user" class="icon"></i>') }}
           </div>
           <code class="sc-code">{% raw %}{{ nav_item('Activity Feed', 'feed', '<svg …/>', active=true) }}
 {{ nav_item('Pending Approvals', 'approvals', '<svg …/>', badge_count=5, badge_id='approvalBadge') }}{% endraw %}</code>
@@ -1255,6 +1906,29 @@
     }
     valEl.textContent = computed;
   });
+
+lucide.createIcons();
+
+// Scrollspy
+(function() {
+  const links = document.querySelectorAll('#sc-nav .sc-nav-link');
+  const ids = Array.from(links).map(a => a.getAttribute('href').slice(1)).filter(Boolean);
+  const targets = ids.map(id => document.getElementById(id)).filter(Boolean);
+
+  function onScroll() {
+    const scrollY = window.scrollY + 80;
+    let current = targets[0];
+    for (const el of targets) {
+      if (el.offsetTop <= scrollY) current = el;
+    }
+    links.forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + current.id);
+    });
+  }
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
 </script>
 
 </body>

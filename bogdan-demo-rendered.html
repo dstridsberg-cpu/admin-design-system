@@ -4,11 +4,15 @@
   <link rel="icon" href="/favicon.ico" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin.ai</title>
-  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <title>Admin</title>
+  <!-- Load Aktiv Grotesk from your font provider (Adobe Fonts, Fonts.com, or @font-face) -->
+  <!-- <link rel="stylesheet" href="YOUR_AKTIV_GROTESK_URL"> -->
+  <!-- Tiempos Headline Light — used via --brand-font for optional brand accent headings -->
+  <link href="https://db.onlinewebfonts.com/c/e4b6f66c5987eea12c8847782bc851f6?family=Tiempos+Headline+Light" rel="stylesheet">
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
-  <link rel="stylesheet" href="tokens.css">
-  <link rel="stylesheet" href="components.css">
+  <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+  <link rel="stylesheet" href="-styles/tokens.css">
+  <link rel="stylesheet" href="-styles/components.css">
 </head>
 <body>
 
@@ -19,7 +23,11 @@
       <header class="top-nav">
   <div class="nav-left">
     <div class="nav-logo"><span></span><span></span><span></span><span></span></div>
-    <select class="company-dropdown"><option>Company A</option></select>
+    <span class="nav-app-title">Supervisor Console</span>
+    <div class="header-status" id="agentStatus">
+  <span class="pulse-dot"></span>
+  <span id="statusText">Agent Active</span>
+</div>
   </div>
   <div class="nav-center">
     <div class="autonomy-switcher">
@@ -39,18 +47,15 @@
           data-speed="2">2x</button>  <button class="speed-btn"
           data-speed="0">Instant</button></div>
 
-    <div class="header-status" id="agentStatus">
-  <span class="pulse-dot"></span>
-  <span id="statusText">Agent Active</span>
-</div>
 
   </div>
   <div class="nav-right">
     <button class="btn btn-danger pause-btn" id="pauseBtn" onclick="togglePause()">
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><rect x="2" y="1" width="3.5" height="12" rx="1"/><rect x="8.5" y="1" width="3.5" height="12" rx="1"/></svg>
+      <i data-lucide="pause" class="icon icon-sm"></i>
       Pause
     </button>
     <a href="#">API Keys</a>
+    <select class="company-dropdown"><option>Company A</option></select>
   </div>
 </header>
 
@@ -59,24 +64,22 @@
       <nav class="sidebar">
 
   <div class="sidebar-section">
-    <div class="sidebar-label">Dashboard</div>
-
 
     <div class="nav-item active"
-      data-view="feed" onclick="switchView('feed')"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3h12M3 7h12M3 11h8M3 15h5"/></svg>Activity Feed</div>
+      data-view="feed" onclick="switchView('feed')"><i data-lucide="activity" class="icon"></i>Activity Feed</div>
 
 
     <div class="nav-item"
-      data-view="approvals" onclick="switchView('approvals')"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 1v4M5 3l1.5 2M13 3l-1.5 2M3 9h12v6a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg>Pending Approvals  <span class="nav-badge" id="approvalBadge"
+      data-view="approvals" onclick="switchView('approvals')"><i data-lucide="bell" class="icon"></i>Pending Approvals  <span class="nav-badge" id="approvalBadge"
         style="display:none">0</span></div>
 
 
     <div class="nav-item"
-      data-view="patients" onclick="switchView('patients')"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="5" r="3"/><path d="M3 17v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>Patient Panel</div>
+      data-view="patients" onclick="switchView('patients')"><i data-lucide="user" class="icon"></i>Patient Panel</div>
 
 
     <div class="nav-item"
-      data-view="encounter" onclick="switchView('encounter')"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 2h10a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2zM6 6h6M6 9h6M6 12h3"/></svg>Encounter Detail</div>
+      data-view="encounter" onclick="switchView('encounter')"><i data-lucide="file-text" class="icon"></i>Encounter Detail</div>
 
   </div>
 
@@ -85,11 +88,11 @@
 
 
     <div class="nav-item"
-      data-view="analytics" onclick="switchView('analytics')"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 15V9M7 15V5M11 15V8M15 15V3"/></svg>Analytics</div>
+      data-view="analytics" onclick="switchView('analytics')"><i data-lucide="bar-chart-2" class="icon"></i>Analytics</div>
 
 
     <div class="nav-item"
-      data-view="config" onclick="switchView('config')"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="9" r="3"/><path d="M9 1v3M9 14v3M1 9h3M14 9h3M3.3 3.3l2.1 2.1M12.6 12.6l2.1 2.1M3.3 14.7l2.1-2.1M12.6 5.4l2.1-2.1"/></svg>Configuration</div>
+      data-view="config" onclick="switchView('config')"><i data-lucide="settings" class="icon"></i>Configuration</div>
 
   </div>
 
@@ -148,7 +151,7 @@
           <!-- Admin API approvals section -->
           <div class="approvals-section" id="admin-approvals-section" style="display:none;">
             <div class="approvals-header">
-              <h2 class="approvals-title">Live Approvals (API)</h2>
+              <h4 class="approvals-title">Live Approvals (API)</h4>
               <span class="approvals-count" id="admin-approvals-count">0</span>
             </div>
             <div id="admin-approvals-queue"></div>
@@ -203,11 +206,11 @@
   <div class="modal-overlay" id="patient-modal">
     <div class="modal-container">
       <div class="modal-header">
-        <h2 class="modal-title" id="modal-title">Patient Details</h2>
+        <h3 class="modal-title" id="modal-title">Patient Details</h3>
         <button class="modal-close" onclick="closeModal()">&#215;</button>
       </div>
       <div class="approval-context" id="approval-context" style="display: none;">
-        <div class="approval-context-header"><h3>Approval Required</h3></div>
+        <div class="approval-context-header"><h4>Approval Required</h4></div>
         <div class="approval-context-body">
           <div class="approval-action-card">
             <div class="approval-action-header">
@@ -351,7 +354,7 @@
   <!-- Welcome Overlay -->
   <div class="overlay" id="welcomeOverlay">
     <div class="overlay-card">
-      <h2>Admin.ai Supervisor Dashboard</h2>
+      <h1 style="font-family:var(--brand-font);font-weight:300;">Admin Supervisor Dashboard</h1>
       <p>Interactive demo of an autonomous primary care AI agent. You are the supervising physician overseeing three concurrent patient encounters.</p>
       <ul class="overlay-features">
         <li><strong>Margaret Thompson</strong> (58F) -- Community-acquired pneumonia. Full clinical workflow.</li>
@@ -359,7 +362,7 @@
         <li><strong>Aisha Patel</strong> (71F) -- Chest tightness with cardiac risks. Triggers mandatory escalation.</li>
       </ul>
       <p style="font-size:12px;">Use the <strong>autonomy level switcher</strong> in the header to see how L0-L4 changes what needs your approval.</p>
-      <button class="btn btn-primary" style="width:100%;justify-content:center;padding:10px;" onclick="startDemo()">Start Simulation</button>
+      <button class="btn btn-primary btn-lg" style="width:100%;justify-content:center;" onclick="startDemo()">Start Simulation</button>
     </div>
   </div>
 
@@ -643,7 +646,7 @@ function renderFeed() {
   });
   count.textContent = allItems.length + ' actions';
   if (allItems.length === 0) {
-    list.innerHTML = '<div class="empty-state"><h3>No activity yet</h3><p>Actions will appear as the simulation runs or from live sessions.</p></div>';
+    list.innerHTML = '<div class="empty-state"><h5>No activity yet</h5><p>Actions will appear as the simulation runs or from live sessions.</p></div>';
     return;
   }
   var items = allItems.slice().reverse();
@@ -700,7 +703,7 @@ function renderSimApprovals() {
   badge.style.display = totalPending > 0 ? '' : 'none';
 
   if (pending.length === 0) {
-    list.innerHTML = '<div class="empty-state"><h3>No simulation approvals</h3><p>Actions requiring review will appear here.</p></div>';
+    list.innerHTML = '<div class="empty-state"><h5>No simulation approvals</h5><p>Actions requiring review will appear here.</p></div>';
     return;
   }
   var urgencyOrder = { emergent: 0, urgent: 1, routine: 2 };
@@ -742,7 +745,7 @@ function renderPatientPanel() {
     var isEscalated = p.id === 'patel' && state.feedItems.some(function(f) { return f.patientId === 'patel' && f.isEscalation; });
     return '<div class="card patient-card" onclick="selectPatient(\'' + p.id + '\'); switchView(\'encounter\');">' +
       '<div class="flex items-center justify-between mb-2"><div>' +
-        '<div class="patient-name">' + p.name + '</div>' +
+        '<h2 class="patient-name">' + p.name + '</h2>' +
         '<div class="patient-demo">' + p.age + p.sex + ' \u00b7 ' + p.mrn + '</div>' +
       '</div>' +
       (isEscalated ? '<span class="badge badge-danger">ESCALATED</span>' : isComplete ? '<span class="badge badge-success">Complete</span>' : '<span class="badge badge-info">In Progress</span>') +
@@ -771,7 +774,7 @@ function renderPatientPanel() {
       var hasVitals = p.vitals && p.vitals.temp && p.vitals.temp !== '--';
       return '<div class="card patient-card live-session" onclick="selectPatient(\'' + pid + '\'); switchView(\'encounter\');">' +
         '<div class="flex items-center justify-between mb-2"><div>' +
-          '<div class="patient-name">' + p.name + ' <span class="live-badge"><span class="live-dot"></span>LIVE</span></div>' +
+          '<h2 class="patient-name">' + p.name + ' <span class="live-badge"><span class="live-dot"></span>LIVE</span></h2>' +
           '<div class="patient-demo">' + p._messageCount + ' messages</div>' +
         '</div>' +
         (p.status === 'complete' ? '<span class="badge badge-success">Complete</span>' : '<span class="badge badge-info">In Progress</span>') +
@@ -808,14 +811,14 @@ function renderEncounterDetail() {
   var pid = state.selectedPatient;
   var p = getPatientData(pid);
   if (!p) {
-    container.innerHTML = '<div class="empty-state"><h3>Select a patient</h3></div>';
+    container.innerHTML = '<div class="empty-state"><h5>Select a patient</h5></div>';
     return;
   }
   var isLive = !!p._live;
 
   // Fetch full data for live patients on first view
   if (isLive && !p._actionsLoaded) {
-    container.innerHTML = '<div class="empty-state"><h3>Loading encounter...</h3></div>';
+    container.innerHTML = '<div class="empty-state"><h5>Loading encounter...</h5></div>';
     fetch('/api/sessions/' + pid).then(function(r){ return r.json(); }).then(function(data) {
       p._actions = (data.actions || []).map(function(a) {
         a.patientId = pid;
@@ -863,7 +866,7 @@ function renderEncounterDetail() {
 
   container.innerHTML =
     '<div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">' +
-      '<h2 style="font-size:18px;font-weight:700;">' + p.name + '</h2>' +
+      '<h2>' + p.name + '</h2>' +
       (p.age ? '<span class="badge badge-muted">' + p.age + p.sex + '</span>' : '') +
       (p.mrn ? '<span class="badge badge-muted">' + p.mrn + '</span>' : '') +
       (isLive ? '<span class="live-badge"><span class="live-dot"></span>LIVE</span>' : '') +
@@ -885,7 +888,7 @@ function renderEncounterDetail() {
         '</div>' +
       '</div>' +
       '<div class="encounter-content">' + renderEncounterContent(pid, viewStep, events, diffEvent, soapEvent, escalationEvent) + '</div>' +
-      '<div class="reasoning-panel-sidebar"><h3>Reasoning Trace</h3>' + renderEncounterReasoningPanel(events, viewStep) + '</div>' +
+      '<div class="reasoning-panel-sidebar"><h4>Reasoning Trace</h4>' + renderEncounterReasoningPanel(events, viewStep) + '</div>' +
     '</div>';
 
   // Start polling for live patients
@@ -937,17 +940,17 @@ function renderEncounterContent(pid, viewStep, events, diffEvent, soapEvent, esc
     html += '<div class="card" style="border:2px solid var(--danger);margin-bottom:16px;"><div style="background:var(--danger-light);padding:12px;margin:-16px -16px 12px;border-radius:16px 16px 0 0;"><strong style="color:var(--danger);">\u26a0 MANDATORY ESCALATION</strong></div><div style="font-size:13px;line-height:1.6;"><strong>' + escalationEvent.escalation.title + '</strong><br><br>' + escalationEvent.escalation.summary + '<br><br><strong>Recommended:</strong> ' + escalationEvent.escalation.recommended + '</div></div>';
   }
   if (diffEvent && viewStep >= diffEvent.step) {
-    html += '<div class="encounter-section"><h3><span class="badge badge-info">Assessment</span> Differential Diagnosis</h3><table class="dx-table"><thead><tr><th>#</th><th>Diagnosis</th><th>Prob</th><th>For</th><th>Against</th></tr></thead><tbody>' +
+    html += '<div class="encounter-section"><h4><span class="badge badge-info">Assessment</span> Differential Diagnosis</h4><table class="dx-table"><thead><tr><th>#</th><th>Diagnosis</th><th>Prob</th><th>For</th><th>Against</th></tr></thead><tbody>' +
       diffEvent.differential.map(function(d) {
         return '<tr><td class="dx-rank">' + d.rank + '</td><td><strong>' + d.dx + '</strong></td><td class="dx-prob">' + d.prob + '</td><td class="evidence-for">' + d.forEvidence.map(function(e){return '+ '+e;}).join('<br>') + '</td><td class="evidence-against">' + d.againstEvidence.map(function(e){return '\u2212 '+e;}).join('<br>') + '</td></tr>';
       }).join('') + '</tbody></table></div>';
   }
   if (soapEvent && viewStep >= soapEvent.step) {
     var s = soapEvent.soap;
-    html += '<div class="encounter-section"><h3><span class="badge badge-info">Documentation</span> SOAP Note</h3><div class="card"><div class="soap-section"><div class="soap-label">Subjective</div><div class="soap-content">' + s.subjective + '</div></div><div class="soap-section"><div class="soap-label">Objective</div><div class="soap-content">' + s.objective + '</div></div><div class="soap-section"><div class="soap-label">Assessment</div><div class="soap-content">' + s.assessment + '</div></div><div class="soap-section"><div class="soap-label">Plan</div><div class="soap-content">' + s.plan.replace(/\n/g,'<br>') + '</div></div></div></div>';
+    html += '<div class="encounter-section"><h4><span class="badge badge-info">Documentation</span> SOAP Note</h4><div class="card"><div class="soap-section"><div class="soap-label">Subjective</div><div class="soap-content">' + s.subjective + '</div></div><div class="soap-section"><div class="soap-label">Objective</div><div class="soap-content">' + s.objective + '</div></div><div class="soap-section"><div class="soap-label">Assessment</div><div class="soap-content">' + s.assessment + '</div></div><div class="soap-section"><div class="soap-label">Plan</div><div class="soap-content">' + s.plan.replace(/\n/g,'<br>') + '</div></div></div></div>';
   }
   if (stepEvents.length > 0) {
-    html += '<div class="encounter-section"><h3>Actions at this step</h3>' + stepEvents.map(function(e) {
+    html += '<div class="encounter-section"><h4>Actions at this step</h4>' + stepEvents.map(function(e) {
       return '<div class="order-item ' + tierBorderClass(e.tier) + '"><span class="badge ' + tierClass(e.tier) + '">' + tierLabel(e.tier) + '</span><span class="feed-tool">' + e.tool + '</span><span style="flex:1;">' + e.desc + '</span><span class="badge ' + (e.status==='auto-approved'||e.status==='approved'?'badge-success':e.status==='pending'?'badge-muted':'badge-danger') + '">' + e.status + '</span></div>';
     }).join('') + '</div>';
   }
@@ -959,7 +962,7 @@ function renderEncounterContent(pid, viewStep, events, diffEvent, soapEvent, esc
       var emr = lp._emrEntries || [];
       if (conv.length > 0 || emr.length > 0) {
         if (emr.length > 0) {
-          html += '<div class="encounter-section"><h3><span class="badge badge-info">EMR</span> Entries</h3>' +
+          html += '<div class="encounter-section"><h4><span class="badge badge-info">EMR</span> Entries</h4>' +
             emr.map(function(e) {
               return '<div class="order-item tier-border-1"><span class="badge badge-muted">' + (e.type || 'note') + '</span>' +
                 '<span style="flex:1;"><strong>' + (e.title || '') + '</strong>' + (e.detail ? ' — ' + e.detail : '') + '</span>' +
@@ -967,7 +970,7 @@ function renderEncounterContent(pid, viewStep, events, diffEvent, soapEvent, esc
             }).join('') + '</div>';
         }
         if (conv.length > 0) {
-          html += '<div class="encounter-section"><h3><span class="badge badge-muted">Chat</span> Conversation</h3>' +
+          html += '<div class="encounter-section"><h4><span class="badge badge-muted">Chat</span> Conversation</h4>' +
             '<div style="max-height:400px;overflow-y:auto;padding:8px;">' +
             conv.slice(-20).map(function(m) {
               var isUser = m.role === 'user';
@@ -982,7 +985,7 @@ function renderEncounterContent(pid, viewStep, events, diffEvent, soapEvent, esc
       }
     }
   }
-  if (!html) html = '<div class="empty-state"><h3>No data for this step yet</h3><p>Actions will populate as the encounter progresses.</p></div>';
+  if (!html) html = '<div class="empty-state"><h5>No data for this step yet</h5><p>Actions will populate as the encounter progresses.</p></div>';
   return html;
 }
 
@@ -1070,12 +1073,12 @@ function renderAnalytics() {
 function renderConfig() {
   var container = document.getElementById('configContent');
   container.innerHTML =
-    '<div class="config-section"><h3>Autonomy Level</h3><div class="card" style="padding:20px;">' +
+    '<div class="config-section"><h4>Autonomy Level</h4><div class="card" style="padding:20px;">' +
       '<p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Current: <strong style="color:#2563eb;">L' + state.autonomyLevel + '</strong></p>' +
       '<div style="display:flex;gap:8px;">' + [0,1,2,3,4].map(function(l) { return '<button class="btn ' + (state.autonomyLevel===l?'btn-primary':'btn-outline') + ' btn-sm" onclick="setAutonomy(' + l + ')">L' + l + '</button>'; }).join('') + '</div>' +
       '<div style="margin-top:12px;font-size:12px;color:var(--text-muted);">' + ['L0 Shadow: All actions draft','L1 Copilot: All need approval','L2 Supervised: T1 auto, T2+ review','L3 Guarded: T1-T2 auto, T3+ review','L4 Full: T1-T3 auto, T4+ review'][state.autonomyLevel] + '</div>' +
     '</div></div>' +
-    '<div class="config-section"><h3>Risk Tier Approval Matrix</h3><div class="card"><table class="approval-matrix"><thead><tr><th></th><th>T1</th><th>T2</th><th>T3</th><th>T4</th></tr></thead><tbody>' +
+    '<div class="config-section"><h4>Risk Tier Approval Matrix</h4><div class="card"><table class="approval-matrix"><thead><tr><th></th><th>T1</th><th>T2</th><th>T3</th><th>T4</th></tr></thead><tbody>' +
       [0,1,2,3,4].map(function(l) {
         return '<tr><td style="text-align:left;font-weight:600;">L' + l + ' ' + ['Shadow','Copilot','Supervised','Guarded','Full'][l] + '</td>' +
           [1,2,3,4].map(function(t) { var auto = !needsApproval(t, l); return '<td class="' + (auto?'matrix-auto':'matrix-approve') + '">' + (auto?'Auto':'Review') + '</td>'; }).join('') + '</tr>';
@@ -1273,14 +1276,14 @@ function togglePause() {
   var statusText = document.getElementById('statusText');
   var banner = document.getElementById('pausedBanner');
   if (state.paused) {
-    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><path d="M3 1l10 6-10 6V1z"/></svg> Resume';
+    btn.innerHTML = '<i data-lucide="play" class="icon icon-sm"></i> Resume'; lucide.createIcons();
     btn.classList.add('is-paused');
     status.classList.add('paused');
     statusText.textContent = 'Agent Paused';
     banner.classList.add('visible');
     showToast('Agent paused', 'danger', 3000);
   } else {
-    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor"><rect x="2" y="1" width="3.5" height="12" rx="1"/><rect x="8.5" y="1" width="3.5" height="12" rx="1"/></svg> Pause';
+    btn.innerHTML = '<i data-lucide="pause" class="icon icon-sm"></i> Pause'; lucide.createIcons();
     btn.classList.remove('is-paused');
     status.classList.remove('paused');
     statusText.textContent = 'Agent Active';
@@ -1965,6 +1968,9 @@ document.addEventListener('keydown', function(e) {
 
 // Initialize dashboard on load
 initDashboard();
+
+// Initialize Lucide icons
+lucide.createIcons();
   </script>
 </body>
 </html>

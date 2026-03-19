@@ -76,14 +76,6 @@
   --red-800:   #991b1b;
   --red-900:   #7f1d1d;
 
-  /* ── Status: Orange (Tier 3) ── */
-  --orange-50:  #fff7ed;
-  --orange-100: #ffedd5;
-  --orange-200: #fed7aa;
-  --orange-500: #f97316;
-  --orange-600: #ea580c;
-  --orange-800: #9a3412;
-
   /* ── Accent / Interactive / Blue ── */
   --blue-50:   #eff6ff;
   --blue-100:  #dbeafe;
@@ -100,6 +92,12 @@
   --purple-600: #7c3aed;
   --purple-700: #6b21a8;
   --purple-800: #581c87;
+
+  /* ── Icon scale ── */
+  --icon-size-sm:  14px;
+  --icon-size-md:  16px;
+  --icon-size-lg:  18px;
+  --icon-stroke:   2;
 
   /* ── Spacing scale ── */
   --space-0:   0px;
@@ -157,9 +155,10 @@
   --shadow-glow-purple: 0 0 6px rgba(147,51,234,0.5);
 
   /* ── Font stacks ── */
-  --font-sans:    'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-display: 'Playfair Display', serif;
+  --font-sans:    'Aktiv Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-display: 'Aktiv Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
   --font-mono:    'SF Mono', 'Fira Code', Menlo, monospace;
+  --font-brand:   'Tiempos Headline Light', Georgia, serif;  /* use for brand accent headings only */
 
   /* ── Transition ── */
   --ease-default: 0.2s ease;
@@ -184,9 +183,9 @@
   --surface-sidebar:  rgba(255,255,255,0.92); /* sidebar (translucent) */
 
   /* ── Background decoration (gradient, blobs) ── */
-  --bg-gradient:      linear-gradient(135deg, #B8E8E3 0%, #E8F5F3 50%, #F5F5F5 100%);
-  --bg-blob-1:        rgba(184, 232, 227, 0.3);
-  --bg-blob-2:        rgba(232, 245, 243, 0.4);
+  --bg-gradient:      var(--grey-100);
+  --bg-blob-1:        transparent;
+  --bg-blob-2:        transparent;
 
   /* ── Text ── */
   --text-primary:     var(--grey-900);        /* headings, names, emphasis */
@@ -225,11 +224,6 @@
   --status-danger-bg:      var(--red-100);
   --status-danger-text:    var(--red-800);
 
-  /* ── Status: Orange (Tier 3) ── */
-  --status-orange:         var(--orange-600);
-  --status-orange-bg:      var(--orange-100);
-  --status-orange-text:    var(--orange-800);
-
   /* ── Status: Info / Accent ── */
   --status-info:           var(--blue-600);
   --status-info-bg:        var(--blue-100);
@@ -242,9 +236,9 @@
   --tier-2:           var(--amber-600);
   --tier-2-bg:        var(--amber-100);
   --tier-2-text:      var(--amber-800);
-  --tier-3:           var(--orange-600);
-  --tier-3-bg:        var(--orange-100);
-  --tier-3-text:      var(--orange-800);
+  --tier-3:           var(--red-600);
+  --tier-3-bg:        var(--red-100);
+  --tier-3-text:      var(--red-800);
   --tier-4:           var(--red-600);
   --tier-4-bg:        var(--red-100);
   --tier-4-text:      var(--red-800);
@@ -254,8 +248,8 @@
   --autonomy-l0-text: var(--grey-600);
   --autonomy-l1:      var(--blue-100);
   --autonomy-l1-text: var(--blue-700);
-  --autonomy-l2:      var(--purple-200);
-  --autonomy-l2-text: var(--purple-700);
+  --autonomy-l2:      var(--grey-200);
+  --autonomy-l2-text: var(--grey-700);
   --autonomy-l3:      var(--amber-100);
   --autonomy-l3-text: var(--amber-800);
   --autonomy-l4:      var(--green-100);
@@ -264,23 +258,23 @@
   /* ── AI / Memory special ── */
   --ai-agent-bg:      var(--grey-900);
   --ai-agent-text:    var(--grey-0);
-  --memory-bg:        var(--purple-100);
-  --memory-text:      var(--purple-700);
-  --memory-dot:       var(--purple-500);
+  --memory-bg:        var(--grey-100);
+  --memory-text:      var(--grey-600);
+  --memory-dot:       var(--grey-400);
 
   /* ── Component sizing ── */
   --topbar-height:    56px;
-  --sidebar-width:    220px;
+  --sidebar-width:    240px;
   --card-padding:     16px;
   --card-padding-lg:  18px;
 
   /* ── Component radii (semantic) ── */
-  --card-radius:      var(--radius-3xl);      /* 16px - main cards */
-  --card-radius-sm:   var(--radius-lg);       /* 8px - inner cards, inputs */
-  --badge-radius:     var(--radius-xl);       /* 10px - badges, pills */
-  --button-radius:    var(--radius-lg);       /* 8px - buttons */
-  --button-radius-sm: var(--radius-2xl);      /* 12px - pill buttons */
-  --input-radius:     var(--radius-md);       /* 6px - form inputs */
+  --card-radius:      var(--radius-lg);       /* 8px - main cards */
+  --card-radius-sm:   var(--radius-sm);       /* 4px - inner cards, inputs */
+  --badge-radius:     var(--radius-md);       /* 6px - badges, pills */
+  --button-radius:    var(--radius-md);       /* 6px - buttons */
+  --button-radius-sm: var(--radius-lg);       /* 8px - pill buttons */
+  --input-radius:     var(--radius-sm);       /* 4px - form inputs */
 
   /* ── Component shadows (semantic) ── */
   --card-shadow:      var(--shadow-md);
@@ -291,13 +285,14 @@
 
   /* ── Component typography (semantic) ── */
   --body-font:        var(--font-sans);
-  --heading-font:     var(--font-display);
+  --heading-font:     var(--font-sans);
   --code-font:        var(--font-mono);
+  --brand-font:       var(--font-brand);
   --body-size:        var(--text-lg);         /* 14px base */
-  --heading-size:     var(--text-6xl);        /* 28px section headings */
+  --heading-size:     var(--text-5xl);        /* 24px section headings */
   --label-size:       var(--text-sm);         /* 10px labels */
-  --label-weight:     700;
-  --label-spacing:    1px;
+  --label-weight:     600;
+  --label-spacing:    0.5px;
   --label-transform:  uppercase;
 }
 

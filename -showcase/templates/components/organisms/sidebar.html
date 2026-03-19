@@ -27,7 +27,7 @@
     {{ nav_item(
         label='Activity Feed',
         view='feed',
-        icon_svg='<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 3h12M3 7h12M3 11h8M3 15h5"/></svg>',
+        icon_svg='<i data-lucide="activity" class="icon"></i>',
         active=(active_view == 'feed'),
         onclick="switchView('feed')"
     ) }}
@@ -35,7 +35,7 @@
     {{ nav_item(
         label='Pending Approvals',
         view='approvals',
-        icon_svg='<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 1v4M5 3l1.5 2M13 3l-1.5 2M3 9h12v6a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg>',
+        icon_svg='<i data-lucide="bell" class="icon"></i>',
         active=(active_view == 'approvals'),
         onclick="switchView('approvals')",
         badge_count=0,
@@ -45,7 +45,7 @@
     {{ nav_item(
         label='Patient Panel',
         view='patients',
-        icon_svg='<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="5" r="3"/><path d="M3 17v-2a4 4 0 014-4h4a4 4 0 014 4v2"/></svg>',
+        icon_svg='<i data-lucide="user" class="icon"></i>',
         active=(active_view == 'patients'),
         onclick="switchView('patients')"
     ) }}
@@ -53,7 +53,7 @@
     {{ nav_item(
         label='Encounter Detail',
         view='encounter',
-        icon_svg='<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 2h10a2 2 0 012 2v10a2 2 0 01-2 2H4a2 2 0 01-2-2V4a2 2 0 012-2zM6 6h6M6 9h6M6 12h3"/></svg>',
+        icon_svg='<i data-lucide="file-text" class="icon"></i>',
         active=(active_view == 'encounter'),
         onclick="switchView('encounter')"
     ) }}
@@ -65,7 +65,7 @@
     {{ nav_item(
         label='Analytics',
         view='analytics',
-        icon_svg='<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 15V9M7 15V5M11 15V8M15 15V3"/></svg>',
+        icon_svg='<i data-lucide="bar-chart-2" class="icon"></i>',
         active=(active_view == 'analytics'),
         onclick="switchView('analytics')"
     ) }}
@@ -73,7 +73,7 @@
     {{ nav_item(
         label='Configuration',
         view='config',
-        icon_svg='<svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="9" r="3"/><path d="M9 1v3M9 14v3M1 9h3M14 9h3M3.3 3.3l2.1 2.1M12.6 12.6l2.1 2.1M3.3 14.7l2.1-2.1M12.6 5.4l2.1-2.1"/></svg>',
+        icon_svg='<i data-lucide="settings" class="icon"></i>',
         active=(active_view == 'config'),
         onclick="switchView('config')"
     ) }}
