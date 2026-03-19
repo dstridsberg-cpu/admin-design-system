@@ -1,31 +1,37 @@
 {#
-  top_bar(active_autonomy, active_speed)
+  top_bar(active_autonomy, active_speed, app_title, company)
   ─────────────────────────────────────────────────────────────
-  Full top navigation header with logo, company selector,
-  autonomy switcher, speed control, agent status indicator,
-  pause button, and API Keys link.
+  Full top navigation header with logo, app title, agent status
+  indicator, autonomy switcher, speed control, pause button,
+  API Keys link, and company selector.
 
   Parameters:
     active_autonomy  (int)   Active L-level index 0–4. Default 2.
     active_speed     (str)   Active speed value '0.5'|'1'|'2'|'0'. Default '1'.
+    app_title        (str)   App title shown in nav-left. Default 'Supervisor Console'.
+    company          (str)   Company name shown in nav-right. Default 'Company A'.
 
-  CSS classes: top-nav > nav-left  nav-center  nav-right
+  Layout:
+    nav-left   — logo · app title · agent status
+    nav-center — autonomy switcher · speed control
+    nav-right  — pause button · API Keys · company selector
+
   IDs set by children: autonomyBtns, agentStatus, statusText, pauseBtn
   ─────────────────────────────────────────────────────────────
 #}
 {% from 'components/atoms/toggle_pill_group.html' import autonomy_switcher, speed_control %}
 {% from 'components/atoms/status_indicator.html' import status_indicator %}
 
-{% macro top_bar(active_autonomy=2, active_speed='1') %}
+{% macro top_bar(active_autonomy=2, active_speed='1', app_title='Supervisor Console', company='Company A') %}
 <header class="top-nav">
   <div class="nav-left">
     <div class="nav-logo"><span></span><span></span><span></span><span></span></div>
-    <select class="company-dropdown"><option>Company A</option></select>
+    <span class="nav-app-title">{{ app_title }}</span>
+    {{ status_indicator('Agent Active', 'active', 'agentStatus', 'statusText') }}
   </div>
   <div class="nav-center">
     {{ autonomy_switcher(active_autonomy) }}
     {{ speed_control(active_speed) }}
-    {{ status_indicator('Agent Active', 'active', 'agentStatus', 'statusText') }}
   </div>
   <div class="nav-right">
     <button class="btn btn-danger pause-btn" id="pauseBtn" onclick="togglePause()">
@@ -33,6 +39,7 @@
       Pause
     </button>
     <a href="#">API Keys</a>
+    <select class="company-dropdown"><option>{{ company }}</option></select>
   </div>
 </header>
 {% endmacro %}
