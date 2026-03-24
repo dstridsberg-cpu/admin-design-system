@@ -2,44 +2,56 @@
   top_bar(active_autonomy, active_speed, app_title, company)
   ─────────────────────────────────────────────────────────────
   Full top navigation header with logo, app title, agent status
-  indicator, autonomy switcher, speed control, pause button,
-  API Keys link, and company selector.
+  group (pill + pause + demo controls), and nav-right links.
 
   Parameters:
     active_autonomy  (int)   Active L-level index 0–4. Default 2.
     active_speed     (str)   Active speed value '0.5'|'1'|'2'|'0'. Default '1'.
-    app_title        (str)   App title shown in nav-left. Default 'Supervisor Console'.
+    app_title        (str)   App title shown in nav-left. Default 'Consultations'.
     company          (str)   Company name shown in nav-right. Default 'Company A'.
 
   Layout:
-    nav-left   — logo · app title · agent status
-    nav-center — autonomy switcher · speed control
-    nav-right  — pause button · API Keys · company selector
+    nav-left   — logo · app title · agent status group · demo controls panel
+    nav-right  — API Keys · company switcher (chevron + dropdown)
 
-  IDs set by children: autonomyBtns, agentStatus, statusText, pauseBtn
+  IDs set by children: agentStatus, statusText, pauseBtn, demoControlsBtn, demoControlsPanel, autonomyBtns
   ─────────────────────────────────────────────────────────────
 #}
 {% from 'components/atoms/toggle_pill_group.html' import autonomy_switcher, speed_control %}
-{% from 'components/atoms/status_indicator.html' import status_indicator %}
+{% from 'components/molecules/dropdown_menu.html' import dropdown_menu %}
 
-{% macro top_bar(active_autonomy=2, active_speed='1', app_title='Supervisor Console', company='Company A') %}
+{% macro top_bar(active_autonomy=2, active_speed='1', app_title='Consultations', company='Company A') %}
 <header class="top-nav">
-  <div class="nav-left">
-    <div class="nav-logo"><span></span><span></span><span></span><span></span></div>
-    <span class="nav-app-title">{{ app_title }}</span>
-    {{ status_indicator('Agent Active', 'active', 'agentStatus', 'statusText') }}
+  <div class="nav-brand">
+    <img class="nav-logo" src="https://www.figma.com/api/mcp/asset/6358ae29-e7d7-45d7-bf0b-9d8bc29bad11" alt="Admin" width="24" height="19">
+    <div class="nav-brand-text">
+      <img class="nav-wordmark" src="https://www.figma.com/api/mcp/asset/ea685a85-b46c-493f-bf45-cb878fe05cd1" alt="admin." width="54" height="10">
+      <span class="nav-app-title">{{ app_title }}</span>
+    </div>
   </div>
-  <div class="nav-center">
-    {{ autonomy_switcher(active_autonomy) }}
-    {{ speed_control(active_speed) }}
+  <div class="nav-left">
+    <div class="agent-status-group" id="agentStatus">
+      <div class="agent-status-pill">
+        <span class="pulse-dot"></span>
+        <span id="statusText">Agent Active</span>
+      </div>
+      <div class="agent-status-actions">
+        <button class="agent-action-btn" id="pauseBtn" onclick="togglePause()" title="Pause agent">
+          <i data-lucide="pause" class="icon icon-sm"></i>
+        </button>
+        <button class="agent-action-btn" id="demoControlsBtn" onclick="toggleDemoControls()" title="Demo controls">
+          <i data-lucide="sliders-horizontal" class="icon icon-sm"></i>
+        </button>
+      </div>
+    </div>
+    <div class="demo-controls-panel" id="demoControlsPanel">
+      {{ autonomy_switcher(active_autonomy) }}
+      {{ speed_control(active_speed) }}
+    </div>
   </div>
   <div class="nav-right">
-    <button class="btn btn-danger pause-btn" id="pauseBtn" onclick="togglePause()">
-      <i data-lucide="pause" class="icon icon-sm"></i>
-      Pause
-    </button>
     <a href="#">API Keys</a>
-    <select class="company-dropdown"><option>{{ company }}</option></select>
+    {{ dropdown_menu(company, [company, 'Company B', 'Company C']) }}
   </div>
 </header>
 {% endmacro %}

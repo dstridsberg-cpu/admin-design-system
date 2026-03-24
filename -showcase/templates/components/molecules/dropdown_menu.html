@@ -1,0 +1,33 @@
+{#
+  dropdown_menu(label, options, active)
+  ─────────────────────────────────────────────────────────────
+  Context-switcher with a chevron trigger and animated dropdown
+  list. Used in the top bar for company/workspace selection.
+
+  Parameters:
+    label    (str)        Trigger button label (the current selection).
+    options  (list[str])  All selectable options.
+    active   (str)        The currently active option. Defaults to label.
+
+  CSS classes: dropdown-menu > dropdown-menu-btn (.chevron inside)
+                             > dropdown-list > dropdown-item (.active)
+
+  Behaviour: toggled by JS via .open class on .dropdown-menu.
+  Use data-dropdown-trigger on the button and data-dropdown-list
+  on the list — or wire up onclick manually.
+  ─────────────────────────────────────────────────────────────
+#}
+{% macro dropdown_menu(label='', options=[], active='') %}
+  {%- set current = active if active else label -%}
+<div class="dropdown-menu">
+  <button class="dropdown-menu-btn" aria-haspopup="listbox" aria-expanded="false">
+    <span>{{ label }}</span>
+    <i data-lucide="chevron-down" class="icon icon-sm chevron"></i>
+  </button>
+  <div class="dropdown-list" role="listbox">
+    {%- for option in options %}
+    <div class="dropdown-item{% if option == current %} active{% endif %}" role="option">{{ option }}</div>
+    {%- endfor %}
+  </div>
+</div>
+{% endmacro %}

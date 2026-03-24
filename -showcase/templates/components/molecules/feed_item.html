@@ -1,58 +1,102 @@
 {#
   feed_item(patient_name, tool, tier, description, status, confidence,
-            time_display, is_live, is_escalation, has_reasoning)
+            age_sex, chief, vitals, agent_detail, step,
+            time_display, is_live, is_escalation)
   ─────────────────────────────────────────────────────────────
-  One row in the Activity Feed.  In the demo this is JS-generated;
-  this macro defines the canonical structure for static/server rendering.
+  Activity Feed row.
 
   Parameters:
-    patient_name   (str)    Display name of patient. Required.
-    tool           (str)    Tool identifier (e.g. 'orders.lab_order').
-    tier           (int)    Risk tier 1–4.
-    description    (str)    Human-readable action description.
-    status         (str)    'auto-approved' | 'approved' | 'rejected' |
-                            'pending' | 'escalated'
+    patient_name   (str)    Display name. Required.
+    tool           (str)    Tool identifier (not displayed).
+    tier           (int)    Risk tier 1–4 (used for progress colour).
+    description    (str)    Agent action title (bold heading). Required.
+    status         (str)    'auto-approved'|'approved'|'rejected'|'pending'|'escalated'
     confidence     (float)  Confidence 0.0–1.0.
-    time_display   (str)    Pre-formatted time string (e.g. '0:43').
+    age_sex        (str)    Suffix e.g. ', 58F'. Default ''.
+    chief          (str)    Chief complaint shown below name. Default ''.
+    vitals         (dict)   label→value e.g. {'°C:':'38.9°','HR:':'102',...}. Default none.
+    agent_detail   (str)    Agent reasoning shown as grey text. Default ''.
+    step           (int)    Workflow step 0–6 for progress bar. Default 0.
+    time_display   (str)    Time label e.g. 'Just now'. Default ''.
     is_live        (bool)   Show LIVE badge. Default false.
     is_escalation  (bool)   Show ESCALATION badge. Default false.
-    reasoning_html (str)    Pre-rendered reasoning HTML block. Default ''.
+
+  Structure:
+    .feed-item
+      .feed-item-top
+        .feed-patient-col
+          .feed-person-col    (Patient: label, name/age, chief complaint)
+          .feed-vitals        (2×2 grid)
+        .feed-agent-col
+          .feed-agent-content (heading row, action row, reasoning text)
+      .feed-progress          (4px bar — workflow stage indicator)
   ─────────────────────────────────────────────────────────────
 #}
 {% from 'components/atoms/badge.html' import badge %}
-{% from 'components/atoms/code_label.html' import code_label %}
-{% from 'components/atoms/confidence_indicator.html' import confidence_indicator %}
 
 {% macro feed_item(patient_name, tool, tier, description, status, confidence,
-                   time_display='', is_live=false, is_escalation=false,
-                   reasoning_html='') %}
-  {%- set status_labels = {
-    'auto-approved': 'Auto-approved',
-    'approved': 'Approved',
-    'rejected': 'Rejected',
-    'pending': 'Pending',
-    'escalated': 'Escalated'
-  } -%}
+                   age_sex='', chief='', vitals=none, agent_detail='', step=0,
+                   time_display='', is_live=false, is_escalation=false) %}
+  {%- set status_labels = {'auto-approved':'Auto-approved','approved':'Approved','rejected':'Rejected','pending':'Pending','escalated':'Escalated'} -%}
   {%- set status_label = status_labels[status] if status in status_labels else status -%}
-<div class="feed-item tier-border-t{{ tier }}" onclick="toggleReasoning(this)">
-  <div class="feed-item-header">
-    <span class="feed-patient">{{ patient_name }}</span>
-    {%- if is_live %}{{ badge('LIVE', 'live', 'margin-left:4px;font-size:9px;') }}{% endif %}
-    {{ badge('T' ~ tier, 't' ~ tier) }}
-    {{ code_label(tool) }}
-    {%- if is_escalation %}{{ badge('ESCALATION', 'danger') }}{% endif %}
-    <span class="feed-time">{{ time_display }}</span>
+  {%- set status_class = 'auto-approved' if status == 'auto-approved' else status -%}
+  {%- set status_icons = {'auto-approved':'check','approved':'check','rejected':'x','pending':'clock','escalated':'alert-triangle'} -%}
+  {%- set status_icon = status_icons[status] if status in status_icons else 'circle' -%}
+  {%- set pct = (confidence * 100) | int -%}
+  {%- set progress_pct = ((step / 6) * 100) | round(1) -%}
+<div class="feed-item">
+  <div class="feed-item-top">
+    <div class="feed-patient-col">
+      <div class="feed-person-col">
+        <div class="feed-person-patient">
+          <i data-lucide="user" class="icon feed-person-icon" style="width:18px;height:18px;"></i>
+          <div class="feed-person-headings">
+            <span class="feed-person-label">Patient:</span>
+            <span class="feed-person-name">{{ patient_name }}{%- if age_sex %}<span class="feed-age-sex">{{ age_sex }}</span>{%- endif %}</span>
+          </div>
+          {%- if is_live %}{{ badge('LIVE', 'live') }}{% endif %}
+          {%- if is_escalation %}{{ badge('ESCALATION', 'danger') }}{% endif %}
+        </div>
+        {%- if chief %}<p class="feed-chief">{{ chief }}</p>{% endif %}
+      </div>
+      <div class="feed-vitals">
+        {%- if vitals %}
+          {%- for label, val in vitals.items() %}
+        <div class="feed-vital">
+          <span class="feed-vital-label">{{ label }}</span>
+          <span class="feed-vital-value">{{ val }}</span>
+        </div>
+          {%- endfor %}
+        {%- else %}
+        <div class="feed-vital" style="border:none;">
+          <span class="feed-vital-label" style="color:var(--text-tertiary);">No vitals</span>
+        </div>
+        {%- endif %}
+      </div>
+    </div>
+    <div class="feed-agent-col">
+      <div class="feed-agent-content">
+        <div class="feed-agent-text-group">
+          <div class="feed-agent-heading">
+            <span class="feed-agent-label">Agent:</span>
+            {%- if time_display %}<span class="feed-timestamp">{{ time_display }}</span>{% endif %}
+          </div>
+          <div class="feed-agent-texts">
+            <span class="feed-agent-title">{{ description }}</span>
+            <div class="feed-action-inline">
+              <span class="feed-inline-badge feed-inline-status {{ status_class }}">
+                <i data-lucide="{{ status_icon }}" class="icon icon-sm"></i>{{ status_label }}
+              </span>
+              <span class="feed-inline-badge feed-inline-confidence">Confidence {{ pct }}%</span>
+            </div>
+          </div>
+        </div>
+        {%- if agent_detail %}<p class="feed-agent-reasoning">{{ agent_detail }}</p>{% endif %}
+      </div>
+    </div>
   </div>
-  <div class="feed-desc">{{ description }}</div>
-  <div class="feed-meta">
-    <span class="feed-status {{ 'auto-approved' if status == 'auto-approved' else status }}">
-      {{ status_label }}
-    </span>
-    {{ confidence_indicator(confidence) }}
+  <div class="feed-progress">
+    <div class="feed-progress-fill" style="width:{{ progress_pct }}%;"></div>
   </div>
-  {%- if reasoning_html %}
-  <div class="reasoning-toggle" onclick="event.stopPropagation();toggleReasoning(this.closest('.feed-item'))">&#9654; Reasoning trace</div>
-  <div class="reasoning-content">{{ reasoning_html | safe }}</div>
-  {%- endif %}
 </div>
 {% endmacro %}

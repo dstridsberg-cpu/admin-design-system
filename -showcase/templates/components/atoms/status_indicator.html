@@ -19,9 +19,12 @@
 {% macro status_indicator(text='Agent Active', state='active', id='', text_id='') %}
   {%- set id_attr = ' id="' ~ id ~ '"' if id else '' -%}
   {%- set text_id_attr = ' id="' ~ text_id ~ '"' if text_id else '' -%}
-<div class="header-status"{{ id_attr }}>
-  <span class="pulse-dot{{ ' paused' if state == 'paused' }}"></span>
-  <span{{ text_id_attr }}>{{ text }}</span>
+  {%- set paused = state == 'paused' -%}
+<div class="agent-status-group{{ ' paused' if paused }}"{{ id_attr }}>
+  <div class="agent-status-pill">
+    <span class="pulse-dot"></span>
+    <span{{ text_id_attr }}>{{ text }}</span>
+  </div>
 </div>
 {% endmacro %}
 

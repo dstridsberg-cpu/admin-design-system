@@ -1,67 +1,60 @@
 {#
   sidebar(active_view)
   ─────────────────────────────────────────────────────────────
-  Full left sidebar with three sections:
-    1. Dashboard — Activity Feed, Pending Approvals, Patient Panel, Encounter Detail
-    2. System    — Analytics, Configuration
-    3. Encounters — Three fixed patient links + dynamic #live-sidebar-items slot
+  Full left sidebar with:
+    — Activity, Pending Approvals, Patients (main nav)
+    — Encounter sub-items (patient list with status dots)
+    — Analytics, Configuration (bottom, pushed to end)
 
   Parameters:
     active_view  (str)  Currently active view name. Default 'feed'.
-                        One of: 'feed' | 'approvals' | 'patients' | 'encounter'
+                        One of: 'feed' | 'approvals' | 'patients'
                               | 'analytics' | 'config'
 
-  CSS classes: sidebar > sidebar-section > sidebar-label  nav-item  nav-badge  pulse-dot
+  CSS classes: sidebar · nav-item · nav-badge · encounter-nav-items
+               encounter-nav-item · encounter-dot · sidebar-bottom
   IDs: approvalBadge, live-sidebar-items
   ─────────────────────────────────────────────────────────────
 #}
-{% from 'components/atoms/section_label.html' import section_label %}
 {% from 'components/molecules/nav_item.html' import nav_item, encounter_nav_item %}
 
 {% macro sidebar(active_view='feed') %}
 <nav class="sidebar">
 
-  <div class="sidebar-section">
-    {{ section_label('Dashboard') }}
+  {{ nav_item(
+      label='Activity',
+      view='feed',
+      icon_svg='<i data-lucide="activity" class="icon"></i>',
+      active=(active_view == 'feed'),
+      onclick="switchView('feed')"
+  ) }}
 
-    {{ nav_item(
-        label='Activity Feed',
-        view='feed',
-        icon_svg='<i data-lucide="activity" class="icon"></i>',
-        active=(active_view == 'feed'),
-        onclick="switchView('feed')"
-    ) }}
+  {{ nav_item(
+      label='Pending Approvals',
+      view='approvals',
+      icon_svg='<i data-lucide="bell" class="icon"></i>',
+      active=(active_view == 'approvals'),
+      onclick="switchView('approvals')",
+      badge_count=0,
+      badge_id='approvalBadge'
+  ) }}
 
-    {{ nav_item(
-        label='Pending Approvals',
-        view='approvals',
-        icon_svg='<i data-lucide="bell" class="icon"></i>',
-        active=(active_view == 'approvals'),
-        onclick="switchView('approvals')",
-        badge_count=0,
-        badge_id='approvalBadge'
-    ) }}
+  {{ nav_item(
+      label='Patients',
+      view='patients',
+      icon_svg='<i data-lucide="user" class="icon"></i>',
+      active=(active_view == 'patients'),
+      onclick="switchView('patients')"
+  ) }}
 
-    {{ nav_item(
-        label='Patient Panel',
-        view='patients',
-        icon_svg='<i data-lucide="user" class="icon"></i>',
-        active=(active_view == 'patients'),
-        onclick="switchView('patients')"
-    ) }}
-
-    {{ nav_item(
-        label='Encounter Detail',
-        view='encounter',
-        icon_svg='<i data-lucide="file-text" class="icon"></i>',
-        active=(active_view == 'encounter'),
-        onclick="switchView('encounter')"
-    ) }}
+  <div class="encounter-nav-items">
+    {{ encounter_nav_item("M. Thompson, 58F", "selectPatient('thompson'); switchView('encounter')", 'active') }}
+    {{ encounter_nav_item("J. Rodriguez, 34M", "selectPatient('rodriguez'); switchView('encounter')", 'active') }}
+    {{ encounter_nav_item("A. Patel, 71F",    "selectPatient('patel'); switchView('encounter')",    'danger') }}
+    <div id="live-sidebar-items"></div>
   </div>
 
-  <div class="sidebar-section">
-    {{ section_label('System') }}
-
+  <div class="sidebar-bottom">
     {{ nav_item(
         label='Analytics',
         view='analytics',
@@ -77,16 +70,6 @@
         active=(active_view == 'config'),
         onclick="switchView('config')"
     ) }}
-  </div>
-
-  <div class="sidebar-section" style="margin-top:auto;padding-top:16px;border-top:1px solid var(--border);">
-    {{ section_label('Encounters') }}
-
-    {{ encounter_nav_item("M. Thompson, 58F", "selectPatient('thompson'); switchView('encounter')", 'active') }}
-    {{ encounter_nav_item("J. Rodriguez, 34M", "selectPatient('rodriguez'); switchView('encounter')", 'active') }}
-    {{ encounter_nav_item("A. Patel, 71F",    "selectPatient('patel'); switchView('encounter')",    'danger') }}
-
-    <div id="live-sidebar-items"></div>
   </div>
 
 </nav>

@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
   <link rel="icon" href="/favicon.ico" />
+  <!-- Preload logo assets to prevent blink on first render -->
+  <link rel="preload" as="image" href="https://www.figma.com/api/mcp/asset/6358ae29-e7d7-45d7-bf0b-9d8bc29bad11">
+  <link rel="preload" as="image" href="https://www.figma.com/api/mcp/asset/ea685a85-b46c-493f-bf45-cb878fe05cd1">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Admin</title>
-  <!-- Load Aktiv Grotesk from your font provider (Adobe Fonts, Fonts.com, or @font-face) -->
-  <!-- <link rel="stylesheet" href="YOUR_AKTIV_GROTESK_URL"> -->
   <!-- Tiempos Headline Light — used via --brand-font for optional brand accent headings -->
   <link href="https://db.onlinewebfonts.com/c/e4b6f66c5987eea12c8847782bc851f6?family=Tiempos+Headline+Light" rel="stylesheet">
   <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
@@ -21,41 +22,61 @@
     <div class="app">
       <!-- Top Nav -->
       <header class="top-nav">
-  <div class="nav-left">
-    <div class="nav-logo"><span></span><span></span><span></span><span></span></div>
-    <span class="nav-app-title">Supervisor Console</span>
-    <div class="header-status" id="agentStatus">
-  <span class="pulse-dot"></span>
-  <span id="statusText">Agent Active</span>
-</div>
+  <div class="nav-brand">
+    <img class="nav-logo" src="https://www.figma.com/api/mcp/asset/6358ae29-e7d7-45d7-bf0b-9d8bc29bad11" alt="Admin" width="24" height="19">
+    <div class="nav-brand-text">
+      <img class="nav-wordmark" src="https://www.figma.com/api/mcp/asset/ea685a85-b46c-493f-bf45-cb878fe05cd1" alt="admin." width="54" height="10">
+      <span class="nav-app-title">Consultations</span>
+    </div>
   </div>
-  <div class="nav-center">
-    <div class="autonomy-switcher">
-  <label>Autonomy</label>
-  <div class="autonomy-btns" id="autonomyBtns">    <button class="autonomy-btn"
-            data-level="0">L0</button>    <button class="autonomy-btn"
-            data-level="1">L1</button>    <button class="autonomy-btn active"
-            data-level="2">L2</button>    <button class="autonomy-btn"
-            data-level="3">L3</button>    <button class="autonomy-btn"
-            data-level="4">L4</button>  </div>
-</div>
-
-    <div class="speed-control">
-  <span>Speed:</span>  <button class="speed-btn"
-          data-speed="0.5">0.5x</button>  <button class="speed-btn active"
-          data-speed="1">1x</button>  <button class="speed-btn"
-          data-speed="2">2x</button>  <button class="speed-btn"
-          data-speed="0">Instant</button></div>
-
-
+  <div class="nav-left">
+    <div class="agent-status-group" id="agentStatus">
+      <div class="agent-status-pill">
+        <span class="pulse-dot"></span>
+        <span id="statusText">Agent Active</span>
+      </div>
+      <div class="agent-status-actions">
+        <button class="agent-action-btn" id="pauseBtn" onclick="togglePause()" title="Pause agent">
+          <i data-lucide="pause" class="icon icon-sm"></i>
+        </button>
+        <button class="agent-action-btn" id="demoControlsBtn" onclick="toggleDemoControls()" title="Demo controls">
+          <i data-lucide="sliders-horizontal" class="icon icon-sm"></i>
+        </button>
+      </div>
+    </div>
+    <div class="demo-controls-panel" id="demoControlsPanel">
+      <div class="autonomy-switcher">
+        <label>Autonomy</label>
+        <div class="autonomy-btns" id="autonomyBtns">
+          <button class="autonomy-btn" data-level="0">L0</button>
+          <button class="autonomy-btn" data-level="1">L1</button>
+          <button class="autonomy-btn active" data-level="2">L2</button>
+          <button class="autonomy-btn" data-level="3">L3</button>
+          <button class="autonomy-btn" data-level="4">L4</button>
+        </div>
+      </div>
+      <div class="speed-control">
+        <span>Speed:</span>
+        <button class="speed-btn" data-speed="0.5">0.5x</button>
+        <button class="speed-btn active" data-speed="1">1x</button>
+        <button class="speed-btn" data-speed="2">2x</button>
+        <button class="speed-btn" data-speed="0">Instant</button>
+      </div>
+    </div>
   </div>
   <div class="nav-right">
-    <button class="btn btn-danger pause-btn" id="pauseBtn" onclick="togglePause()">
-      <i data-lucide="pause" class="icon icon-sm"></i>
-      Pause
-    </button>
     <a href="#">API Keys</a>
-    <select class="company-dropdown"><option>Company A</option></select>
+    <div class="dropdown-menu" id="companySwitcher">
+      <button class="dropdown-menu-btn" onclick="toggleCompanyDropdown()" aria-haspopup="listbox" aria-expanded="false" id="companySwitcherBtn">
+        <span id="companyLabel">Company A</span>
+        <i data-lucide="chevron-down" class="icon icon-sm chevron"></i>
+      </button>
+      <div class="dropdown-list" role="listbox">
+        <div class="dropdown-item active" onclick="selectCompany(this, 'Company A')">Company A</div>
+        <div class="dropdown-item" onclick="selectCompany(this, 'Company B')">Company B</div>
+        <div class="dropdown-item" onclick="selectCompany(this, 'Company C')">Company C</div>
+      </div>
+    </div>
   </div>
 </header>
 
@@ -63,64 +84,37 @@
       <!-- Sidebar -->
       <nav class="sidebar">
 
-  <div class="sidebar-section">
-
-    <div class="nav-item active"
-      data-view="feed" onclick="switchView('feed')"><i data-lucide="activity" class="icon"></i>Activity Feed</div>
-
-
-    <div class="nav-item"
-      data-view="approvals" onclick="switchView('approvals')"><i data-lucide="bell" class="icon"></i>Pending Approvals  <span class="nav-badge" id="approvalBadge"
-        style="display:none">0</span></div>
-
-
-    <div class="nav-item"
-      data-view="patients" onclick="switchView('patients')"><i data-lucide="user" class="icon"></i>Patient Panel</div>
-
-
-    <div class="nav-item"
-      data-view="encounter" onclick="switchView('encounter')"><i data-lucide="file-text" class="icon"></i>Encounter Detail</div>
-
+  <div class="nav-item active" data-view="feed" onclick="switchView('feed')">
+    <i data-lucide="activity" class="icon"></i>Activity
+  </div>
+  <div class="nav-item" data-view="approvals" onclick="switchView('approvals')">
+    <i data-lucide="bell" class="icon"></i>Pending Approvals
+    <span class="nav-badge" id="approvalBadge" style="display:none">0</span>
+  </div>
+  <div class="nav-item" data-view="patients" onclick="switchView('patients')">
+    <i data-lucide="user" class="icon"></i>Patients
   </div>
 
-  <div class="sidebar-section">
-    <div class="sidebar-label">System</div>
-
-
-    <div class="nav-item"
-      data-view="analytics" onclick="switchView('analytics')"><i data-lucide="bar-chart-2" class="icon"></i>Analytics</div>
-
-
-    <div class="nav-item"
-      data-view="config" onclick="switchView('config')"><i data-lucide="settings" class="icon"></i>Configuration</div>
-
-  </div>
-
-  <div class="sidebar-section" style="margin-top:auto;padding-top:16px;border-top:1px solid var(--border);">
-    <div class="sidebar-label">Encounters</div>
-
-
-    <div class="nav-item" style="font-size:12px;"
-     onclick="selectPatient('thompson'); switchView('encounter')">
-  <span class="pulse-dot" style="width:6px;height:6px;"></span>
-  M. Thompson, 58F
-</div>
-
-    <div class="nav-item" style="font-size:12px;"
-     onclick="selectPatient('rodriguez'); switchView('encounter')">
-  <span class="pulse-dot" style="width:6px;height:6px;"></span>
-  J. Rodriguez, 34M
-</div>
-
-    <div class="nav-item" style="font-size:12px;"
-     onclick="selectPatient('patel'); switchView('encounter')">
-  <span class="pulse-dot"
-          style="width:6px;height:6px;background:var(--status-danger);animation:none;"></span>
-  A. Patel, 71F
-</div>
-
-
+  <div class="encounter-nav-items">
+    <div class="encounter-nav-item" data-patient="thompson" onclick="selectPatient('thompson'); switchView('encounter')" style="display:none;">
+      <span class="encounter-dot"></span>M. Thompson, 58F
+    </div>
+    <div class="encounter-nav-item" data-patient="rodriguez" onclick="selectPatient('rodriguez'); switchView('encounter')" style="display:none;">
+      <span class="encounter-dot"></span>J. Rodriguez, 34M
+    </div>
+    <div class="encounter-nav-item" data-patient="patel" onclick="selectPatient('patel'); switchView('encounter')" style="display:none;">
+      <span class="encounter-dot"></span>A. Patel, 71F
+    </div>
     <div id="live-sidebar-items"></div>
+  </div>
+
+  <div class="sidebar-bottom">
+    <div class="nav-item" data-view="analytics" onclick="switchView('analytics')">
+      <i data-lucide="bar-chart-2" class="icon"></i>Analytics
+    </div>
+    <div class="nav-item" data-view="config" onclick="switchView('config')">
+      <i data-lucide="settings" class="icon"></i>Configuration
+    </div>
   </div>
 
 </nav>
@@ -128,16 +122,30 @@
 
       <!-- Main Content -->
       <main class="main">
-        <div class="paused-banner" id="pausedBanner">
-  AGENT PAUSED — All activity suspended. Click Resume to continue.
-</div>
 
 
         <!-- Activity Feed View -->
         <div class="view active" id="view-feed">
           <div class="view-header">
-            <h2>Activity Feed</h2>
-            <span class="view-header-meta" id="feedCount">0 actions</span>
+            <h2>Live Consultations</h2>
+            <span class="feed-count-badge" id="feedCountBadge">0</span>
+            <div class="view-switcher" style="margin-left:auto;">
+              <span class="view-switcher-label">View:</span>
+              <div class="view-switcher-btns">
+                <button class="view-switcher-btn active" title="Feed">
+                  <i data-lucide="rows-3" class="icon icon-sm"></i>
+                </button>
+                <button class="view-switcher-btn" disabled title="Timeline">
+                  <i data-lucide="gantt-chart" class="icon icon-sm"></i>
+                </button>
+                <button class="view-switcher-btn" disabled title="Columns">
+                  <i data-lucide="kanban" class="icon icon-sm"></i>
+                </button>
+                <button class="view-switcher-btn" disabled title="Cards">
+                  <i data-lucide="layout-grid" class="icon icon-sm"></i>
+                </button>
+              </div>
+            </div>
           </div>
           <div class="feed-list" id="feedList"></div>
         </div>
@@ -184,11 +192,11 @@
           <div class="card mt-4">
             <div class="card-header"><span class="card-title">Action Distribution by Risk Tier</span></div><br />
             <div id="tierChart" style="display:flex;gap:4px;align-items:flex-end;height:140px;padding:10px 0;"></div>
-            <div style="display:flex;gap:16px;margin-top:8px;font-size:12px;color:var(--text-muted);">
-              <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--t1);vertical-align:middle;margin-right:4px;"></span>T1 Low</span>
-              <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--t2);vertical-align:middle;margin-right:4px;"></span>T2 Medium</span>
-              <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--t3);vertical-align:middle;margin-right:4px;"></span>T3 High</span>
-              <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--t4);vertical-align:middle;margin-right:4px;"></span>T4 Critical</span>
+            <div style="display:flex;gap:16px;margin-top:8px;font-size:12px;color:var(--text-tertiary);">
+              <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--tier-1);vertical-align:middle;margin-right:4px;"></span>T1 Low</span>
+              <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--tier-2);vertical-align:middle;margin-right:4px;"></span>T2 Medium</span>
+              <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--tier-3);vertical-align:middle;margin-right:4px;"></span>T3 High</span>
+              <span><span style="display:inline-block;width:10px;height:10px;border-radius:2px;background:var(--tier-4);vertical-align:middle;margin-right:4px;"></span>T4 Critical</span>
             </div>
           </div>
         </div>
@@ -199,6 +207,31 @@
           <div id="configContent"></div>
         </div>
       </main>
+
+      <!-- Activity Panel — 3rd grid column, only visible on feed view -->
+      <aside class="activity-col" id="activityPanel">
+        <div class="activity-col-header">
+          <h2 class="activity-col-heading">Activity</h2>
+        </div>
+        <div class="activity-metrics-grid" id="feedActivityMetrics"></div>
+        <div class="activity-chart-section">
+          <div class="activity-chart-cols">
+            <div class="activity-chart-bars-col">
+              <div class="activity-chart-bars" id="feedTierChart"></div>
+            </div>
+            <div class="activity-chart-legend-col">
+              <div class="activity-chart-header">Risk</div>
+              <div class="activity-chart-legend">
+                <div class="activity-legend-item"><span class="legend-dot" style="background:var(--tier-1);"></span>Low</div>
+                <div class="activity-legend-item"><span class="legend-dot" style="background:var(--tier-2);"></span>Medium</div>
+                <div class="activity-legend-item"><span class="legend-dot" style="background:var(--tier-3);"></span>High</div>
+                <div class="activity-legend-item"><span class="legend-dot" style="background:var(--tier-4);"></span>Critical</div>
+              </div>
+            </div>
+          </div>
+          <div class="activity-chart-footer"></div>
+        </div>
+      </aside>
     </div>
   </div>
 
@@ -354,15 +387,22 @@
   <!-- Welcome Overlay -->
   <div class="overlay" id="welcomeOverlay">
     <div class="overlay-card">
-      <h1 style="font-family:var(--brand-font);font-weight:300;">Admin Supervisor Dashboard</h1>
-      <p>Interactive demo of an autonomous primary care AI agent. You are the supervising physician overseeing three concurrent patient encounters.</p>
-      <ul class="overlay-features">
-        <li><strong>Margaret Thompson</strong> (58F) -- Community-acquired pneumonia. Full clinical workflow.</li>
-        <li><strong>James Rodriguez</strong> (34M) -- Simple UTI. Routine case that flows quickly.</li>
-        <li><strong>Aisha Patel</strong> (71F) -- Chest tightness with cardiac risks. Triggers mandatory escalation.</li>
-      </ul>
-      <p style="font-size:12px;">Use the <strong>autonomy level switcher</strong> in the header to see how L0-L4 changes what needs your approval.</p>
-      <button class="btn btn-primary btn-lg" style="width:100%;justify-content:center;" onclick="startDemo()">Start Simulation</button>
+      <div class="overlay-col-left">
+        <div class="overlay-left-inner">
+          <div class="overlay-brand">
+            <img class="overlay-logo" src="https://www.figma.com/api/mcp/asset/ea685a85-b46c-493f-bf45-cb878fe05cd1" alt="admin.">
+            <h2 class="overlay-heading">Consultations Supervisor</h2>
+          </div>
+          <p class="overlay-description"><strong>Interactive demo of an autonomous primary care AI agent.</strong> <span>You are the supervising physician overseeing three concurrent patient encounters.</span></p>
+          <div class="overlay-actions">
+            <button class="overlay-cta" onclick="startDemo()">Start Simulation</button>
+            <p class="overlay-hint">Use the <strong>autonomy level switcher</strong> via this icon <span class="overlay-hint-icon"><i data-lucide="sliders-horizontal" class="icon icon-sm"></i></span> in the header to see how L0–L4 changes what needs your approval.</p>
+          </div>
+        </div>
+      </div>
+      <div class="overlay-col-right">
+        <img class="overlay-photo" src="https://www.figma.com/api/mcp/asset/8fa06450-319e-4214-a9bb-1fee14763fc2" alt="">
+      </div>
     </div>
   </div>
 
@@ -540,6 +580,9 @@ let state = {
   completedActions: [],
   simTime: 0,
   simInterval: null,
+  simStartWall: 0,
+  simPausedMs: 0,
+  simPauseStartedAt: 0,
   nextEventIndex: { thompson: 0, rodriguez: 0, patel: 0 },
   patientSteps: { thompson: -1, rodriguez: -1, patel: -1 },
   encounterComplete: { thompson: false, rodriguez: false, patel: false },
@@ -551,12 +594,106 @@ let state = {
 // ══════════════════════════════════════════════════════════════
 function tierClass(t) { return 'badge-t' + t; }
 function tierLabel(t) { return 'T' + t; }
-function tierColor(t) { return ['','var(--t1)','var(--t2)','var(--t3)','var(--t4)'][t]; }
+function tierColor(t) { return ['','var(--tier-1)','var(--tier-2)','var(--tier-3)','var(--tier-4)'][t]; }
 function tierBorderClass(t) { return 'tier-border-t' + t; }
+function feedAge(ms) {
+  var s = Math.floor((Date.now() - ms) / 1000);
+  if (s < 3)  return 'Just now';
+  if (s < 60) return s + 's ago';
+  var m = Math.floor(s / 60);
+  if (m < 60) return m + 'm ago';
+  return Math.floor(m / 60) + 'h ago';
+}
+
+// Tick all visible feed timestamps every second
+setInterval(function() {
+  document.querySelectorAll('.feed-item[data-created-at]').forEach(function(el) {
+    var ts = parseInt(el.getAttribute('data-created-at'), 10);
+    var tsEl = el.querySelector('.feed-timestamp');
+    if (tsEl) tsEl.textContent = feedAge(ts);
+  });
+  if (state.simStartWall && !state.paused) {
+    var elapsed = Math.floor((Date.now() - state.simStartWall - state.simPausedMs) / 1000);
+    var t = formatTime(elapsed);
+    ['analyticsTimeValue', 'activityTimeValue'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = t;
+    });
+  }
+}, 1000);
+
+// ── Tier bar chart — animated height updates ──
+function updateTierChart(chartId, tierCounts, maxCount, opts) {
+  var chart = document.getElementById(chartId);
+  if (!chart) return;
+  var existing = chart.querySelectorAll('[data-tier-bar]');
+  if (existing.length === 4) {
+    // Update in place — CSS transition animates the height change
+    [1,2,3,4].forEach(function(t) {
+      var h = Math.max(4, (tierCounts[t] / maxCount) * opts.maxH);
+      var barEl = chart.querySelector('[data-tier-bar="' + t + '"]');
+      var countEl = chart.querySelector('[data-tier-count="' + t + '"]');
+      if (barEl) barEl.style.height = h + 'px';
+      if (countEl) countEl.textContent = tierCounts[t];
+    });
+  } else {
+    // First render — build at height 0 then animate to target
+    chart.innerHTML = [1,2,3,4].map(function(t) {
+      return '<div style="' + opts.wrapper + '">' +
+        '<span data-tier-count="' + t + '" style="font-size:12px;font-weight:600;color:var(--text-secondary);">' + tierCounts[t] + '</span>' +
+        '<div data-tier-bar="' + t + '" style="' + opts.bar + ';height:0;background:' + tierColor(t) + ';border-radius:' + opts.radius + ';transition:height 0.5s ease-out;"></div>' +
+        (opts.label ? '<span style="font-size:11px;color:var(--text-tertiary);">T' + t + '</span>' : '') +
+        '</div>';
+    }).join('');
+    requestAnimationFrame(function() {
+      [1,2,3,4].forEach(function(t) {
+        var barEl = chart.querySelector('[data-tier-bar="' + t + '"]');
+        if (barEl) barEl.style.height = Math.max(4, (tierCounts[t] / maxCount) * opts.maxH) + 'px';
+      });
+    });
+  }
+}
+
+// ── Metric card count-up animation ──
+var metricLastValues = {};
+
+function parseAnimatable(str) {
+  var s = String(str).trim();
+  if (/^\d+$/.test(s))  return { num: parseInt(s, 10), suffix: '' };
+  if (/^\d+%$/.test(s)) return { num: parseInt(s, 10), suffix: '%' };
+  return null;
+}
+
+function animateCountUp(el, oldStr, newStr) {
+  var from = parseAnimatable(oldStr);
+  var to   = parseAnimatable(newStr);
+  if (!from || !to || from.num === to.num) return;
+  var suffix = to.suffix;
+  var start = from.num, end = to.num, duration = 600, t0 = null;
+  function ease(t) { return 1 - Math.pow(1 - t, 3); }
+  function tick(ts) {
+    if (!t0) t0 = ts;
+    var p = Math.min((ts - t0) / duration, 1);
+    el.textContent = Math.round(start + (end - start) * ease(p)) + suffix;
+    if (p < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
+function applyMetricAnimations(grid) {
+  grid.querySelectorAll('[data-metric-key]').forEach(function(el) {
+    var key = el.dataset.metricKey;
+    var newVal = String(el.textContent);
+    var oldVal = metricLastValues[key];
+    metricLastValues[key] = newVal;
+    if (oldVal !== undefined && oldVal !== newVal) animateCountUp(el, oldVal, newVal);
+  });
+}
+
 function confidenceColor(c) {
-  if (c >= 0.9) return 'var(--success)';
-  if (c >= 0.7) return 'var(--warning)';
-  return 'var(--danger)';
+  if (c >= 0.9) return 'var(--status-success)';
+  if (c >= 0.7) return 'var(--status-warning)';
+  return 'var(--status-danger)';
 }
 function formatTime(seconds) {
   var m = Math.floor(seconds / 60);
@@ -600,6 +737,7 @@ function formatTimestamp(timestamp) {
 // TOAST SYSTEM
 // ══════════════════════════════════════════════════════════════
 function showToast(message, type, duration) {
+  return; // temporarily hidden — remove this line to re-enable toasts
   type = type || 'info';
   duration = duration || 4000;
   var container = document.getElementById('toastContainer');
@@ -621,56 +759,467 @@ function switchView(view) {
   document.querySelectorAll('.nav-item[data-view]').forEach(function(n) {
     n.classList.toggle('active', n.dataset.view === view);
   });
+  if (view !== 'encounter') {
+    document.querySelectorAll('.encounter-nav-item').forEach(function(el) {
+      el.classList.remove('active');
+    });
+  }
+  var showActivity = (view === 'feed');
+  document.querySelector('.app').classList.toggle('has-activity-col', showActivity);
+  var panel = document.getElementById('activityPanel');
+  if (panel) panel.style.display = showActivity ? '' : 'none';
   renderCurrentView();
 }
 function selectPatient(id) {
   state.selectedPatient = id;
   state.selectedEncounterStep = null;
+  document.querySelectorAll('.encounter-nav-item').forEach(function(el) {
+    el.classList.toggle('active', el.dataset.patient === id);
+  });
 }
 
 // ══════════════════════════════════════════════════════════════
 // RENDERING - Activity Feed
 // ══════════════════════════════════════════════════════════════
+// Priority: escalated=0, pending=1, everything else=2
+// Higher urgency = lower number = goes higher in the list
+function feedProgressColor(statusClass) {
+  if (statusClass === 'escalated') return 'var(--red-500)';
+  if (statusClass === 'pending')   return 'var(--amber-500)';
+  return 'var(--status-success)';
+}
+
+function feedPriority(statusClass) {
+  if (statusClass === 'escalated') return 0;
+  if (statusClass === 'pending')   return 1;
+  return 2;
+}
+
+// FLIP-animate a card into its correct position based on priority tier:
+//   escalated (0) → before any pending or normal
+//   pending   (1) → before any normal, after all escalated
+//   normal    (2) → after all attention cards
+function moveCardToTop(card, list, statusClass) {
+  var allCards = Array.from(list.querySelectorAll('.feed-item[data-patient-id]'));
+  var myPriority = feedPriority(statusClass);
+
+  // Find insertion point: first card with strictly lower urgency (higher priority number)
+  var insertBefore = null;
+  for (var i = 0; i < allCards.length; i++) {
+    var c = allCards[i];
+    if (c === card) continue;
+    if (feedPriority(c.dataset.feedStatus) > myPriority) { insertBefore = c; break; }
+  }
+
+  // Already in correct position? Skip.
+  var alreadyThere = insertBefore ? card.nextSibling === insertBefore : list.firstElementChild === card;
+  if (alreadyThere) return;
+
+  // Remove entrance animation class before DOM move
+  allCards.forEach(function(c) {
+    c.classList.remove('feed-item-entering');
+    c.style.animationDelay = '';
+  });
+
+  // Snapshot natural Y positions
+  var befores = new Map();
+  allCards.forEach(function(c) { befores.set(c, c.getBoundingClientRect().top); });
+
+  // Move card
+  if (insertBefore) list.insertBefore(card, insertBefore);
+  else list.prepend(card);
+
+  // FLIP: animate each card from its old position to its new layout position
+  allCards.forEach(function(c) {
+    var delta = befores.get(c) - c.getBoundingClientRect().top;
+    if (Math.abs(delta) < 1) return;
+    c.animate(
+      [{ transform: 'translateY(' + delta + 'px)' }, { transform: 'translateY(0px)' }],
+      { duration: 500, easing: 'ease-out', fill: 'none' }
+    );
+  });
+}
+
+// Add or remove the attention banner on a card; statusClass drives color
+function setAttentionBanner(card, show, statusClass) {
+  var existing = card.querySelector('.feed-attention-banner');
+  var isCritical = statusClass === 'escalated';
+  if (show) {
+    if (!existing) {
+      existing = document.createElement('div');
+      existing.innerHTML = '<i data-lucide="pin" class="icon"></i><span class="feed-attention-banner-text">Requires your attention</span>';
+      card.insertBefore(existing, card.firstChild);
+    }
+    existing.className = 'feed-attention-banner' + (isCritical ? ' feed-attention-banner--critical' : '');
+    lucide.createIcons({ nodes: [existing] });
+  } else if (existing) {
+    existing.remove();
+  }
+}
+
+// Fade an element out quickly, swap content, ease it back in slowly
+function feedFade(el, updateFn, delay) {
+  setTimeout(function() {
+    el.style.transition = 'opacity 0.12s ease-in';
+    el.style.opacity = '0';
+    setTimeout(function() {
+      updateFn();
+      el.style.transition = 'opacity 0.55s ease-out';
+      el.style.opacity = '1';
+    }, 140);
+  }, delay || 0);
+}
+
+function buildAgentContentHtml(item) {
+  var statusClass = item.status === 'auto-approved' ? 'auto-approved' : item.status;
+  var statusLabel = {'auto-approved':'Auto-approved','approved':'Approved','rejected':'Rejected','pending':'Pending','escalated':'Escalated'}[item.status] || item.status;
+  var statusIcon = {'auto-approved':'check','approved':'check','rejected':'x','pending':'clock','escalated':'alert-triangle'}[item.status] || 'circle';
+  var pct = Math.round(item.confidence * 100);
+  var createdAt = item.createdAt || (item.timestamp ? new Date(item.timestamp).getTime() : Date.now());
+  var reasoningText = item.reasoning && item.reasoning.thought ? item.reasoning.thought : '';
+  return '<div class="feed-agent-text-group">' +
+    '<div class="feed-agent-heading">' +
+      '<span class="feed-agent-label">Agent:</span>' +
+      '<span class="feed-timestamp">' + feedAge(createdAt) + '</span>' +
+    '</div>' +
+    '<div class="feed-agent-texts">' +
+      '<span class="feed-agent-title">' + item.desc + '</span>' +
+      '<div class="feed-action-inline">' +
+        '<span class="feed-inline-badge feed-inline-status ' + statusClass + '">' +
+          '<i data-lucide="' + statusIcon + '" class="icon icon-sm"></i>' + statusLabel +
+        '</span>' +
+        '<span class="feed-inline-badge feed-inline-confidence">Confidence ' + pct + '%</span>' +
+      '</div>' +
+    '</div>' +
+  '</div>' +
+  (reasoningText ? '<p class="feed-agent-reasoning">' + reasoningText + '</p>' : '');
+}
+
+function buildFeedCardHtml(pid, item) {
+  var p = SIM_PATIENTS[pid] || livePatients[pid] || {};
+  var ageSex = p.age ? (', ' + p.age + p.sex) : '';
+  var chief = p.chief || '';
+  var v = p.vitals || {};
+  var vitalsHtml = (v.temp || v.hr || v.bp || v.spo2) ?
+    [['°C:', v.temp || '—'], ['HR:', String(v.hr || '—')], ['BP:', v.bp || '—'], ['SpO2:', v.spo2 || '—']].map(function(pair) {
+      return '<div class="feed-vital"><span class="feed-vital-label">' + pair[0] + '</span><span class="feed-vital-value">' + pair[1] + '</span></div>';
+    }).join('') :
+    '<div class="feed-vital" style="border:none;"><span class="feed-vital-label" style="color:var(--text-tertiary);">No vitals</span></div>';
+  var createdAt = item.createdAt || (item.timestamp ? new Date(item.timestamp).getTime() : Date.now());
+  var progressPct = Math.min((item.step || 0) / 6, 1) * 100;
+  var sc = item.status === 'auto-approved' ? 'auto-approved' : item.status;
+  var cp = Math.round(item.confidence * 100);
+  var rt = item.reasoning && item.reasoning.thought ? item.reasoning.thought : '';
+  var attn = (sc === 'pending' || sc === 'escalated') ? '1' : '0';
+  var bannerCritical = sc === 'escalated';
+  var bannerHtml = attn === '1' ? '<div class="feed-attention-banner' + (bannerCritical ? ' feed-attention-banner--critical' : '') + '"><i data-lucide="pin" class="icon"></i><span class="feed-attention-banner-text">Requires your attention</span></div>' : '';
+  return '<div class="feed-item" onclick="selectPatient(\'' + pid + '\'); switchView(\'encounter\')" data-patient-id="' + pid + '" data-created-at="' + createdAt + '" data-feed-title="' + (item.desc || '').replace(/"/g, '&quot;') + '" data-feed-status="' + sc + '" data-feed-pct="' + cp + '" data-feed-reasoning="' + rt.replace(/"/g, '&quot;') + '" data-feed-attention="' + attn + '">' +
+    bannerHtml +
+    '<div class="feed-item-top">' +
+      '<div class="feed-patient-col">' +
+        '<div class="feed-person-col">' +
+          '<div class="feed-person-patient">' +
+            '<i data-lucide="user" class="icon feed-person-icon" style="width:18px;height:18px;"></i>' +
+            '<div class="feed-person-headings">' +
+              '<span class="feed-person-label">Patient:</span>' +
+              '<span class="feed-person-name">' + getPatientName(pid) + '<span class="feed-age-sex">' + ageSex + '</span></span>' +
+            '</div>' +
+            (item._isLive ? '<span class="live-badge" style="font-size:9px;"><span class="live-dot"></span>LIVE</span>' : '') +
+            (item.isEscalation ? '<span class="badge badge-danger">ESCALATION</span>' : '') +
+          '</div>' +
+          (chief ? '<p class="feed-chief">' + chief + '</p>' : '') +
+        '</div>' +
+        '<div class="feed-vitals">' + vitalsHtml + '</div>' +
+      '</div>' +
+      '<div class="feed-agent-col">' +
+        '<div class="feed-agent-content">' + buildAgentContentHtml(item) + '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="feed-progress"><div class="feed-progress-fill" style="width:' + progressPct + '%;background:' + feedProgressColor(sc) + ';"></div></div>' +
+  '</div>';
+}
+
 function renderFeed() {
   var list = document.getElementById('feedList');
-  var count = document.getElementById('feedCount');
-  // Merge sim + live actions
-  var allItems = state.feedItems.slice();
+
+  // Build latest-event-per-patient map (sim items are chronological, so last wins)
+  var latestByPatient = {};
+  state.feedItems.forEach(function(item) { latestByPatient[item.patientId] = item; });
+  Object.keys(livePatients).forEach(function(pid) {
+    var p = livePatients[pid];
+    if (p._actions && p._actions.length > 0) {
+      latestByPatient[pid] = Object.assign({}, p._actions[p._actions.length - 1], {patientId: pid, _isLive: true});
+    }
+  });
+
+  var patientIds = Object.keys(latestByPatient);
+
+  if (patientIds.length === 0) {
+    list.innerHTML = '<div class="empty-state"><h5>No activity yet</h5><p>Actions will appear as the simulation runs or from live sessions.</p></div>';
+    return;
+  }
+
+  // Remove empty-state placeholder if present
+  var empty = list.querySelector('.empty-state');
+  if (empty) empty.remove();
+
+  // Remove cards for patients no longer in the feed
+  list.querySelectorAll('.feed-item[data-patient-id]').forEach(function(el) {
+    if (!latestByPatient[el.dataset.patientId]) el.remove();
+  });
+
+  // Update existing cards in-place; create new ones (staggered)
+  var newCardIndex = 0;
+  patientIds.forEach(function(pid) {
+    var item = latestByPatient[pid];
+    var card = list.querySelector('.feed-item[data-patient-id="' + pid + '"]');
+
+    if (card) {
+      var createdAt = item.createdAt || (item.timestamp ? new Date(item.timestamp).getTime() : Date.now());
+      var statusClass = item.status === 'auto-approved' ? 'auto-approved' : item.status;
+      var statusLabel = {'auto-approved':'Auto-approved','approved':'Approved','rejected':'Rejected','pending':'Pending','escalated':'Escalated'}[item.status] || item.status;
+      var statusIcon = {'auto-approved':'check','approved':'check','rejected':'x','pending':'clock','escalated':'alert-triangle'}[item.status] || 'circle';
+      var pct = Math.round(item.confidence * 100);
+      var reasoningText = item.reasoning && item.reasoning.thought ? item.reasoning.thought : '';
+
+      card.setAttribute('data-created-at', createdAt);
+
+      var needsAttention = statusClass === 'pending' || statusClass === 'escalated';
+      var wasAttention   = card.dataset.feedAttention === '1';
+      var contentChanged = card.dataset.feedTitle     !== item.desc    ||
+                           card.dataset.feedStatus    !== statusClass  ||
+                           card.dataset.feedPct       !== String(pct)  ||
+                           card.dataset.feedReasoning !== reasoningText;
+
+      // Card is in position if no preceding sibling has a lower urgency (higher priority number)
+      var myPriority = feedPriority(statusClass);
+      var isInPosition = true;
+      var prevEl = card.previousElementSibling;
+      while (prevEl) {
+        if (feedPriority(prevEl.dataset.feedStatus) > myPriority) { isInPosition = false; break; }
+        prevEl = prevEl.previousElementSibling;
+      }
+
+      // Move if out of position due to content change OR urgency
+      var shouldMoveToTop = !isInPosition && (contentChanged || needsAttention);
+
+      if (!contentChanged && !shouldMoveToTop) {
+        // Nothing new — leave card exactly as-is
+      } else if (shouldMoveToTop) {
+        // Move to top — FLIP animate, update content silently on arrival
+        card.dataset.feedTitle     = item.desc;
+        card.dataset.feedStatus    = statusClass;
+        card.dataset.feedPct       = String(pct);
+        card.dataset.feedReasoning = reasoningText;
+        card.dataset.feedAttention = needsAttention ? '1' : '0';
+
+        moveCardToTop(card, list, statusClass);
+
+        setTimeout((function(c, desc, sc, sl, si, p, rt, step) { return function() {
+          var titleEl = c.querySelector('.feed-agent-title');
+          if (titleEl) titleEl.textContent = desc;
+
+          var statusEl = c.querySelector('.feed-inline-status');
+          if (statusEl) {
+            statusEl.className = 'feed-inline-badge feed-inline-status ' + sc;
+            statusEl.innerHTML = '<i data-lucide="' + si + '" class="icon icon-sm"></i>' + sl;
+            lucide.createIcons();
+          }
+
+          var confEl = c.querySelector('.feed-inline-confidence');
+          if (confEl) confEl.textContent = 'Confidence ' + p + '%';
+
+          var fillEl = c.querySelector('.feed-progress-fill');
+          fillEl.style.width = Math.min(step / 6, 1) * 100 + '%';
+          fillEl.style.background = feedProgressColor(sc);
+
+          var reasoningEl = c.querySelector('.feed-agent-reasoning');
+          var agentContent = c.querySelector('.feed-agent-content');
+          if (rt) {
+            if (reasoningEl) reasoningEl.textContent = rt;
+            else {
+              var newP = document.createElement('p');
+              newP.className = 'feed-agent-reasoning';
+              newP.textContent = rt;
+              agentContent.appendChild(newP);
+            }
+          } else if (reasoningEl) {
+            reasoningEl.remove();
+          }
+          setAttentionBanner(c, sc === 'pending' || sc === 'escalated', sc);
+        }; })(card, item.desc, statusClass, statusLabel, statusIcon, pct, reasoningText, item.step || 0), 540);
+
+      } else {
+        // Content changed, already at top — fades only, no movement
+        card.dataset.feedAttention = needsAttention ? '1' : '0';
+        setAttentionBanner(card, needsAttention, statusClass);
+        var fillEl = card.querySelector('.feed-progress-fill');
+        fillEl.style.width = Math.min((item.step || 0) / 6, 1) * 100 + '%';
+        fillEl.style.background = feedProgressColor(statusClass);
+
+        if (card.dataset.feedTitle !== item.desc) {
+          card.dataset.feedTitle = item.desc;
+          var titleEl = card.querySelector('.feed-agent-title');
+          if (titleEl) feedFade(titleEl, function() { titleEl.textContent = item.desc; }, 0);
+        }
+
+        if (card.dataset.feedStatus !== statusClass) {
+          card.dataset.feedStatus = statusClass;
+          var statusEl = card.querySelector('.feed-inline-status');
+          if (statusEl) {
+            statusEl.className = 'feed-inline-badge feed-inline-status ' + statusClass;
+            statusEl.innerHTML = '<i data-lucide="' + statusIcon + '" class="icon icon-sm"></i>' + statusLabel;
+            lucide.createIcons();
+          }
+        }
+
+        if (card.dataset.feedPct !== String(pct)) {
+          card.dataset.feedPct = String(pct);
+          var confEl = card.querySelector('.feed-inline-confidence');
+          if (confEl) confEl.textContent = 'Confidence ' + pct + '%';
+        }
+
+        if (card.dataset.feedReasoning !== reasoningText) {
+          card.dataset.feedReasoning = reasoningText;
+          var reasoningEl = card.querySelector('.feed-agent-reasoning');
+          var agentContent = card.querySelector('.feed-agent-content');
+          if (reasoningText) {
+            if (reasoningEl) {
+              feedFade(reasoningEl, (function(el, t) { return function() { el.textContent = t; }; })(reasoningEl, reasoningText), 70);
+            } else {
+              setTimeout(function() {
+                var p = document.createElement('p');
+                p.className = 'feed-agent-reasoning';
+                p.style.cssText = 'opacity:0;transition:opacity 0.55s ease-out';
+                p.textContent = reasoningText;
+                agentContent.appendChild(p);
+                requestAnimationFrame(function() { p.style.opacity = '1'; });
+              }, 70);
+            }
+          } else if (reasoningEl) {
+            setTimeout(function() {
+              reasoningEl.style.cssText = 'transition:opacity 0.12s ease-in;opacity:0';
+              setTimeout(function() { if (reasoningEl.parentNode) reasoningEl.remove(); }, 140);
+            }, 70);
+          }
+        }
+      }
+    } else {
+      var div = document.createElement('div');
+      div.innerHTML = buildFeedCardHtml(pid, item);
+      var newCard = div.firstChild;
+      var newPriority = feedPriority(item.status === 'auto-approved' ? 'auto-approved' : item.status);
+      newCard.classList.add('feed-item-entering');
+      newCard.style.animationDelay = (newCardIndex * 120) + 'ms';
+      newCardIndex++;
+      // Insert before the first card with strictly lower urgency (higher priority number)
+      var newInsertBefore = null;
+      list.querySelectorAll('.feed-item[data-patient-id]').forEach(function(c) {
+        if (!newInsertBefore && feedPriority(c.dataset.feedStatus) > newPriority) newInsertBefore = c;
+      });
+      if (newInsertBefore) list.insertBefore(newCard, newInsertBefore);
+      else list.appendChild(newCard);
+    }
+  });
+
+  // Re-render any new lucide icons (only affects newly-inserted <i data-lucide> elements)
+  lucide.createIcons();
+
+  updateSidebarDots(latestByPatient);
+
+  var badge = document.getElementById('feedCountBadge');
+  if (badge) badge.textContent = Object.keys(latestByPatient).length;
+
+  renderActivitySidebar();
+}
+
+function renderActivitySidebar() {
+  // Compute same metrics as renderAnalytics
+  var m = { totalActions: state.metrics.totalActions, autoApproved: state.metrics.autoApproved,
+    manualApproved: state.metrics.manualApproved, rejected: state.metrics.rejected,
+    escalations: state.metrics.escalations, confidenceSum: state.metrics.confidenceSum };
+  var liveCount = 0;
   Object.keys(livePatients).forEach(function(pid) {
     var p = livePatients[pid];
     if (p._actions) {
       p._actions.forEach(function(a) {
-        allItems.push(Object.assign({}, a, {patientId: pid, _isLive: true}));
+        m.totalActions++;
+        m.confidenceSum += (a.confidence || 0.95);
+        if (a.status === 'auto-approved') m.autoApproved++;
+        else if (a.status === 'approved') m.manualApproved++;
+        else if (a.status === 'rejected') m.rejected++;
       });
+      liveCount++;
     }
   });
-  count.textContent = allItems.length + ' actions';
-  if (allItems.length === 0) {
-    list.innerHTML = '<div class="empty-state"><h5>No activity yet</h5><p>Actions will appear as the simulation runs or from live sessions.</p></div>';
-    return;
+  var avgConf = m.totalActions > 0 ? Math.round(m.confidenceSum / m.totalActions * 100) : 0;
+  var escRate = m.totalActions > 0 ? Math.round(m.escalations / m.totalActions * 100) : 0;
+  var concordance = m.totalActions > 0 ? Math.min(98, 85 + Math.floor(m.manualApproved * 2.5)) : 0;
+  var simComplete = Object.values(state.encounterComplete).filter(Boolean).length;
+
+  var grid = document.getElementById('feedActivityMetrics');
+  if (grid) {
+    grid.innerHTML = [
+      { key: 'totalActions',   value: m.totalActions,                          label: 'Total Actions',   sub: 'Sim + live encounters' },
+      { key: 'autoApproved',   value: m.autoApproved,                          label: 'Auto approved',   sub: (m.totalActions ? Math.round(m.autoApproved/m.totalActions*100) : 0) + '% of total' },
+      { key: 'manualReviews',  value: (m.manualApproved + m.rejected),         label: 'Manual Reviews',  sub: m.manualApproved + ' approved, ' + m.rejected + ' rejected' },
+      { key: 'escalationRate', value: escRate + '%',                            label: 'Escalation Rate', sub: m.escalations + ' escalations' },
+      { key: 'avgConfidence',  value: avgConf + '%',                            label: 'Avg. Confidence', sub: 'Across all actions' },
+      { key: 'concordance',    value: concordance + '%',                        label: 'Concordance',     sub: 'Agent vs. Supervisor' },
+      { key: 'encounters',     value: simComplete + '/3 + ' + liveCount,        label: 'Encounters',      sub: simComplete + '/3 sim + ' + liveCount + ' live' },
+      { key: 'time',           value: formatTime(state.simTime),                label: 'Time',            sub: 'Simulation time', id: 'activityTimeValue' }
+    ].map(function(card) {
+      return '<div class="metric-card"><div class="metric-caption"><div class="metric-label">' + card.label + '</div><div class="metric-value" data-metric-key="' + card.key + '"' + (card.id ? ' id="' + card.id + '"' : '') + '>' + card.value + '</div></div>' +
+        (card.sub ? '<div class="metric-sublabel">' + card.sub + '</div>' : '') + '</div>';
+    }).join('');
+    applyMetricAnimations(grid);
   }
-  var items = allItems.slice().reverse();
-  list.innerHTML = items.map(function(item) {
-    var statusClass = item.status === 'auto-approved' ? 'auto-approved' : item.status;
-    var statusLabel = item.status === 'auto-approved' ? 'Auto-approved' : item.status === 'approved' ? 'Approved' : item.status === 'rejected' ? 'Rejected' : item.status === 'pending' ? 'Pending' : item.status === 'escalated' ? 'Escalated' : item.status;
-    var timeDisplay = item._isLive ? (item.timestamp ? formatTimestamp(new Date(item.timestamp).getTime()) : '') : formatTime(item.time);
-    return '<div class="feed-item ' + tierBorderClass(item.tier) + '" onclick="toggleReasoning(this)">' +
-      '<div class="feed-item-header">' +
-        '<span class="feed-patient">' + getPatientName(item.patientId) + '</span>' +
-        (item._isLive ? '<span class="live-badge" style="margin-left:4px;font-size:9px;"><span class="live-dot"></span>LIVE</span>' : '') +
-        '<span class="badge ' + tierClass(item.tier) + '">' + tierLabel(item.tier) + '</span>' +
-        '<span class="feed-tool">' + item.tool + '</span>' +
-        (item.isEscalation ? '<span class="badge badge-danger">ESCALATION</span>' : '') +
-        '<span class="feed-time">' + timeDisplay + '</span>' +
-      '</div>' +
-      '<div class="feed-desc">' + item.desc + '</div>' +
-      '<div class="feed-meta">' +
-        '<span class="feed-status ' + statusClass + '">' + statusLabel + '</span>' +
-        '<span>Confidence: <span class="confidence-bar"><span class="confidence-fill" style="width:' + (item.confidence*100) + '%;background:' + confidenceColor(item.confidence) + '"></span></span> ' + Math.round(item.confidence*100) + '%</span>' +
-      '</div>' +
-      (item.reasoning ? '<div class="reasoning-toggle" onclick="event.stopPropagation();toggleReasoning(this.closest(\'.feed-item\'))">\u25b6 Reasoning trace</div><div class="reasoning-content">' + renderReasoningInline(item.reasoning, item.tool) + '</div>' : '') +
-    '</div>';
-  }).join('');
+
+  var tierCounts = [0,0,0,0,0];
+  state.feedItems.forEach(function(f) { tierCounts[f.tier]++; });
+  Object.keys(livePatients).forEach(function(pid) {
+    var p = livePatients[pid];
+    if (p._actions) p._actions.forEach(function(a) { if (a.tier >= 1 && a.tier <= 4) tierCounts[a.tier]++; });
+  });
+  var maxCount = Math.max(1, Math.max.apply(null, tierCounts));
+  updateTierChart('feedTierChart', tierCounts, maxCount, {
+    maxH: 100,
+    wrapper: 'display:flex;flex-direction:column;align-items:center;gap:4px;',
+    bar: 'width:8px',
+    radius: '40px 40px 0 0',
+    label: false
+  });
+}
+
+function updateSidebarDots(latestByPatient) {
+  var dotColors = {
+    'escalated':    'var(--status-danger)',
+    'pending':      'var(--status-warning)',
+    'auto-approved':'var(--status-success)',
+    'approved':     'var(--status-success)',
+    'rejected':     'var(--grey-400)'
+  };
+  var container = document.querySelector('.encounter-nav-items');
+  if (!container) return;
+
+  // Update visibility and dot color
+  var items = Array.from(container.querySelectorAll('.encounter-nav-item[data-patient]'));
+  items.forEach(function(el) {
+    var pid = el.dataset.patient;
+    var item = latestByPatient[pid];
+    if (!item) return;
+    el.style.display = '';
+    var sc = item.status === 'auto-approved' ? 'auto-approved' : item.status;
+    var dot = el.querySelector('.encounter-dot');
+    if (dot) dot.style.background = dotColors[sc] || 'var(--status-success)';
+    el.dataset.feedStatus = sc;
+  });
+
+  // Sort visible items by priority (escalated → pending → rest)
+  var visible = items.filter(function(el) { return el.style.display !== 'none' && el.dataset.feedStatus; });
+  visible.sort(function(a, b) { return feedPriority(a.dataset.feedStatus) - feedPriority(b.dataset.feedStatus); });
+  var liveItems = container.querySelector('#live-sidebar-items');
+  visible.forEach(function(el) { container.insertBefore(el, liveItems || null); });
 }
 
 function toggleReasoning(el) {
@@ -723,8 +1272,8 @@ function renderSimApprovals() {
       '<div class="sim-approval-body">' +
         '<div class="sim-approval-patient">' + SIM_PATIENTS[item.patientId].name + '</div>' +
         '<div class="sim-approval-action">' + item.desc + '</div>' +
-        (item.escalation ? '<div style="margin-top:8px;padding:10px;background:var(--danger-light);border-radius:8px;font-size:12px;"><strong style="color:var(--danger);">' + item.escalation.title + '</strong><br>' + item.escalation.summary + '</div>' : '') +
-        '<div style="margin-top:6px;font-size:12px;color:var(--text-muted);">Confidence: ' + Math.round(item.confidence*100) + '%</div>' +
+        (item.escalation ? '<div style="margin-top:8px;padding:10px;background:var(--status-danger-bg);border-radius:8px;font-size:12px;"><strong style="color:var(--status-danger);">' + item.escalation.title + '</strong><br>' + item.escalation.summary + '</div>' : '') +
+        '<div style="margin-top:6px;font-size:12px;color:var(--text-tertiary);">Confidence: ' + Math.round(item.confidence*100) + '%</div>' +
       '</div>' +
       '<div class="sim-approval-actions" id="sim-actions-' + item.id + '">' +
         '<button class="btn btn-success btn-sm" onclick="simApproveAction(\'' + item.id + '\')">Approve</button>' +
@@ -881,7 +1430,7 @@ function renderEncounterDetail() {
           return '<div class="encounter-stepper-item ' + cls + '" style="' + selected + '" onclick="state.selectedEncounterStep=' + i + ';renderEncounterDetail();">' +
             '<div class="step-icon">' + (i < currentStep ? '\u2713' : (i+1)) + '</div>' + s + '</div>';
         }).join('') +
-        '<div style="margin-top:16px;padding:12px;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border);">' +
+        '<div style="margin-top:16px;padding:12px;font-size:11px;color:var(--text-tertiary);border-top:1px solid var(--border-default);">' +
           (p.pmh && p.pmh.length > 0 ? '<div><strong>' + (isLive ? 'Facts:' : 'PMH:') + '</strong></div>' + p.pmh.map(function(x){ return '<div>\u00b7 '+x+'</div>'; }).join('') : '') +
           (p.meds && p.meds.length > 0 ? '<div style="margin-top:6px;"><strong>Meds:</strong></div>' + p.meds.map(function(x){ return '<div>\u00b7 '+x+'</div>'; }).join('') : '') +
           (p.allergies && p.allergies.length > 0 ? '<div style="margin-top:6px;"><strong>Allergies:</strong></div>' + p.allergies.map(function(x){ return '<div>\u00b7 '+x+'</div>'; }).join('') : '') +
@@ -937,7 +1486,7 @@ function renderEncounterContent(pid, viewStep, events, diffEvent, soapEvent, esc
   var stepEvents = events.filter(function(e) { return e.step === viewStep; });
   var html = '';
   if (escalationEvent && pid === 'patel') {
-    html += '<div class="card" style="border:2px solid var(--danger);margin-bottom:16px;"><div style="background:var(--danger-light);padding:12px;margin:-16px -16px 12px;border-radius:16px 16px 0 0;"><strong style="color:var(--danger);">\u26a0 MANDATORY ESCALATION</strong></div><div style="font-size:13px;line-height:1.6;"><strong>' + escalationEvent.escalation.title + '</strong><br><br>' + escalationEvent.escalation.summary + '<br><br><strong>Recommended:</strong> ' + escalationEvent.escalation.recommended + '</div></div>';
+    html += '<div class="card" style="border:2px solid var(--status-danger);margin-bottom:16px;"><div style="background:var(--status-danger-bg);padding:12px;margin:-16px -16px 12px;border-radius:16px 16px 0 0;"><strong style="color:var(--status-danger);">\u26a0 MANDATORY ESCALATION</strong></div><div style="font-size:13px;line-height:1.6;"><strong>' + escalationEvent.escalation.title + '</strong><br><br>' + escalationEvent.escalation.summary + '<br><br><strong>Recommended:</strong> ' + escalationEvent.escalation.recommended + '</div></div>';
   }
   if (diffEvent && viewStep >= diffEvent.step) {
     html += '<div class="encounter-section"><h4><span class="badge badge-info">Assessment</span> Differential Diagnosis</h4><table class="dx-table"><thead><tr><th>#</th><th>Diagnosis</th><th>Prob</th><th>For</th><th>Against</th></tr></thead><tbody>' +
@@ -977,7 +1526,7 @@ function renderEncounterContent(pid, viewStep, events, diffEvent, soapEvent, esc
               return '<div style="display:flex;gap:8px;margin-bottom:8px;justify-content:' + (isUser ? 'flex-end' : 'flex-start') + ';">' +
                 '<div style="max-width:80%;padding:8px 12px;border-radius:12px;font-size:13px;line-height:1.5;' +
                 (isUser ? 'background:#e0f2fe;color:#0c4a6e;' : 'background:#f3f4f6;color:#1f2937;') + '">' +
-                '<div style="font-size:10px;font-weight:600;margin-bottom:2px;color:var(--text-muted);">' + (isUser ? 'Patient' : 'AI') + '</div>' +
+                '<div style="font-size:10px;font-weight:600;margin-bottom:2px;color:var(--text-tertiary);">' + (isUser ? 'Patient' : 'AI') + '</div>' +
                 m.content.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>') +
                 '</div></div>';
             }).join('') + '</div></div>';
@@ -1042,15 +1591,16 @@ function renderAnalytics() {
   var simComplete = Object.values(state.encounterComplete).filter(Boolean).length;
   var grid = document.getElementById('metricsGrid');
   grid.innerHTML = [
-    { value: m.totalActions, label: 'Total Actions', sub: 'sim + live encounters' },
-    { value: m.autoApproved, label: 'Auto-Approved', sub: (m.totalActions ? Math.round(m.autoApproved/m.totalActions*100) : 0) + '% of total' },
-    { value: (m.manualApproved + m.rejected), label: 'Manual Reviews', sub: m.manualApproved + ' approved, ' + m.rejected + ' rejected' },
-    { value: escRate + '%', label: 'Escalation Rate', sub: m.escalations + ' escalations' },
-    { value: avgConf + '%', label: 'Avg Confidence', sub: 'across all actions' },
-    { value: concordance + '%', label: 'Concordance', sub: 'agent vs supervisor' },
-    { value: simComplete + '/3 sim + ' + liveCount + ' live', label: 'Encounters', sub: '' },
-    { value: formatTime(state.simTime), label: 'Sim Time', sub: '' }
-  ].map(function(m) { return '<div class="card metric-card"><div class="metric-value">' + m.value + '</div><div class="metric-label">' + m.label + '</div>' + (m.sub ? '<div class="metric-sublabel">' + m.sub + '</div>' : '') + '</div>'; }).join('');
+    { key: 'totalActions',   value: m.totalActions,                          label: 'Total Actions',   sub: 'sim + live encounters' },
+    { key: 'autoApproved',   value: m.autoApproved,                          label: 'Auto-Approved',   sub: (m.totalActions ? Math.round(m.autoApproved/m.totalActions*100) : 0) + '% of total' },
+    { key: 'manualReviews',  value: (m.manualApproved + m.rejected),         label: 'Manual Reviews',  sub: m.manualApproved + ' approved, ' + m.rejected + ' rejected' },
+    { key: 'escalationRate', value: escRate + '%',                            label: 'Escalation Rate', sub: m.escalations + ' escalations' },
+    { key: 'avgConfidence',  value: avgConf + '%',                            label: 'Avg Confidence',  sub: 'across all actions' },
+    { key: 'concordance',    value: concordance + '%',                        label: 'Concordance',     sub: 'agent vs supervisor' },
+    { key: 'encounters',     value: simComplete + '/3 + ' + liveCount,        label: 'Encounters',      sub: simComplete + '/3 sim + ' + liveCount + ' live' },
+    { key: 'time',           value: formatTime(state.simTime),                label: 'Sim Time',        sub: '', id: 'analyticsTimeValue' }
+  ].map(function(m) { return '<div class="metric-card"><div class="metric-caption"><div class="metric-label">' + m.label + '</div><div class="metric-value" data-metric-key="' + m.key + '"' + (m.id ? ' id="' + m.id + '"' : '') + '>' + m.value + '</div></div>' + (m.sub ? '<div class="metric-sublabel">' + m.sub + '</div>' : '') + '</div>'; }).join('');
+  applyMetricAnimations(grid);
 
   var tierCounts = [0,0,0,0,0];
   state.feedItems.forEach(function(f) { tierCounts[f.tier]++; });
@@ -1060,11 +1610,13 @@ function renderAnalytics() {
     if (p._actions) p._actions.forEach(function(a) { if (a.tier >= 1 && a.tier <= 4) tierCounts[a.tier]++; });
   });
   var maxCount = Math.max(1, Math.max.apply(null, tierCounts));
-  var chart = document.getElementById('tierChart');
-  chart.innerHTML = [1,2,3,4].map(function(t) {
-    var h = Math.max(4, (tierCounts[t] / maxCount) * 120);
-    return '<div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;"><span style="font-size:12px;font-weight:600;">' + tierCounts[t] + '</span><div style="width:100%;height:' + h + 'px;background:' + tierColor(t) + ';border-radius:4px 4px 0 0;"></div><span style="font-size:11px;color:var(--text-muted);">T' + t + '</span></div>';
-  }).join('');
+  updateTierChart('tierChart', tierCounts, maxCount, {
+    maxH: 120,
+    wrapper: 'flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;',
+    bar: 'width:100%',
+    radius: '4px 4px 0 0',
+    label: true
+  });
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1074,9 +1626,9 @@ function renderConfig() {
   var container = document.getElementById('configContent');
   container.innerHTML =
     '<div class="config-section"><h4>Autonomy Level</h4><div class="card" style="padding:20px;">' +
-      '<p style="font-size:13px;color:var(--text-muted);margin-bottom:16px;">Current: <strong style="color:#2563eb;">L' + state.autonomyLevel + '</strong></p>' +
+      '<p style="font-size:13px;color:var(--text-tertiary);margin-bottom:16px;">Current: <strong style="color:#2563eb;">L' + state.autonomyLevel + '</strong></p>' +
       '<div style="display:flex;gap:8px;">' + [0,1,2,3,4].map(function(l) { return '<button class="btn ' + (state.autonomyLevel===l?'btn-primary':'btn-outline') + ' btn-sm" onclick="setAutonomy(' + l + ')">L' + l + '</button>'; }).join('') + '</div>' +
-      '<div style="margin-top:12px;font-size:12px;color:var(--text-muted);">' + ['L0 Shadow: All actions draft','L1 Copilot: All need approval','L2 Supervised: T1 auto, T2+ review','L3 Guarded: T1-T2 auto, T3+ review','L4 Full: T1-T3 auto, T4+ review'][state.autonomyLevel] + '</div>' +
+      '<div style="margin-top:12px;font-size:12px;color:var(--text-tertiary);">' + ['L0 Shadow: All actions draft','L1 Copilot: All need approval','L2 Supervised: T1 auto, T2+ review','L3 Guarded: T1-T2 auto, T3+ review','L4 Full: T1-T3 auto, T4+ review'][state.autonomyLevel] + '</div>' +
     '</div></div>' +
     '<div class="config-section"><h4>Risk Tier Approval Matrix</h4><div class="card"><table class="approval-matrix"><thead><tr><th></th><th>T1</th><th>T2</th><th>T3</th><th>T4</th></tr></thead><tbody>' +
       [0,1,2,3,4].map(function(l) {
@@ -1105,6 +1657,7 @@ function renderCurrentView() {
 // ══════════════════════════════════════════════════════════════
 function startSimulation() {
   if (state.simInterval) clearInterval(state.simInterval);
+  if (!state.simStartWall) { state.simStartWall = Date.now(); state.simPausedMs = 0; }
   var tickMs = state.speed === 0 ? 50 : 1000 / state.speed;
   state.simInterval = setInterval(simTick, tickMs);
 }
@@ -1136,7 +1689,7 @@ function processEvent(pid, evt) {
     confidence: evt.confidence, urgency: evt.urgency || 'routine', time: state.simTime,
     step: evt.step, reasoning: evt.reasoning, isDifferential: evt.isDifferential,
     differential: evt.differential, soap: evt.soap, isEscalation: isEscalation,
-    escalation: evt.escalation,
+    escalation: evt.escalation, createdAt: Date.now(),
     status: autoApprove ? 'auto-approved' : (isEscalation ? 'escalated' : 'pending')
   };
   state.feedItems.push(feedItem);
@@ -1269,25 +1822,72 @@ function setSpeed(speed) {
   if (state.started) startSimulation();
 }
 
+function toggleDemoControls() {
+  var panel = document.getElementById('demoControlsPanel');
+  var btn = document.getElementById('demoControlsBtn');
+  var isOpen = panel.classList.toggle('open');
+  btn.classList.toggle('active', isOpen);
+}
+
+function toggleCompanyDropdown() {
+  var switcher = document.getElementById('companySwitcher');
+  var btn = document.getElementById('companySwitcherBtn');
+  var isOpen = switcher.classList.toggle('open');
+  btn.setAttribute('aria-expanded', isOpen);
+}
+
+function selectCompany(el, name) {
+  document.getElementById('companyLabel').textContent = name;
+  document.querySelectorAll('#companySwitcher .dropdown-item').forEach(function(item) {
+    item.classList.toggle('active', item === el);
+  });
+  document.getElementById('companySwitcher').classList.remove('open');
+  document.getElementById('companySwitcherBtn').setAttribute('aria-expanded', 'false');
+}
+
+document.addEventListener('click', function(e) {
+  var switcher = document.getElementById('companySwitcher');
+  if (switcher && !switcher.contains(e.target)) {
+    switcher.classList.remove('open');
+    document.getElementById('companySwitcherBtn').setAttribute('aria-expanded', 'false');
+  }
+});
+
+var agentPill = document.querySelector('.agent-status-pill');
+agentPill.addEventListener('click', togglePause);
+agentPill.addEventListener('mouseenter', function() {
+  document.getElementById('statusText').textContent = state.paused ? 'Start Agent?' : 'Pause Agent?';
+});
+agentPill.addEventListener('mouseleave', function() {
+  document.getElementById('statusText').textContent = state.paused ? 'Agent Paused' : 'Agent Active';
+});
+
+document.addEventListener('click', function(e) {
+  var panel = document.getElementById('demoControlsPanel');
+  var btn = document.getElementById('demoControlsBtn');
+  if (panel.classList.contains('open') && !panel.contains(e.target) && !btn.contains(e.target)) {
+    panel.classList.remove('open');
+    btn.classList.remove('active');
+  }
+});
+
 function togglePause() {
   state.paused = !state.paused;
   var btn = document.getElementById('pauseBtn');
   var status = document.getElementById('agentStatus');
   var statusText = document.getElementById('statusText');
-  var banner = document.getElementById('pausedBanner');
+  var pillHovered = document.querySelector('.agent-status-pill:hover');
   if (state.paused) {
-    btn.innerHTML = '<i data-lucide="play" class="icon icon-sm"></i> Resume'; lucide.createIcons();
-    btn.classList.add('is-paused');
+    state.simPauseStartedAt = Date.now();
+    btn.innerHTML = '<i data-lucide="play" class="icon icon-sm"></i>'; lucide.createIcons();
     status.classList.add('paused');
-    statusText.textContent = 'Agent Paused';
-    banner.classList.add('visible');
+    statusText.textContent = pillHovered ? 'Start Agent?' : 'Agent Paused';
     showToast('Agent paused', 'danger', 3000);
   } else {
-    btn.innerHTML = '<i data-lucide="pause" class="icon icon-sm"></i> Pause'; lucide.createIcons();
-    btn.classList.remove('is-paused');
+    if (state.simPauseStartedAt) state.simPausedMs += Date.now() - state.simPauseStartedAt;
+    btn.innerHTML = '<i data-lucide="pause" class="icon icon-sm"></i>'; lucide.createIcons();
     status.classList.remove('paused');
-    statusText.textContent = 'Agent Active';
-    banner.classList.remove('visible');
+    statusText.textContent = pillHovered ? 'Pause Agent?' : 'Agent Active';
     showToast('Agent resumed', 'success', 2000);
   }
 }
@@ -1401,8 +2001,8 @@ function renderAdminApprovals() {
       '<div class="sim-approval-body">' +
         '<div class="sim-approval-patient">' + (a.patientName || a.patientId || 'Unknown') + '</div>' +
         '<div class="sim-approval-action">' + a.action + '</div>' +
-        '<div style="margin-top:4px;font-size:12px;color:var(--text-muted);">' + (a.reason || '') + '</div>' +
-        (a.condition ? '<div style="margin-top:4px;font-size:12px;color:var(--text-muted);">Condition: ' + a.condition + '</div>' : '') +
+        '<div style="margin-top:4px;font-size:12px;color:var(--text-tertiary);">' + (a.reason || '') + '</div>' +
+        (a.condition ? '<div style="margin-top:4px;font-size:12px;color:var(--text-tertiary);">Condition: ' + a.condition + '</div>' : '') +
       '</div>' +
       '<div class="sim-approval-actions" id="admin-actions-' + a.id + '">' +
         '<button class="btn btn-success btn-sm" onclick="adminApproveAction(\'' + a.id + '\')">Approve</button>' +
@@ -1934,6 +2534,9 @@ function initDashboard() {
   // Poll for live data
   setInterval(fetchLiveSessions, 15000);
   setInterval(fetchAdminApprovals, 10000);
+
+  // Show activity panel on initial feed view
+  document.querySelector('.app').classList.add('has-activity-col');
 
   // Initial render
   renderCurrentView();

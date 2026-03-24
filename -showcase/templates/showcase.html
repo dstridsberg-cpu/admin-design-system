@@ -2,18 +2,15 @@
 {% from 'components/atoms/button.html'             import button %}
 {% from 'components/atoms/toggle_pill_group.html'  import autonomy_switcher, speed_control %}
 {% from 'components/atoms/status_indicator.html'   import status_indicator, pulse_dot %}
-{% from 'components/atoms/section_label.html'      import section_label %}
-{% from 'components/atoms/code_label.html'         import code_label %}
 {% from 'components/atoms/confidence_indicator.html' import confidence_indicator %}
 {% from 'components/atoms/text_input.html'         import text_input %}
-{% from 'components/atoms/kbd_hint.html'           import kbd_hint %}
 {% from 'components/molecules/nav_item.html'       import nav_item, encounter_nav_item %}
 {% from 'components/molecules/feed_item.html'      import feed_item %}
 {% from 'components/molecules/approval_card.html'  import sim_approval_card, admin_approval_card %}
 {% from 'components/molecules/patient_card.html'   import patient_card %}
 {% from 'components/molecules/toast.html'          import toast %}
-{% from 'components/molecules/alert_banner.html'   import alert_banner, paused_banner %}
 {% from 'components/molecules/metric_card.html'    import metric_card %}
+{% from 'components/molecules/dropdown_menu.html'  import dropdown_menu %}
 {% from 'components/organisms/top_bar.html'        import top_bar %}
 {% from 'components/organisms/sidebar.html'        import sidebar %}
 {% from 'components/organisms/toast_stack.html'    import toast_stack %}
@@ -23,8 +20,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Admin — Design System</title>
-  <!-- Load Aktiv Grotesk from your font provider (Adobe Fonts, Fonts.com, or @font-face) -->
-  <!-- <link rel="stylesheet" href="YOUR_AKTIV_GROTESK_URL"> -->
   <!-- Tiempos Headline Light — used via --brand-font for optional brand accent headings -->
   <link href="https://db.onlinewebfonts.com/c/e4b6f66c5987eea12c8847782bc851f6?family=Tiempos+Headline+Light" rel="stylesheet">
   <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
@@ -37,6 +32,7 @@
     html, body {
       margin: 0;
       height: 100%;
+      scroll-behavior: smooth;
     }
     body {
       background: var(--surface-bg);
@@ -44,30 +40,24 @@
       font-size: var(--text-md);
       line-height: 1.5;
       color: var(--text-primary);
-      overflow-y: scroll;
+      overflow: auto;
     }
 
     /* Top bar */
-    .sc-header {
+    /* Override top-nav for showcase: sticky + full-width (no parent grid) */
+    header.top-nav {
       position: sticky; top: 0; z-index: 200;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 var(--space-12);
-      height: 52px;
-      background: var(--surface-header);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--border-strong);
+      grid-column: unset;
     }
-    .sc-header-left { display: flex; align-items: center; gap: var(--space-8); }
-    .sc-wordmark { font-family: var(--heading-font); font-size: var(--text-3xl); color: var(--text-primary); }
-    .sc-wordmark span { color: var(--text-tertiary); font-size: var(--text-3xl); }
-    .sc-header-pills { display: flex; gap: var(--space-2); }
+    /* Section nav links in top bar center */
     .sc-header-pill {
-      padding: var(--space-2) var(--space-6);
-      border-radius: var(--badge-radius);
+      padding: var(--space-2) var(--space-5);
+      border-radius: var(--radius-md);
       font-size: var(--text-md);
+      font-weight: 500;
       color: var(--text-secondary);
       text-decoration: none;
-      transition: all var(--ease-default);
+      transition: background var(--ease-default), color var(--ease-default);
     }
     .sc-header-pill:hover { background: var(--surface-tertiary); color: var(--text-primary); }
 
@@ -102,7 +92,7 @@
     /* Layout */
     .sc-layout {
       display: grid;
-      grid-template-columns: 200px 1fr;
+      grid-template-columns: 240px 1fr;
       min-height: calc(100vh - 52px);
     }
 
@@ -111,76 +101,96 @@
       position: sticky; top: 52px;
       height: calc(100vh - 52px);
       overflow-y: auto;
-      width: 200px;
+      width: 240px;
       flex-shrink: 0;
-      padding: var(--space-8) 0 var(--space-16);
-      border-right: 1px solid var(--border-default);
-      background: var(--surface-primary);
+      border-right: 1px solid var(--border-strong);
+      background: var(--surface-sidebar);
     }
     .sc-nav-section {
-      padding: 0 var(--space-6);
-      margin-bottom: var(--space-4);
+      padding: 0;
+      margin-bottom: 0;
     }
     .sc-nav-section + .sc-nav-section {
-      margin-top: var(--space-4);
-      padding-top: var(--space-4);
-      border-top: 1px solid var(--border-default);
+      padding-top: 0;
     }
     .sc-nav-label {
       font-size: var(--text-sm);
-      font-weight: 600;
+      font-weight: 500;
       text-transform: uppercase;
       letter-spacing: 0.5px;
       color: var(--text-tertiary);
-      padding: var(--space-2) var(--space-3);
-      margin-bottom: var(--space-2);
+      padding: var(--space-6) var(--space-6) var(--space-2);
+      border-top: 1px solid var(--border-strong);
     }
     .sc-nav-group-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: var(--space-2) var(--space-3);
-      margin-bottom: var(--space-1);
+      padding: 10px 16px;
       font-size: var(--text-md);
       font-weight: 500;
       color: var(--text-primary);
       text-decoration: none;
+      border-bottom: 1px solid var(--border-strong);
+      transition: background var(--ease-default), box-shadow var(--ease-default);
     }
+    .sc-nav-group-header:hover,
+    .sc-nav-group-header.active {
+      background: var(--surface-tertiary);
+      box-shadow: inset 2px 0 0 0 var(--text-primary);
+    }
+    .sc-nav-group-header:hover { background: var(--surface-secondary); }
     .sc-nav-count {
       font-size: var(--text-md);
       color: var(--text-tertiary);
-      background: var(--surface-tertiary);
-      padding: 1px 6px;
-      border-radius: var(--radius-full);
       font-weight: 400;
     }
     .sc-nav-link {
       display: block;
-      padding: var(--space-2) var(--space-3);
-      border-radius: var(--radius-md);
+      padding: 8px 16px 8px 24px;
       font-size: var(--text-md);
       color: var(--text-secondary);
       text-decoration: none;
-      transition: all var(--ease-default);
+      border-bottom: 1px solid var(--border-strong);
+      transition: background var(--ease-default), box-shadow var(--ease-default), color var(--ease-default);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .sc-nav-link:hover { background: var(--surface-secondary); color: var(--text-primary); }
-    .sc-nav-link.active { background: var(--accent-bg); color: var(--accent); font-weight: 500; }
+    .sc-nav-link:hover {
+      background: var(--surface-secondary);
+      color: var(--text-primary);
+      box-shadow: inset 2px 0 0 0 var(--text-primary);
+    }
+    .sc-nav-link.active {
+      background: var(--surface-tertiary);
+      color: var(--text-primary);
+      font-weight: 500;
+      box-shadow: inset 2px 0 0 0 var(--text-primary);
+    }
     .sc-nav-children {
-      padding-left: var(--space-3);
-      border-left: 1px solid var(--border-default);
-      margin-left: var(--space-3);
-      margin-bottom: var(--space-2);
+      padding-left: 0;
+      border-left: none;
+      margin-left: 0;
+      margin-bottom: 0;
     }
     .sc-nav-children .sc-nav-link {
-      font-size: var(--text-md);
-      color: var(--text-tertiary);
-      padding: var(--space-1) var(--space-3);
+      padding: 7px 16px 7px 28px;
+      font-size: var(--text-sm);
+      font-weight: 500;
+      color: var(--text-secondary);
     }
-    .sc-nav-children .sc-nav-link:hover { color: var(--text-primary); background: var(--surface-secondary); }
-    .sc-nav-children .sc-nav-link.active { color: var(--accent); background: var(--accent-bg); font-weight: 500; }
+    .sc-nav-children .sc-nav-link:hover {
+      color: var(--text-primary);
+      background: var(--surface-secondary);
+      box-shadow: inset 2px 0 0 0 var(--text-primary);
+    }
+    .sc-nav-children .sc-nav-link.active {
+      color: var(--text-primary);
+      background: var(--surface-tertiary);
+      font-weight: 500;
+      box-shadow: inset 2px 0 0 0 var(--text-primary);
+    }
 
     /* Intro section */
     .sc-intro {
@@ -273,6 +283,7 @@
 
     /* Sections */
     .sc-section { margin-bottom: 72px; }
+    .sc-section, .sc-component, .sc-variant { scroll-margin-top: 68px; }
     .sc-section-header {
       display: flex; align-items: baseline; gap: var(--space-8);
       margin-bottom: var(--space-16);
@@ -454,9 +465,6 @@
       pointer-events: none;
     }
 
-    /* Force paused-banner visible in showcase */
-    .sc-show-banner .paused-banner { display: block !important; }
-
     /* standalone toast (not position:fixed) */
     .sc-toast-preview .toast-container {
       position: static !important;
@@ -465,24 +473,31 @@
     /* Separator */
     .sc-divider { height: 1px; background: var(--border-default); margin: var(--space-10) 0; }
   </style>
+  <script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
 </head>
 <body>
 
 <!-- ── Showcase header ── -->
-<header class="sc-header">
-  <div class="sc-header-left">
-    <span class="sc-wordmark">Admin <span>Design System</span></span>
-    <nav class="sc-header-pills">
-      <a class="sc-header-pill" href="#tokens">Tokens</a>
-      <a class="sc-header-pill" href="#atoms">Atoms</a>
-      <a class="sc-header-pill" href="#molecules">Molecules</a>
-      <a class="sc-header-pill" href="#organisms">Organisms</a>
-    </nav>
+<header class="top-nav">
+  <div class="nav-brand">
+    <img class="nav-logo" src="https://www.figma.com/api/mcp/asset/6358ae29-e7d7-45d7-bf0b-9d8bc29bad11" alt="Admin" width="24" height="19">
+    <div class="nav-brand-text">
+      <img class="nav-wordmark" src="https://www.figma.com/api/mcp/asset/ea685a85-b46c-493f-bf45-cb878fe05cd1" alt="admin." width="54" height="10">
+      <span class="nav-app-title">Design System</span>
+    </div>
   </div>
-  <button class="sc-toggle" onclick="document.body.classList.toggle('dark')">
-    <div class="sc-toggle-knob"></div>
-    Dark mode
-  </button>
+  <nav class="nav-left">
+    <a class="sc-header-pill" href="#tokens">Tokens</a>
+    <a class="sc-header-pill" href="#atoms">Atoms</a>
+    <a class="sc-header-pill" href="#molecules">Molecules</a>
+    <a class="sc-header-pill" href="#organisms">Organisms</a>
+  </nav>
+  <div class="nav-right">
+    <button class="sc-toggle" onclick="document.body.classList.toggle('dark')">
+      <div class="sc-toggle-knob"></div>
+      Dark mode
+    </button>
+  </div>
 </header>
 
 <div class="sc-layout">
@@ -497,7 +512,7 @@
     <div class="sc-nav-section">
       <div class="sc-nav-label">Foundations</div>
 
-      <div class="sc-nav-group-header">Color</div>
+      <a class="sc-nav-group-header" href="#tokens-color">Color</a>
       <div class="sc-nav-children">
         <a class="sc-nav-link" href="#tokens-color">Primitives</a>
         <a class="sc-nav-link" href="#tokens-surfaces">Surfaces</a>
@@ -509,7 +524,7 @@
         <a class="sc-nav-link" href="#tokens-autonomy">Autonomy</a>
       </div>
 
-      <div class="sc-nav-group-header">Typography</div>
+      <a class="sc-nav-group-header" href="#tokens-type">Typography</a>
       <div class="sc-nav-children">
         <a class="sc-nav-link" href="#tokens-type">Type scale</a>
         <a class="sc-nav-link" href="#tokens-typography">Typefaces</a>
@@ -526,37 +541,34 @@
     <div class="sc-nav-section">
       <div class="sc-nav-label">Components</div>
 
-      <div class="sc-nav-group-header">
-        Atoms <span class="sc-nav-count">9</span>
-      </div>
+      <a class="sc-nav-group-header" href="#atoms">
+        Atoms <span class="sc-nav-count">6</span>
+      </a>
       <div class="sc-nav-children">
         <a class="sc-nav-link" href="#atom-badge">Badge</a>
         <a class="sc-nav-link" href="#atom-button">Button</a>
         <a class="sc-nav-link" href="#atom-pills">Toggle pills</a>
         <a class="sc-nav-link" href="#atom-status">Status indicator</a>
-        <a class="sc-nav-link" href="#atom-section-label">Section label</a>
-        <a class="sc-nav-link" href="#atom-code-label">Code label</a>
         <a class="sc-nav-link" href="#atom-confidence">Confidence</a>
         <a class="sc-nav-link" href="#atom-text-input">Text input</a>
-        <a class="sc-nav-link" href="#atom-kbd">Kbd hint</a>
       </div>
 
-      <div class="sc-nav-group-header">
+      <a class="sc-nav-group-header" href="#molecules">
         Molecules <span class="sc-nav-count">7</span>
-      </div>
+      </a>
       <div class="sc-nav-children">
         <a class="sc-nav-link" href="#mol-nav-item">Nav item</a>
         <a class="sc-nav-link" href="#mol-feed-item">Feed item</a>
         <a class="sc-nav-link" href="#mol-approval">Approval card</a>
         <a class="sc-nav-link" href="#mol-patient">Patient card</a>
         <a class="sc-nav-link" href="#mol-toast">Toast</a>
-        <a class="sc-nav-link" href="#mol-alert">Alert banner</a>
         <a class="sc-nav-link" href="#mol-metric">Metric card</a>
+        <a class="sc-nav-link" href="#mol-dropdown">Dropdown menu</a>
       </div>
 
-      <div class="sc-nav-group-header">
+      <a class="sc-nav-group-header" href="#organisms">
         Organisms <span class="sc-nav-count">3</span>
-      </div>
+      </a>
       <div class="sc-nav-children">
         <a class="sc-nav-link" href="#org-topbar">Top bar</a>
         <a class="sc-nav-link" href="#org-sidebar">Sidebar</a>
@@ -1011,7 +1023,7 @@
               ('--text-base-2','11px'),('--text-base','12px'),('--text-md','13px'),
               ('--text-lg','14px'),('--text-xl','15px'),('--text-2xl','16px'),
               ('--text-3xl','18px'),('--text-4xl','20px'),('--text-5xl','24px'),
-              ('--text-6xl','28px'),('--text-7xl','32px')
+              ('--text-6xl','28px'),('--text-7xl','32px'),('--text-8xl','40px')
             ] %}
             <div class="sc-scale-item">
               <div class="sc-scale-name">{{ name }}</div>
@@ -1035,9 +1047,9 @@
         <div class="sc-variant">
           <div class="sc-variant-label">Body — <code>--font-sans</code> — Aktiv Grotesk</div>
           <div style="display:flex;flex-direction:column;gap:var(--space-4);">
+            <div style="font-family:var(--font-sans);font-size:var(--text-lg);font-weight:300;color:var(--text-primary);">Light 300 — Used for large display text, supporting copy</div>
             <div style="font-family:var(--font-sans);font-size:var(--text-lg);font-weight:400;color:var(--text-primary);">Regular 400 — Used for body text, descriptions, UI labels</div>
-            <div style="font-family:var(--font-sans);font-size:var(--text-lg);font-weight:500;color:var(--text-primary);">Medium 500 — Used for emphasized labels, nav items</div>
-            <div style="font-family:var(--font-sans);font-size:var(--text-lg);font-weight:600;color:var(--text-primary);">Semibold 600 — Used for uppercase labels, badges, emphasis</div>
+            <div style="font-family:var(--font-sans);font-size:var(--text-lg);font-weight:500;color:var(--text-primary);">Medium 500 — Used for emphasized labels, nav items, badges</div>
           </div>
         </div>
 
@@ -1098,9 +1110,9 @@
         <p class="sc-category-desc">The 12 recurring text roles found across all components. Each style defines the full typographic spec — not just size, but weight, line-height, letter-spacing, and transform. Use these names when specifying text in design handoff.</p>
 
         <div class="sc-text-style">
-          <div class="sc-text-style-name">Display</div>
-          <div style="font-family:var(--body-font);font-size:var(--text-7xl);font-weight:600;line-height:1;color:var(--text-primary);">97%</div>
-          <div class="sc-text-style-spec">text-7xl · 700 · lh 1.0 · body-font</div>
+          <div class="sc-text-style-name">Metric Value</div>
+          <div style="font-family:var(--brand-font);font-size:var(--text-8xl);font-weight:300;line-height:1;letter-spacing:-0.64px;color:var(--text-primary);">97%</div>
+          <div class="sc-text-style-spec">text-8xl · 300 · lh 1.0 · ls -0.64px · brand-font</div>
         </div>
 
         <div class="sc-text-style">
@@ -1124,7 +1136,7 @@
         <div class="sc-text-style">
           <div class="sc-text-style-name">Label</div>
           <div style="font-family:var(--body-font);font-size:var(--text-sm);font-weight:600;line-height:1;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-tertiary);">Dashboard</div>
-          <div class="sc-text-style-spec">text-sm · 700 · lh 1.0 · uppercase · ls 0.5px</div>
+          <div class="sc-text-style-spec">text-sm · 600 · lh 1.0 · uppercase · ls 0.5px</div>
         </div>
 
         <div class="sc-text-style">
@@ -1153,8 +1165,8 @@
 
         <div class="sc-text-style">
           <div class="sc-text-style-name">Status</div>
-          <div style="font-family:var(--body-font);font-size:var(--text-md);font-weight:400;line-height:1;color:var(--status-success);">Agent Active</div>
-          <div class="sc-text-style-spec">text-md · 400 · lh 1.0 · color varies by state</div>
+          <div style="font-family:var(--body-font);font-size:var(--text-sm);font-weight:500;line-height:1;color:var(--status-success);">Agent Active</div>
+          <div class="sc-text-style-spec">text-sm · 500 · lh 1.0 · color varies by state</div>
         </div>
 
         <div class="sc-text-style">
@@ -1211,7 +1223,7 @@
         </div>
       </div>
 
-      <!-- Icons -->
+      <!-- Icons — Lucide -->
       <div class="sc-component" id="tokens-icons">
         <div class="sc-component-header">
           <h3 class="sc-component-name">Icons</h3>
@@ -1243,7 +1255,8 @@
             {% for name in ['activity','alert-circle','bell','check','chevron-down','chevron-right',
                             'clock','eye','file-text','home','info','lock','log-out','mail',
                             'pause','play','plus','search','settings','sliders','trash-2',
-                            'user','x','zap'] %}
+                            'user','x','zap',
+                            'layout-grid','gantt-chart','layout-list','kanban','rows-3'] %}
             <div style="display:flex;flex-direction:column;align-items:center;gap:var(--space-2);">
               <i data-lucide="{{ name }}" class="icon"></i>
               <div style="font-family:var(--code-font);font-size:var(--text-2xs);color:var(--text-tertiary);">{{ name }}</div>
@@ -1252,6 +1265,7 @@
           </div>
         </div>
       </div>
+
 
     </section>
 
@@ -1446,43 +1460,6 @@
       </div>
 
 
-      <!-- section_label -->
-      <div class="sc-component" id="atom-section-label">
-        <div class="sc-component-header">
-          <h3 class="sc-component-name">section_label</h3>
-          <span class="sc-component-file">atoms/section_label.html</span>
-          <span class="sc-component-desc">section_label(text, extra_class)</span>
-        </div>
-        <div class="sc-variant">
-          <div class="sc-preview">
-            {{ section_label('Dashboard') }}
-            {{ section_label('System') }}
-            {{ section_label('Encounters') }}
-          </div>
-          <code class="sc-code">{% raw %}{{ section_label('Dashboard') }}{% endraw %}</code>
-        </div>
-      </div>
-
-
-      <!-- code_label -->
-      <div class="sc-component" id="atom-code-label">
-        <div class="sc-component-header">
-          <h3 class="sc-component-name">code_label</h3>
-          <span class="sc-component-file">atoms/code_label.html</span>
-          <span class="sc-component-desc">code_label(text, extra_class)</span>
-        </div>
-        <div class="sc-variant">
-          <div class="sc-preview">
-            {{ code_label('orders.lab_order') }}
-            {{ code_label('vitals.record') }}
-            {{ code_label('diagnosis.icd10') }}
-            {{ code_label('rx.prescribe') }}
-          </div>
-          <code class="sc-code">{% raw %}{{ code_label('orders.lab_order') }}{% endraw %}</code>
-        </div>
-      </div>
-
-
       <!-- confidence_indicator -->
       <div class="sc-component" id="atom-confidence">
         <div class="sc-component-header">
@@ -1525,25 +1502,6 @@
       </div>
 
 
-      <!-- kbd_hint -->
-      <div class="sc-component" id="atom-kbd">
-        <div class="sc-component-header">
-          <h3 class="sc-component-name">kbd_hint</h3>
-          <span class="sc-component-file">atoms/kbd_hint.html</span>
-          <span class="sc-component-desc">kbd_hint(key, extra_class)</span>
-        </div>
-        <div class="sc-variant">
-          <div class="sc-preview" style="align-items:center;">
-            {{ kbd_hint('Esc') }}
-            {{ kbd_hint('⌘K') }}
-            {{ kbd_hint('Enter') }}
-            {{ kbd_hint('⌘⇧P') }}
-            {{ kbd_hint('Tab') }}
-          </div>
-          <code class="sc-code">{% raw %}{{ kbd_hint('Esc') }}   {{ kbd_hint('⌘K') }}   {{ kbd_hint('Enter') }}{% endraw %}</code>
-        </div>
-      </div>
-
     </section>
 
 
@@ -1553,7 +1511,7 @@
     <section class="sc-section" id="molecules">
       <div class="sc-section-header">
         <h2 class="sc-section-title">Molecules</h2>
-        <p class="sc-section-desc">Composites of atoms. 7 components in <code>templates/components/molecules/</code>.</p>
+        <p class="sc-section-desc">Composites of atoms. 8 components in <code>templates/components/molecules/</code>.</p>
       </div>
 
 
@@ -1601,32 +1559,52 @@
         <div class="sc-component-header">
           <h3 class="sc-component-name">feed_item</h3>
           <span class="sc-component-file">molecules/feed_item.html</span>
-          <span class="sc-component-desc">feed_item(patient_name, tool, tier, description, status, confidence, …)</span>
+          <span class="sc-component-desc">feed_item(patient_name, tool, tier, description, status, confidence, age_sex, vitals, agent_detail, …)</span>
         </div>
 
         <div class="sc-variant">
           <div class="sc-variant-label">T1 auto-approved · T2 approved · T3 pending · T4 escalated</div>
           <div class="sc-preview sc-preview-col">
             {{ feed_item('M. Thompson', 'vitals.record', 1,
-               'Recorded vitals: HR 92, BP 128/82, SpO2 94%',
-               'auto-approved', 0.97, '0:12') }}
+               'Reading lab results', 'auto-approved', 0.97,
+               age_sex=', 58F',
+               chief='Productive cough with fever for 3 days, worsening shortness of breath',
+               vitals={'°C:': '38.9°', 'HR:': '102', 'BP:': '128/78', 'SpO2:': '94%'},
+               agent_detail='Patient presents with productive cough, fever, and dyspnea. Need to review PMH.',
+               step=3, time_display='Just now') }}
             {{ feed_item('J. Rodriguez', 'orders.lab_order', 2,
-               'CBC, CMP, Urinalysis ordered',
-               'approved', 0.84, '1:05') }}
-            {{ feed_item('M. Thompson', 'orders.imaging', 3,
-               'Chest X-ray — PA and lateral views',
-               'pending', 0.73, '2:30') }}
+               'CBC, CMP, Urinalysis ordered', 'approved', 0.84,
+               age_sex=', 34M',
+               chief='Dysuria and urinary frequency for 2 days',
+               vitals={'°C:': '37.2°', 'HR:': '76', 'BP:': '118/72', 'SpO2:': '99%'},
+               agent_detail='Urinalysis consistent with UTI. Ordering confirmatory culture.',
+               step=2, time_display='14s ago') }}
+            {{ feed_item('R. Chen', 'orders.imaging', 3,
+               'Chest X-ray — PA and lateral views', 'pending', 0.73,
+               age_sex=', 45M',
+               chief='Acute onset chest pain radiating to left arm, diaphoresis',
+               vitals={'°C:': '37.1°', 'HR:': '88', 'BP:': '145/92', 'SpO2:': '96%'},
+               agent_detail='Suspecting cardiac origin. Imaging ordered to rule out pulmonary cause.',
+               step=4, time_display='2m ago') }}
             {{ feed_item('A. Patel', 'escalation.cardiac', 4,
-               'Cardiac event risk detected — mandatory physician review',
-               'escalated', 0.61, '3:44', false, true) }}
+               'Cardiac event risk detected', 'escalated', 0.61,
+               age_sex=', 71F',
+               chief='Intermittent chest tightness for 2 weeks, worse with exertion',
+               vitals={'°C:': '36.8°', 'HR:': '88', 'BP:': '152/92', 'SpO2:': '97%'},
+               agent_detail='71F with exertional chest tightness and multiple cardiac risk factors — mandatory physician review.',
+               step=1, time_display='5m ago', is_escalation=true) }}
           </div>
           <code class="sc-code">{% raw %}{{ feed_item('M. Thompson', 'vitals.record', 1,
-  'Recorded vitals: HR 92, BP 128/82, SpO2 94%',
-  'auto-approved', 0.97, '0:12') }}
+  'Reading lab results', 'auto-approved', 0.97,
+  age_sex=', 58F',
+  vitals={'°C:': '38.9°', 'HR:': '102', 'BP:': '128/78', 'SpO2:': '94%'},
+  agent_detail='Labs: WBC 14.2 (elevated)') }}
 
 {{ feed_item('A. Patel', 'escalation.cardiac', 4,
-  'Cardiac event risk detected — mandatory physician review',
-  'escalated', 0.61, '3:44', is_escalation=true) }}{% endraw %}</code>
+  'Cardiac event risk detected', 'escalated', 0.61,
+  age_sex=', 71F',
+  vitals={'°C:': '36.8°', 'HR:': '88', 'BP:': '152/92', 'SpO2:': '97%'},
+  is_escalation=true) }}{% endraw %}</code>
         </div>
       </div>
 
@@ -1744,42 +1722,12 @@
       </div>
 
 
-      <!-- alert_banner -->
-      <div class="sc-component" id="mol-alert">
-        <div class="sc-component-header">
-          <h3 class="sc-component-name">alert_banner / paused_banner</h3>
-          <span class="sc-component-file">molecules/alert_banner.html</span>
-          <span class="sc-component-desc">alert_banner(message, type, id, extra_class)</span>
-        </div>
-
-        <div class="sc-variant">
-          <div class="sc-variant-label">alert_banner — warning · danger · info · success</div>
-          <div class="sc-preview sc-preview-col">
-            {{ alert_banner('Autonomy level set to L3 — most actions will auto-execute.', 'warning') }}
-            {{ alert_banner('Critical: A. Patel requires immediate physician review.', 'danger') }}
-            {{ alert_banner('Simulation running at 2× speed.', 'info') }}
-            {{ alert_banner('All 3 patient encounters completed successfully.', 'success') }}
-          </div>
-          <code class="sc-code">{% raw %}{{ alert_banner('Autonomy level set to L3 — most actions auto-execute.', 'warning') }}
-{{ alert_banner('Critical: patient requires immediate review.', 'danger') }}{% endraw %}</code>
-        </div>
-
-        <div class="sc-variant">
-          <div class="sc-variant-label">paused_banner (shown — normally display:none until JS toggles)</div>
-          <div class="sc-show-banner">
-            {{ paused_banner() }}
-          </div>
-          <code class="sc-code">{% raw %}{{ paused_banner() }}   {# shown when togglePause() fires #}{% endraw %}</code>
-        </div>
-      </div>
-
-
       <!-- metric_card -->
       <div class="sc-component" id="mol-metric">
         <div class="sc-component-header">
           <h3 class="sc-component-name">metric_card</h3>
           <span class="sc-component-file">molecules/metric_card.html</span>
-          <span class="sc-component-desc">metric_card(value, label, sublabel, id_value, id_sublabel)</span>
+          <span class="sc-component-desc">metric_card(value, label, sublabel='', id_value='', id_sublabel='')</span>
         </div>
 
         <div class="sc-variant">
@@ -1792,6 +1740,25 @@
           </div>
           <code class="sc-code">{% raw %}{{ metric_card('247', 'Actions Taken', 'this session', 'totalActions', 'actionsSub') }}
 {{ metric_card('94%', 'Auto-approval Rate') }}{% endraw %}</code>
+        </div>
+      </div>
+
+      <!-- dropdown_menu -->
+      <div class="sc-component" id="mol-dropdown">
+        <div class="sc-component-header">
+          <h3 class="sc-component-name">dropdown_menu</h3>
+          <span class="sc-component-file">molecules/dropdown_menu.html</span>
+          <span class="sc-component-desc">dropdown_menu(label, options=[], active='')</span>
+        </div>
+
+        <div class="sc-variant">
+          <div class="sc-variant-label">Default — label matches active · custom active selection</div>
+          <div class="sc-preview" style="gap:var(--space-8);align-items:flex-start;">
+            {{ dropdown_menu('Company A', ['Company A', 'Company B', 'Company C']) }}
+            {{ dropdown_menu('Workspace', ['Workspace', 'Staging', 'Production'], active='Staging') }}
+          </div>
+          <code class="sc-code">{% raw %}{{ dropdown_menu('Company A', ['Company A', 'Company B', 'Company C']) }}
+{{ dropdown_menu('Workspace', ['Workspace', 'Staging', 'Production'], active='Staging') }}{% endraw %}</code>
         </div>
       </div>
 
@@ -1876,13 +1843,13 @@
 <script>
   // Highlight active nav link on scroll
   const sections = document.querySelectorAll('[id]');
-  const navLinks = document.querySelectorAll('.sc-nav-link');
+  const navLinks = document.querySelectorAll('.sc-nav-link, .sc-nav-group-header[href]');
 
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
         navLinks.forEach(l => l.classList.remove('active'));
-        const active = document.querySelector('.sc-nav-link[href="#' + entry.target.id + '"]');
+        const active = document.querySelector('.sc-nav-link[href="#' + entry.target.id + '"], .sc-nav-group-header[href="#' + entry.target.id + '"]');
         if (active) active.classList.add('active');
       }
     });
@@ -1911,7 +1878,7 @@ lucide.createIcons();
 
 // Scrollspy
 (function() {
-  const links = document.querySelectorAll('#sc-nav .sc-nav-link');
+  const links = document.querySelectorAll('#sc-nav .sc-nav-link, #sc-nav .sc-nav-group-header[href]');
   const ids = Array.from(links).map(a => a.getAttribute('href').slice(1)).filter(Boolean);
   const targets = ids.map(id => document.getElementById(id)).filter(Boolean);
 

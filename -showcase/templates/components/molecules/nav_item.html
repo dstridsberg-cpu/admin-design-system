@@ -41,9 +41,9 @@
 {% endmacro %}
 
 {% macro encounter_nav_item(label, onclick='', dot_state='active') %}
-<div class="nav-item" style="font-size:12px;"
+<div class="encounter-nav-item"
      {{ 'onclick="' ~ onclick ~ '"' if onclick | safe }}>
-  {{ pulse_dot(size='6px', state=dot_state) }}
+  <span class="encounter-dot{{ ' encounter-dot--urgent' if dot_state == 'danger' }}"></span>
   {{ label }}
 </div>
 {% endmacro %}
