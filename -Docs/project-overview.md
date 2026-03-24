@@ -49,12 +49,18 @@ The macro handles all the internal structure. Changing how the top bar looks mea
 
 This architecture means the design system can grow into a real front-end framework for Admin's UI: new screens are assembled from existing macros, styled by existing tokens, with no redundant code.
 
-## Where are we as of 2026-03-19?
+## Where are we as of 2026-03-24?
 
-The foundation is in place. The token system is mature, the component library covers the core UI patterns, and the showcase documents both. The demo is a credible, interactive representation of the actual product.
+The foundation is in place. The token system is mature, the component library covers the core UI patterns, and the showcase documents both. The demo is a credible, interactive representation of the actual product — including a live Activity column, animated metrics, and a working bar chart.
 
 ### Tokens
 A full token system exists across: color (primitives + semantic), typography, spacing, radius, shadows, icon sizing, and component-level aliases. Colors follow a 3-step severity scale (green → amber → red) and an 8-step autonomy scale (L0–L4).
+
+**Canonical token names to remember:**
+- Text: `--text-primary`, `--text-secondary`, `--text-tertiary` — no `--text-muted` alias
+- Status: `--status-danger`, `--status-warning`, `--status-success` — no shorthand aliases
+- Borders: `--border-default`, `--border-subtle`, `--border-strong` — no bare `--border`
+- Tier colours: `--tier-1` through `--tier-4`
 
 ### Typography
 - Two typefaces: **Aktiv Grotesk** (UI) and **Tiempos Headline Light** (brand accents)
@@ -63,13 +69,33 @@ A full token system exists across: color (primitives + semantic), typography, sp
 - Heading weight is Medium (500) throughout; Bold has been removed from the system
 
 ### Components
-The component library covers atoms, molecules, and organisms — badges, buttons, inputs, pills, status indicators, feed items, approval cards, patient cards, nav items, toasts, the top bar, and the sidebar.
+The component library covers atoms, molecules, and organisms — badges, buttons, inputs, pills, status indicators, feed items, approval cards, patient cards, nav items, toasts, metric cards, dropdown menus, the top bar, and the sidebar.
+
+The showcase is kept in sync with the demo: components that are no longer used in the demo are removed from the showcase (template file, CSS, nav entry).
 
 ### Demo
 The Supervisor Console demo shows the product working: live agent activity, a patient panel with three concurrent encounters, an approvals queue, analytics, and configuration. It uses the design system's tokens and components directly.
 
+**Key demo features (as of 2026-03-24):**
+- **Live Consultations feed** — one card per patient, updated in-place with staggered fade transitions
+- **Activity column** — 476px full-height right panel (CSS grid column 3), visible on the feed view only; shows the same metrics and tier chart as the Analytics page
+- **Animated metrics** — count-up animation on value changes (integers and percentages); Time card ticks every real second independently via wall-clock tracking
+- **Animated tier bar chart** — `updateTierChart()` helper handles both enter animation (height from 0) and in-place updates (CSS `transition: height 0.5s ease-out`)
+- **Autonomy level switcher** — L0–L4 changes what needs physician approval in real time
+
+**Key rendering functions:**
+| Function | Role |
+|---|---|
+| `buildFeedCardHtml(pid, item)` | Full card HTML for first-time patient appearance |
+| `renderFeed()` | Diffs `latestByPatient` against DOM; updates in-place or creates |
+| `feedFade(el, updateFn, delay)` | Fade-out → swap → fade-in with stagger delay |
+| `updateTierChart(chartId, counts, max, opts)` | Animated bar chart — shared by Activity panel and Analytics |
+| `applyMetricAnimations(grid)` | Count-up animation on metric value changes |
+
 ### Showcase
-The showcase documents all of the above with live rendered output. It is served locally at `localhost:5001`.
+The showcase documents all tokens and components with live rendered output. Served locally at `localhost:5001`.
+
+**Current component counts:** 6 Atoms · 7 Molecules · 3 Organisms
 
 ## What's still missing?
 
