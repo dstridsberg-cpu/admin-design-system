@@ -69,6 +69,61 @@ Split rendering into `buildFeedCardHtml(pid, item)` and `buildAgentContentHtml(i
 - Corrected to `--tier-1` / `--tier-2` / `--tier-3` / `--tier-4` (matching tokens.css)
 - Same fix applied to the legend colour swatches in the HTML
 
+### 7. Activity column — full-height right panel
+- Added `<aside class="activity-col">` as a direct child of `.app` (CSS grid column 3, not inside `<main>`)
+- `.app.has-activity-col` extends the grid: `grid-template-columns: var(--sidebar-width) 1fr 476px`
+- `switchView` toggles `.has-activity-col` on `.app` and shows/hides the panel; only visible on the feed view
+- Panel contains: heading, 2-col metrics grid, two-column bar chart (bars + legend)
+- Width 476px, header padding 40px — matches Figma node 32:102
+- Feed view header gets `margin-bottom: 40px` so first card top-border aligns with Activity header bottom-border
+
+### 8. Live Consultations heading + count badge
+- Feed view heading changed from "Activity" → "Live Consultations"
+- `<span class="feed-count-badge" id="feedCountBadge">` added next to heading; count updates via `renderFeed()`
+- View switcher right-aligned with `margin-left: auto`
+
+### 9. Time metric card — independent wall-clock ticking
+- `state.simTime` is a sim-tick counter, not real elapsed time
+- Added `state.simStartWall`, `state.simPausedMs`, `state.simPauseStartedAt` to track real wall time
+- `startSimulation()` records `Date.now()` on first run; `togglePause()` accumulates paused duration
+- Separate 1s `setInterval` updates `#activityTimeValue` and `#analyticsTimeValue` directly, bypassing the render cycle
+
+### 10. Metric count-up animation
+- `parseAnimatable(str)` — returns `{ num, suffix }` for plain integers and `"N%"` strings; returns `null` for anything else (Encounters `"1/3 + 0"`, Time `"0:12"` are excluded automatically)
+- `animateCountUp(el, oldStr, newStr)` — 600ms cubic ease-out via `requestAnimationFrame`
+- `metricLastValues` map keyed by `data-metric-key` attribute — stable across `innerHTML` replacements
+- `applyMetricAnimations(grid)` called after each metrics grid render
+
+### 11. Animated tier bar chart
+- `updateTierChart(chartId, tierCounts, maxCount, opts)` — unified helper for both Activity panel (`feedTierChart`) and Analytics page (`tierChart`)
+- First render: builds bars at `height:0`, then `requestAnimationFrame` sets target heights → enter animation
+- Subsequent renders: finds `[data-tier-bar]` elements and updates `height` in-place; CSS `transition: height 0.5s ease-out` animates the change
+- Replaced old `chart.innerHTML = [...].join('')` calls in `renderActivitySidebar` and `renderAnalytics`
+
+### 12. Broken token names fixed in demo
+All occurrences replaced globally:
+| Old (broken) | Correct |
+|---|---|
+| `--text-muted` | `--text-tertiary` |
+| `--danger` | `--status-danger` |
+| `--danger-light` | `--status-danger-bg` |
+| `--success` | `--status-success` |
+| `--warning` | `--status-warning` |
+| `--border` | `--border-default` |
+
+### 13. Button border-radius unified
+- All buttons (`.btn`, `.btn-lg`, `.overlay-cta`) now use `var(--radius-lg)`
+- Welcome modal width updated to 1060px, height 580px
+
+### 14. Showcase — unused components removed
+Deleted from Showcase (not used in demo):
+- `section_label` (atom)
+- `code_label` (atom)
+- `kbd_hint` (atom) + `.kbd-hint` CSS removed from `components.css`
+- `alert_banner` / `paused_banner` (molecule) + showcase-only `.sc-show-banner` hack removed
+
+Nav counts updated: Atoms 9→6, Molecules 8→7. Four template files deleted.
+
 ---
 
 ## Current state of the system
@@ -86,9 +141,14 @@ Split rendering into `buildFeedCardHtml(pid, item)` and `buildAgentContentHtml(i
 | `buildAgentContentHtml(item)` | Agent col inner HTML (used only for initial render) |
 | `renderFeed()` | Diffs `latestByPatient` against DOM; updates in-place or creates |
 | `feedFade(el, updateFn, delay)` | Fade-out → swap → fade-in helper with stagger delay |
+| `updateTierChart(chartId, counts, max, opts)` | Animated bar chart — enter animation + in-place updates |
+| `applyMetricAnimations(grid)` | Count-up animation on metric value changes |
 
-### Known token name pattern
-Tier colours: `--tier-1` through `--tier-4` (not `--t1`–`--t4`)
+### Token name patterns
+- Tier colours: `--tier-1` through `--tier-4`
+- Status colours: `--status-danger`, `--status-warning`, `--status-success` (no shorthand aliases)
+- Text: `--text-primary`, `--text-secondary`, `--text-tertiary` (no `--text-muted`)
+- Borders: `--border-default`, `--border-subtle`, `--border-strong` (no `--border`)
 
 ---
 
@@ -102,6 +162,18 @@ Tier colours: `--tier-1` through `--tier-4` (not `--t1`–`--t4`)
 
 ## Files changed this session
 - `-styles/components.css`
-- `-showcase/templates/components/molecules/feed_item.html`
+- `-styles/tokens.css`
 - `-showcase/templates/showcase.html`
+- `-showcase/templates/components/molecules/feed_item.html`
+- `-showcase/templates/components/molecules/metric_card.html`
+- `-showcase/templates/components/molecules/nav_item.html`
+- `-showcase/templates/components/molecules/dropdown_menu.html` (new)
+- `-showcase/templates/components/atoms/status_indicator.html`
+- `-showcase/templates/components/atoms/view_icons.html` (new)
+- `-showcase/templates/components/organisms/sidebar.html`
+- `-showcase/templates/components/organisms/top_bar.html`
+- `-showcase/templates/components/atoms/section_label.html` (deleted)
+- `-showcase/templates/components/atoms/code_label.html` (deleted)
+- `-showcase/templates/components/atoms/kbd_hint.html` (deleted)
+- `-showcase/templates/components/molecules/alert_banner.html` (deleted)
 - `bogdan-demo-rendered.html`
