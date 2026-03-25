@@ -5,6 +5,7 @@
   <!-- Preload logo assets to prevent blink on first render -->
   <link rel="preload" as="image" href="https://www.figma.com/api/mcp/asset/6358ae29-e7d7-45d7-bf0b-9d8bc29bad11">
   <link rel="preload" as="image" href="https://www.figma.com/api/mcp/asset/ea685a85-b46c-493f-bf45-cb878fe05cd1">
+  <link rel="preload" as="image" href="https://www.figma.com/api/mcp/asset/a62fafe5-e418-4c21-8c44-a799e9968276">
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Admin</title>
@@ -97,13 +98,13 @@
 
   <div class="encounter-nav-items">
     <div class="encounter-nav-item" data-patient="thompson" onclick="selectPatient('thompson'); switchView('encounter')" style="display:none;">
-      <span class="encounter-dot"></span>M. Thompson, 58F
+      <span class="encounter-dot"></span><span>M. Thompson<span class="encounter-nav-suffix">, 58F</span></span>
     </div>
     <div class="encounter-nav-item" data-patient="rodriguez" onclick="selectPatient('rodriguez'); switchView('encounter')" style="display:none;">
-      <span class="encounter-dot"></span>J. Rodriguez, 34M
+      <span class="encounter-dot"></span><span>J. Rodriguez<span class="encounter-nav-suffix">, 34M</span></span>
     </div>
     <div class="encounter-nav-item" data-patient="patel" onclick="selectPatient('patel'); switchView('encounter')" style="display:none;">
-      <span class="encounter-dot"></span>A. Patel, 71F
+      <span class="encounter-dot"></span><span>A. Patel<span class="encounter-nav-suffix">, 71F</span></span>
     </div>
     <div id="live-sidebar-items"></div>
   </div>
@@ -145,7 +146,16 @@
                   <i data-lucide="layout-grid" class="icon icon-sm"></i>
                 </button>
               </div>
+              <button class="activity-toggle-btn" id="activityToggleBtn" title="Show Activity panel" onclick="toggleActivityPanel()" style="display:none;">
+                <i data-lucide="panel-right-open" class="icon icon-sm"></i>
+              </button>
             </div>
+          </div>
+          <!-- Loading / null state — shown before sim starts and briefly after -->
+          <div class="loading-state" id="loadingState">
+            <img class="loading-logo" src="https://www.figma.com/api/mcp/asset/a62fafe5-e418-4c21-8c44-a799e9968276" alt="Admin" width="40" height="50">
+            <div class="loading-heading">Initiating Consultations</div>
+            <div class="loading-subtitle" id="loadingSubtitle">Connecting to EMR…</div>
           </div>
           <div class="feed-list" id="feedList"></div>
         </div>
@@ -212,6 +222,9 @@
       <aside class="activity-col" id="activityPanel">
         <div class="activity-col-header">
           <h2 class="activity-col-heading">Activity</h2>
+          <button class="activity-close-btn" title="Hide Activity panel" onclick="toggleActivityPanel()">
+            <i data-lucide="panel-right-close" class="icon icon-sm"></i>
+          </button>
         </div>
         <div class="activity-metrics-grid" id="feedActivityMetrics"></div>
         <div class="activity-chart-section">
@@ -408,6 +421,42 @@
 
   <script>
 // ══════════════════════════════════════════════════════════════
+// LOADING STATE
+// ══════════════════════════════════════════════════════════════
+var INIT_ACTIONS = [
+  'Connecting to EMR…',
+  'Loading patient records…',
+  'Authenticating agent session…',
+  'Establishing secure channel…',
+  'Syncing encounter history…',
+  'Calibrating autonomy level…',
+  'Loading clinical protocols…',
+  'Initialising observation loop…',
+  'Verifying physician credentials…',
+  'Preparing consultation queue…',
+  'Fetching active encounters…',
+  'Loading risk models…',
+];
+var _loadingSubtitleInterval = null;
+
+function startLoadingSubtitle() {
+  var el = document.getElementById('loadingSubtitle');
+  if (!el) return;
+  var idx = 0;
+  el.textContent = INIT_ACTIONS[0];
+  _loadingSubtitleInterval = setInterval(function() {
+    idx = (idx + 1) % INIT_ACTIONS.length;
+    el.textContent = INIT_ACTIONS[idx];
+  }, 300);
+}
+
+function stopLoadingState() {
+  if (_loadingSubtitleInterval) { clearInterval(_loadingSubtitleInterval); _loadingSubtitleInterval = null; }
+  var ls = document.getElementById('loadingState');
+  if (ls) ls.classList.add('hidden');
+}
+
+// ══════════════════════════════════════════════════════════════
 // SIMULATION DATA (from fredrik)
 // ══════════════════════════════════════════════════════════════
 const WORKFLOW_STEPS = ['Intake','History','Assessment','Investigation','Diagnosis','Treatment','Documentation'];
@@ -580,6 +629,7 @@ let state = {
   completedActions: [],
   simTime: 0,
   simInterval: null,
+  activityPanelOpen: true,
   simStartWall: 0,
   simPausedMs: 0,
   simPauseStartedAt: 0,
@@ -764,12 +814,43 @@ function switchView(view) {
       el.classList.remove('active');
     });
   }
-  var showActivity = (view === 'feed');
-  document.querySelector('.app').classList.toggle('has-activity-col', showActivity);
+  var onFeed = (view === 'feed');
+  var showActivity = onFeed && state.activityPanelOpen;
+  var app = document.querySelector('.app');
   var panel = document.getElementById('activityPanel');
-  if (panel) panel.style.display = showActivity ? '' : 'none';
+  if (showActivity) {
+    if (panel) panel.style.display = '';
+    requestAnimationFrame(function() { app.classList.add('has-activity-col'); });
+  } else {
+    app.classList.remove('has-activity-col');
+    if (panel) panel.style.display = 'none';
+  }
+  var reopenBtn = document.getElementById('activityToggleBtn');
+  if (reopenBtn) reopenBtn.style.display = (onFeed && !state.activityPanelOpen) ? '' : 'none';
   renderCurrentView();
 }
+function toggleActivityPanel() {
+  state.activityPanelOpen = !state.activityPanelOpen;
+  var app = document.querySelector('.app');
+  var panel = document.getElementById('activityPanel');
+  var reopenBtn = document.getElementById('activityToggleBtn');
+  if (state.activityPanelOpen) {
+    if (panel) panel.style.display = '';
+    requestAnimationFrame(function() {
+      app.classList.add('has-activity-col');
+      lucide.createIcons();
+    });
+    if (reopenBtn) reopenBtn.style.display = 'none';
+  } else {
+    app.classList.remove('has-activity-col');
+    if (reopenBtn) reopenBtn.style.display = '';
+    if (panel) panel.addEventListener('transitionend', function hide() {
+      panel.removeEventListener('transitionend', hide);
+      if (!state.activityPanelOpen) panel.style.display = 'none';
+    });
+  }
+}
+
 function selectPatient(id) {
   state.selectedPatient = id;
   state.selectedEncounterStep = null;
@@ -919,7 +1000,7 @@ function buildFeedCardHtml(pid, item) {
       '<div class="feed-patient-col">' +
         '<div class="feed-person-col">' +
           '<div class="feed-person-patient">' +
-            '<i data-lucide="user" class="icon feed-person-icon" style="width:18px;height:18px;"></i>' +
+            '<i data-lucide="user" class="icon feed-person-icon" style="width:30px;height:30px;"></i>' +
             '<div class="feed-person-headings">' +
               '<span class="feed-person-label">Patient:</span>' +
               '<span class="feed-person-name">' + getPatientName(pid) + '<span class="feed-age-sex">' + ageSex + '</span></span>' +
@@ -1241,15 +1322,23 @@ function renderReasoningInline(r, toolName) {
 // ══════════════════════════════════════════════════════════════
 // RENDERING - Sim Approvals
 // ══════════════════════════════════════════════════════════════
+function updateApprovalBadge() {
+  var total = state.pendingApprovals.length + adminApprovals.length;
+  var badge = document.getElementById('approvalBadge');
+  if (!badge) return;
+  badge.textContent = total;
+  badge.style.display = total > 0 ? '' : 'none';
+  var hasEscalation = state.pendingApprovals.some(function(a) { return a.isEscalation || a.status === 'escalated'; });
+  badge.style.background = hasEscalation ? 'var(--status-danger)' : 'var(--status-warning)';
+}
+
 function renderSimApprovals() {
   var list = document.getElementById('simApprovalList');
   var count = document.getElementById('simApprovalCount');
-  var badge = document.getElementById('approvalBadge');
   var pending = state.pendingApprovals;
   var totalPending = pending.length + adminApprovals.length;
   count.textContent = totalPending + ' pending';
-  badge.textContent = totalPending;
-  badge.style.display = totalPending > 0 ? '' : 'none';
+  updateApprovalBadge();
 
   if (pending.length === 0) {
     list.innerHTML = '<div class="empty-state"><h5>No simulation approvals</h5><p>Actions requiring review will appear here.</p></div>';
@@ -1702,6 +1791,7 @@ function processEvent(pid, evt) {
     showToast('Auto-approved: ' + evt.tool + ' for ' + SIM_PATIENTS[pid].name.split(' ')[1], 'success', 2500);
   } else {
     state.pendingApprovals.push(feedItem);
+    updateApprovalBadge();
     if (isEscalation) {
       state.metrics.escalations++;
       showToast('\u26a0 ESCALATION: ' + SIM_PATIENTS[pid].name, 'danger', 8000);
@@ -1811,6 +1901,7 @@ function setAutonomy(level) {
   if (toAutoApprove.length > 0) showToast('Autonomy \u2192 L' + level + ': ' + toAutoApprove.length + ' action(s) auto-approved', 'info', 3000);
   else showToast('Autonomy set to L' + level, 'info', 2000);
   for (var i = 0; i < 3; i++) checkEncounterCompletion(['thompson','rodriguez','patel'][i]);
+  updateApprovalBadge();
   renderCurrentView();
 }
 
@@ -1973,8 +2064,7 @@ function fetchAdminApprovals() {
     adminApprovals = realApprovals.map(function(a) { a._real = true; return a; });
     if (state.currentView === 'approvals' && !rejectFormOpen) renderAdminApprovals();
     // Update badge count
-    var badge = document.getElementById('approvalBadge');
-    badge.textContent = state.pendingApprovals.length + adminApprovals.length;
+    updateApprovalBadge();
   }).catch(function(){});
 }
 
@@ -2015,8 +2105,7 @@ function adminApproveAction(id) {
   fetch('/api/approvals/' + id + '/approve', {method:'POST'}).catch(function(){});
   adminApprovals = adminApprovals.filter(function(a){ return a.id !== id; });
   renderAdminApprovals();
-  var badge = document.getElementById('approvalBadge');
-  badge.textContent = state.pendingApprovals.length + adminApprovals.length;
+  updateApprovalBadge();
 }
 
 function adminShowRejectForm(id) {
@@ -2540,6 +2629,9 @@ function initDashboard() {
 
   // Initial render
   renderCurrentView();
+
+  // Start loading subtitle cycling (visible behind the welcome modal)
+  startLoadingSubtitle();
 }
 
 function startDemo() {
@@ -2547,6 +2639,8 @@ function startDemo() {
   state.started = true;
   startSimulation();
   showToast('Simulation started \u2014 3 concurrent encounters in progress', 'info', 4000);
+  // Keep loading state visible briefly, then fade out
+  setTimeout(stopLoadingState, 1500);
 }
 
 // Event listeners
