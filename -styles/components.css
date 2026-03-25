@@ -1103,7 +1103,11 @@ select.config-select { padding: var(--space-3) var(--space-5); border: 1px solid
   from { transform: scale(1); }
   to   { transform: scale(1.08); }
 }
-.overlay-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform-origin: center center; animation: overlayPhotoZoom 10s ease-in-out forwards; }
+.overlay-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform-origin: center center; animation: overlayPhotoZoom 10s ease-in-out forwards, overlayPhotoFadeIn 1.2s ease forwards; }
+@keyframes overlayPhotoFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
 
 
 /* ── Modal (admin) ── */
