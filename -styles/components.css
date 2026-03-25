@@ -1508,8 +1508,8 @@ select.config-select { padding: var(--space-3) var(--space-5); border: 1px solid
   pointer-events: none;
 }
 .loading-logo {
-  width: 48px;
-  height: auto;
+  width: 50px;
+  height: 40px;
   animation: loading-pulse 2.4s ease-in-out infinite;
   margin-bottom: var(--space-4);
 }
