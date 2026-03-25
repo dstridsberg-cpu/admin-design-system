@@ -285,6 +285,7 @@ body::after {
   text-decoration: none;
 }
 .nav-right a:hover { color: var(--text-primary); }
+.nav-clinician { font-size: var(--text-md); font-weight: 500; color: var(--text-primary); }
 
 .dropdown-menu {
   position: relative;
