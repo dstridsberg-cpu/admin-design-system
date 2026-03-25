@@ -219,13 +219,43 @@
       </main>
 
       <!-- Activity Panel — 3rd grid column, only visible on feed view -->
-      <aside class="activity-col" id="activityPanel">
+      <aside class="activity-col activity-col--ghost" id="activityPanel">
         <div class="activity-col-header">
           <h2 class="activity-col-heading">Activity</h2>
           <button class="activity-close-btn" title="Hide Activity panel" onclick="toggleActivityPanel()">
             <i data-lucide="panel-right-close" class="icon icon-sm"></i>
           </button>
         </div>
+
+        <!-- Ghost state — shown before simulation starts -->
+        <div class="activity-ghost">
+          <div class="activity-ghost-cards">
+            <div class="activity-ghost-card"><div class="activity-ghost-caption"><div class="ghost-pill" style="width:73px"></div><div class="ghost-square"></div></div><div class="ghost-pill" style="width:114px"></div></div>
+            <div class="activity-ghost-card"><div class="activity-ghost-caption"><div class="ghost-pill" style="width:73px"></div><div class="ghost-square"></div></div><div class="ghost-pill" style="width:114px"></div></div>
+            <div class="activity-ghost-card"><div class="activity-ghost-caption"><div class="ghost-pill" style="width:73px"></div><div class="ghost-square"></div></div><div class="ghost-pill" style="width:114px"></div></div>
+            <div class="activity-ghost-card"><div class="activity-ghost-caption"><div class="ghost-pill" style="width:73px"></div><div class="ghost-square"></div></div><div class="ghost-pill" style="width:114px"></div></div>
+            <div class="activity-ghost-card"><div class="activity-ghost-caption"><div class="ghost-pill" style="width:73px"></div><div class="ghost-square"></div></div><div class="ghost-pill" style="width:114px"></div></div>
+            <div class="activity-ghost-card"><div class="activity-ghost-caption"><div class="ghost-pill" style="width:73px"></div><div class="ghost-square"></div></div><div class="ghost-pill" style="width:114px"></div></div>
+            <div class="activity-ghost-card"><div class="activity-ghost-caption"><div class="ghost-pill" style="width:73px"></div><div class="ghost-square"></div></div><div class="ghost-pill" style="width:114px"></div></div>
+            <div class="activity-ghost-card"><div class="activity-ghost-caption"><div class="ghost-pill" style="width:73px"></div><div class="ghost-square"></div></div><div class="ghost-pill" style="width:114px"></div></div>
+          </div>
+          <div class="activity-ghost-chart">
+            <div class="activity-ghost-chart-left">
+              <img src="https://www.figma.com/api/mcp/asset/c6318b2c-2d7b-4c18-9bfd-cf299ff67cab" alt="" style="display:block;width:100%;height:auto;">
+            </div>
+            <div class="activity-ghost-chart-right">
+              <div class="ghost-pill" style="width:24px"></div>
+              <div class="activity-ghost-legend">
+                <div class="ghost-pill" style="width:37px"></div>
+                <div class="ghost-pill" style="width:59px"></div>
+                <div class="ghost-pill" style="width:40px"></div>
+                <div class="ghost-pill" style="width:54px"></div>
+              </div>
+            </div>
+          </div>
+          <div class="activity-ghost-footer"></div>
+        </div>
+
         <div class="activity-metrics-grid" id="feedActivityMetrics"></div>
         <div class="activity-chart-section">
           <div class="activity-chart-cols">
@@ -454,6 +484,8 @@ function stopLoadingState() {
   if (_loadingSubtitleInterval) { clearInterval(_loadingSubtitleInterval); _loadingSubtitleInterval = null; }
   var ls = document.getElementById('loadingState');
   if (ls) ls.classList.add('hidden');
+  var panel = document.getElementById('activityPanel');
+  if (panel) panel.classList.remove('activity-col--ghost');
 }
 
 // ══════════════════════════════════════════════════════════════
