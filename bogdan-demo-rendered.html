@@ -124,15 +124,8 @@
       <!-- Main Content -->
       <main class="main">
 
-        <!-- Loading / null state — shown before sim starts and briefly after -->
-        <div class="loading-state" id="loadingState">
-          <img class="loading-logo" src="https://www.figma.com/api/mcp/asset/a62fafe5-e418-4c21-8c44-a799e9968276" alt="Admin" onerror="this.src='https://www.figma.com/api/mcp/asset/6358ae29-e7d7-45d7-bf0b-9d8bc29bad11';">
-          <div class="loading-heading">Initiating Consultations</div>
-          <div class="loading-subtitle" id="loadingSubtitle">Connecting to EMR…</div>
-        </div>
-
         <!-- Activity Feed View -->
-        <div class="view active" id="view-feed">
+        <div class="view active view--loading" id="view-feed">
           <div class="view-header">
             <h2>Live Consultations</h2>
             <span class="feed-count-badge" id="feedCountBadge">0</span>
@@ -156,6 +149,12 @@
                 <i data-lucide="panel-right-open" class="icon icon-sm"></i>
               </button>
             </div>
+          </div>
+          <!-- Loading / null state — shown before sim starts and briefly after -->
+          <div class="loading-state" id="loadingState">
+            <img class="loading-logo" src="https://www.figma.com/api/mcp/asset/ecb91f5d-5bba-4fc5-8125-e171937bb5ee" alt="Admin">
+            <div class="loading-heading">Initiating Consultations</div>
+            <div class="loading-subtitle" id="loadingSubtitle">Connecting to EMR…</div>
           </div>
           <div class="feed-list" id="feedList"></div>
         </div>
@@ -486,6 +485,8 @@ function stopLoadingState() {
   if (ls) ls.classList.add('hidden');
   var panel = document.getElementById('activityPanel');
   if (panel) panel.classList.remove('activity-col--ghost');
+  var feed = document.getElementById('view-feed');
+  if (feed) feed.classList.remove('view--loading');
 }
 
 // ══════════════════════════════════════════════════════════════
@@ -1068,7 +1069,7 @@ function renderFeed() {
   var patientIds = Object.keys(latestByPatient);
 
   if (patientIds.length === 0) {
-    list.innerHTML = '<div class="empty-state"><h5>No activity yet</h5><p>Actions will appear as the simulation runs or from live sessions.</p></div>';
+    list.innerHTML = state.started ? '<div class="empty-state"><h5>No activity yet</h5><p>Actions will appear as the simulation runs or from live sessions.</p></div>' : '';
     return;
   }
 

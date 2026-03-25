@@ -496,7 +496,6 @@ body::after {
   overflow-y: auto;
   padding: var(--space-20);
   background: var(--surface-bg);
-  position: relative;
 }
 
 @keyframes pulse {
@@ -1292,6 +1291,8 @@ select.config-select { padding: var(--space-3) var(--space-5); border: 1px solid
 /* ── View control ── */
 .view { display: none; }
 .view.active { display: block; }
+#view-feed.active { display: flex; flex-direction: column; }
+#view-feed.view--loading .view-header { opacity: 0.35; pointer-events: none; }
 .view-header { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-10); }
 #view-feed .view-header { margin-bottom: var(--space-20); }
 .view-header h2 { font-family: var(--brand-font); font-size: var(--text-7xl); font-weight: 300; letter-spacing: -0.64px; line-height: 1.1; }
@@ -1498,14 +1499,13 @@ select.config-select { padding: var(--space-3) var(--space-5); border: 1px solid
 
 /* ── Loading / Null State ── */
 .loading-state {
-  position: absolute;
-  inset: 0;
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  pointer-events: none;
+  min-height: 400px;
 }
 .loading-logo {
   width: 50px;
