@@ -1471,8 +1471,12 @@ select.config-select { padding: var(--space-3) var(--space-5); border: 1px solid
   box-sizing: border-box;
 }
 .activity-ghost-caption { display: flex; flex-direction: column; gap: 11px; }
-.ghost-pill { height: 12px; border-radius: 8px; background: rgba(0,0,0,0.03); flex-shrink: 0; }
-.ghost-square { width: 32px; height: 32px; border-radius: 8px; background: rgba(0,0,0,0.03); flex-shrink: 0; }
+.ghost-pill { height: 12px; border-radius: 8px; background: rgba(0,0,0,0.06); flex-shrink: 0; animation: ghost-pulse 1.8s ease-in-out infinite; }
+.ghost-square { width: 32px; height: 32px; border-radius: 8px; background: rgba(0,0,0,0.06); flex-shrink: 0; animation: ghost-pulse 1.8s ease-in-out infinite; }
+@keyframes ghost-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
 
 .activity-ghost-chart {
   display: flex;
