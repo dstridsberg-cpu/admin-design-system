@@ -1422,7 +1422,7 @@ select.config-select { padding: var(--space-3) var(--space-5); border: 1px solid
   left: calc(-1 * var(--space-20));
   right: -40px;
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='0' y1='25%25' x2='100%25' y2='25%25' stroke='%23e5e7eb' stroke-dasharray='3 3' stroke-width='1'/%3E%3Cline x1='0' y1='50%25' x2='100%25' y2='50%25' stroke='%23e5e7eb' stroke-dasharray='3 3' stroke-width='1'/%3E%3Cline x1='0' y1='75%25' x2='100%25' y2='75%25' stroke='%23e5e7eb' stroke-dasharray='3 3' stroke-width='1'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='0' y1='16.67%25' x2='100%25' y2='16.67%25' stroke='%23e5e7eb' stroke-dasharray='3 3' stroke-width='1'/%3E%3Cline x1='0' y1='33.33%25' x2='100%25' y2='33.33%25' stroke='%23e5e7eb' stroke-dasharray='3 3' stroke-width='1'/%3E%3Cline x1='0' y1='50%25' x2='100%25' y2='50%25' stroke='%23e5e7eb' stroke-dasharray='3 3' stroke-width='1'/%3E%3Cline x1='0' y1='66.67%25' x2='100%25' y2='66.67%25' stroke='%23e5e7eb' stroke-dasharray='3 3' stroke-width='1'/%3E%3Cline x1='0' y1='83.33%25' x2='100%25' y2='83.33%25' stroke='%23e5e7eb' stroke-dasharray='3 3' stroke-width='1'/%3E%3C/svg%3E");
 }
 #tierChart { position: relative; }
 #tierChart::before {
@@ -1430,7 +1430,7 @@ select.config-select { padding: var(--space-3) var(--space-5); border: 1px solid
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background-image: url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='0' y1='25%25' x2='100%25' y2='25%25' stroke='%23e5e7eb' stroke-dasharray='3 3' stroke-width='1'/%3E%3Cline x1='0' y1='50%25' x2='100%25' y2='50%25' stroke='%23e5e7eb' stroke-dasharray='3 3' stroke-width='1'/%3E%3Cline x1='0' y1='75%25' x2='100%25' y2='75%25' stroke='%23e5e7eb' stroke-dasharray='3 3' stroke-width='1'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3E%3Cline x1='0' y1='16.67%25' x2='100%25' y2='16.67%25' stroke='%23e5e7eb' stroke-dasharray='3 3' stroke-width='1'/%3E%3Cline x1='0' y1='33.33%25' x2='100%25' y2='33.33%25' stroke='%23e5e7eb' stroke-dasharray='3 3' stroke-width='1'/%3E%3Cline x1='0' y1='50%25' x2='100%25' y2='50%25' stroke='%23e5e7eb' stroke-dasharray='3 3' stroke-width='1'/%3E%3Cline x1='0' y1='66.67%25' x2='100%25' y2='66.67%25' stroke='%23e5e7eb' stroke-dasharray='3 3' stroke-width='1'/%3E%3Cline x1='0' y1='83.33%25' x2='100%25' y2='83.33%25' stroke='%23e5e7eb' stroke-dasharray='3 3' stroke-width='1'/%3E%3C/svg%3E");
 }
 /* Bars must sit above the gridline ::before */
 .activity-chart-bars > div,
