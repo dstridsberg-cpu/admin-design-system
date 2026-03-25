@@ -1227,22 +1227,25 @@
       <div class="sc-component" id="tokens-icons">
         <div class="sc-component-header">
           <h3 class="sc-component-name">Icons</h3>
-          <span class="sc-component-file">Lucide · --icon-size-* · --icon-stroke</span>
+          <span class="sc-component-file">Lucide · --icon-size-* · --icon-stroke · --icon-stroke-xl</span>
         </div>
 
-        <!-- Sizes -->
+        <!-- Sizes + stroke widths -->
         <div class="sc-variant">
-          <div class="sc-variant-label">Sizes</div>
-          <div class="sc-preview" style="align-items:flex-end;gap:var(--space-12);">
-            {% for label, cls, size, token in [
-              ('sm', 'icon icon-sm', '14px', '--icon-size-sm'),
-              ('md', 'icon',        '16px', '--icon-size-md'),
-              ('lg', 'icon icon-lg','18px', '--icon-size-lg')
+          <div class="sc-variant-label">Sizes &amp; stroke widths</div>
+          <div class="sc-preview" style="align-items:flex-end;gap:var(--space-16);">
+            {% for label, cls, size, size_token, stroke, stroke_token in [
+              ('sm', 'icon icon-sm', '14px', '--icon-size-sm', '2',    '--icon-stroke'),
+              ('md', 'icon',         '16px', '--icon-size-md', '2',    '--icon-stroke'),
+              ('lg', 'icon icon-lg', '18px', '--icon-size-lg', '2',    '--icon-stroke'),
+              ('xl', 'icon icon-xl', '30px', '--icon-size-xl', '1.25', '--icon-stroke-xl'),
             ] %}
-            <div style="display:flex;flex-direction:column;align-items:center;gap:var(--space-4);">
-              <i data-lucide="bell" class="{{ cls }}"></i>
-              <div style="font-family:var(--code-font);font-size:var(--text-xs);color:var(--text-tertiary);">{{ token }}</div>
+            <div style="display:flex;flex-direction:column;align-items:center;gap:var(--space-3);">
+              <i data-lucide="user" class="{{ cls }}"></i>
+              <div style="font-family:var(--code-font);font-size:var(--text-xs);color:var(--text-secondary);">{{ size_token }}</div>
               <div style="font-family:var(--code-font);font-size:var(--text-xs);color:var(--text-tertiary);">{{ size }}</div>
+              <div style="font-family:var(--code-font);font-size:var(--text-xs);color:var(--text-tertiary);">stroke {{ stroke }}</div>
+              <div style="font-family:var(--code-font);font-size:var(--text-2xs);color:var(--text-tertiary);">{{ stroke_token }}</div>
             </div>
             {% endfor %}
           </div>
@@ -1250,7 +1253,7 @@
 
         <!-- Stroke -->
         <div class="sc-variant">
-          <div class="sc-variant-label">Stroke width — <code>--icon-stroke: 2</code></div>
+          <div class="sc-variant-label">Stroke width — <code>--icon-stroke: 2</code> · <code>--icon-stroke-xl: 1.25</code></div>
           <div class="sc-preview" style="gap:var(--space-8);flex-wrap:wrap;">
             {% for name in ['activity','alert-circle','bell','check','chevron-down','chevron-right',
                             'clock','eye','file-text','home','info','lock','log-out','mail',

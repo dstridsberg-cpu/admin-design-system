@@ -124,7 +124,9 @@
   --icon-size-sm:  14px;
   --icon-size-md:  16px;
   --icon-size-lg:  18px;
-  --icon-stroke:   2;
+  --icon-size-xl:  30px;
+  --icon-stroke:      2;     /* sm / md / lg */
+  --icon-stroke-xl:   1.25;  /* xl — thinner at large display size */
 
   /* ── Spacing scale ── */
   --space-0:   0px;
