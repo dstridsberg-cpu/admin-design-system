@@ -635,7 +635,7 @@ body::after {
 }
 .feed-person-patient { display: flex; align-items: flex-end; gap: 10px; }
 .feed-person-icon { flex-shrink: 0; color: var(--text-tertiary); }
-.feed-person-icon svg { stroke-width: 1.25; }
+.feed-person-icon svg { stroke-width: 1; }
 .feed-person-headings { display: flex; flex-direction: column; gap: 4px; }
 .feed-person-label { font-size: var(--text-base-2); font-weight: 300; color: var(--text-secondary); }
 .feed-person-name { font-size: 14px; font-weight: 500; color: var(--text-primary); white-space: nowrap; }
