@@ -1024,7 +1024,7 @@ select.config-select { padding: var(--space-3) var(--space-5); border: 1px solid
 
 
 /* ── Welcome Overlay ── */
-.overlay { position: fixed; inset: 0; background: transparent; z-index: 2000; display: flex; align-items: center; justify-content: center; }
+.overlay { position: fixed; inset: 0; background: var(--surface-overlay); z-index: 2000; display: flex; align-items: center; justify-content: center; }
 .overlay.hidden { display: none; }
 .overlay-card {
   background: var(--surface-primary);
