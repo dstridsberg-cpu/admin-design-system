@@ -124,6 +124,12 @@
       <!-- Main Content -->
       <main class="main">
 
+        <!-- Loading / null state — shown before sim starts and briefly after -->
+        <div class="loading-state" id="loadingState">
+          <img class="loading-logo" src="https://www.figma.com/api/mcp/asset/a62fafe5-e418-4c21-8c44-a799e9968276" alt="Admin" width="40" height="50" onerror="this.src='https://www.figma.com/api/mcp/asset/6358ae29-e7d7-45d7-bf0b-9d8bc29bad11';this.width=48;this.height=38;">
+          <div class="loading-heading">Initiating Consultations</div>
+          <div class="loading-subtitle" id="loadingSubtitle">Connecting to EMR…</div>
+        </div>
 
         <!-- Activity Feed View -->
         <div class="view active" id="view-feed">
@@ -150,12 +156,6 @@
                 <i data-lucide="panel-right-open" class="icon icon-sm"></i>
               </button>
             </div>
-          </div>
-          <!-- Loading / null state — shown before sim starts and briefly after -->
-          <div class="loading-state" id="loadingState">
-            <img class="loading-logo" src="https://www.figma.com/api/mcp/asset/a62fafe5-e418-4c21-8c44-a799e9968276" alt="Admin" width="40" height="50">
-            <div class="loading-heading">Initiating Consultations</div>
-            <div class="loading-subtitle" id="loadingSubtitle">Connecting to EMR…</div>
           </div>
           <div class="feed-list" id="feedList"></div>
         </div>

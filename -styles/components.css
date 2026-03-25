@@ -496,6 +496,7 @@ body::after {
   overflow-y: auto;
   padding: var(--space-20);
   background: var(--surface-bg);
+  position: relative;
 }
 
 @keyframes pulse {
@@ -1023,7 +1024,7 @@ select.config-select { padding: var(--space-3) var(--space-5); border: 1px solid
 
 
 /* ── Welcome Overlay ── */
-.overlay { position: fixed; inset: 0; background: var(--surface-overlay); z-index: 2000; display: flex; align-items: center; justify-content: center; }
+.overlay { position: fixed; inset: 0; background: transparent; z-index: 2000; display: flex; align-items: center; justify-content: center; }
 .overlay.hidden { display: none; }
 .overlay-card {
   background: var(--surface-primary);
@@ -1033,7 +1034,7 @@ select.config-select { padding: var(--space-3) var(--space-5); border: 1px solid
   max-width: 1060px;
   width: 92%;
   height: 580px;
-  box-shadow: 0px 20px 60px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 32px 80px 0px rgba(0,0,0,0.22), 0 0 0 1px rgba(0,0,0,0.06);
   display: flex;
   flex-direction: row;
 }
@@ -1445,13 +1446,14 @@ select.config-select { padding: var(--space-3) var(--space-5); border: 1px solid
 
 /* ── Loading / Null State ── */
 .loading-state {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex: 1;
-  min-height: 400px;
   gap: var(--space-2);
+  pointer-events: none;
 }
 .loading-logo {
   animation: loading-pulse 2.4s ease-in-out infinite;
