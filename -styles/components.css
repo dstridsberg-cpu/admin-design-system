@@ -1291,7 +1291,6 @@ select.config-select { padding: var(--space-3) var(--space-5); border: 1px solid
 /* ── View control ── */
 .view { display: none; }
 .view.active { display: block; }
-#view-feed.active { display: flex; flex-direction: column; }
 #view-feed.view--loading .view-header { opacity: 0.35; pointer-events: none; }
 .view-header { display: flex; align-items: center; gap: var(--space-4); margin-bottom: var(--space-10); }
 #view-feed .view-header { margin-bottom: var(--space-20); }
@@ -1499,14 +1498,19 @@ select.config-select { padding: var(--space-3) var(--space-5); border: 1px solid
 
 /* ── Loading / Null State ── */
 .loading-state {
-  flex: 1;
+  position: fixed;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: var(--space-2);
-  min-height: 400px;
+  pointer-events: none;
+  z-index: 10;
+  transition: opacity 0.4s ease;
 }
+.loading-state.fading { opacity: 0; }
+#view-feed.view--loading #feedList { display: none; }
 .loading-logo {
   width: 50px;
   height: 40px;

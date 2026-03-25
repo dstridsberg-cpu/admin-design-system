@@ -482,11 +482,16 @@ function startLoadingSubtitle() {
 function stopLoadingState() {
   if (_loadingSubtitleInterval) { clearInterval(_loadingSubtitleInterval); _loadingSubtitleInterval = null; }
   var ls = document.getElementById('loadingState');
-  if (ls) ls.classList.add('hidden');
-  var panel = document.getElementById('activityPanel');
-  if (panel) panel.classList.remove('activity-col--ghost');
-  var feed = document.getElementById('view-feed');
-  if (feed) feed.classList.remove('view--loading');
+  if (!ls) return;
+  ls.classList.add('fading');
+  ls.addEventListener('transitionend', function onFaded() {
+    ls.removeEventListener('transitionend', onFaded);
+    ls.classList.add('hidden');
+    var panel = document.getElementById('activityPanel');
+    if (panel) panel.classList.remove('activity-col--ghost');
+    var feed = document.getElementById('view-feed');
+    if (feed) feed.classList.remove('view--loading');
+  });
 }
 
 // ══════════════════════════════════════════════════════════════
