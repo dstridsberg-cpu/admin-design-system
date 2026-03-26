@@ -1,91 +1,174 @@
 {#
   sim_approval_card(item_id, patient_name, tool, tier, urgency, description,
-                    confidence, sla_display, sla_class, escalation_html)
-  admin_approval_card(item_id, patient_id, patient_name, action, tier,
-                      urgency, context, is_real)
+                    confidence, sla_display, sla_class, is_escalation,
+                    age_sex, chief, reasoning, vitals)
+  admin_approval_card(item_id, patient_name, action, tier, urgency,
+                      context, confidence, sla_display, sla_class)
   ─────────────────────────────────────────────────────────────
-  Two variants of approval card:
+  Layout: agent col (left 50%) · patient col (right 50%).
+  Agent col: "Agent:" label → title + reasoning → confidence badge.
+  Patient col: person info (border-right) · vitals 2×2 grid.
+  Buttons span full card width as a footer strip with SLA right-aligned.
 
-  sim_approval_card — simulation queue card:
+  sim_approval_card:
     item_id       (str)   Unique id for JS action callbacks.
     patient_name  (str)   Full patient name.
-    tool          (str)   Tool identifier.
+    tool          (str)   Tool identifier shown as inline text.
     tier          (int)   Risk tier 1–4.
     urgency       (str)   'routine' | 'urgent' | 'emergent'
-    description   (str)   Human-readable action text.
+    description   (str)   Human-readable proposed action text.
     confidence    (float) 0.0–1.0
     sla_display   (str)   Pre-formatted SLA countdown (e.g. '14:32').
     sla_class     (str)   'sla-ok' | 'sla-warning' | 'sla-critical'
-    is_escalation (bool)  Shows Take Over button instead of Reject.
-    escalation_html (str) Pre-rendered escalation alert HTML.
+    is_escalation (bool)  Adds Escalation banner; shows Take Over button.
+    age_sex       (str)   Age/sex suffix, e.g. ', 34M'.
+    chief         (str)   Chief complaint shown in patient col.
+    reasoning     (str)   Agent rationale shown below action title.
+    vitals        (dict)  Keys: temp, hr, bp, spo2.
 
-  admin_approval_card — live API approval card:
+  admin_approval_card:
     item_id       (str)   Unique id.
-    patient_id    (str)   Short patient ID (e.g. 'PT-1847').
     patient_name  (str)   Full name.
-    action        (str)   Action string.
+    action        (str)   Proposed action text.
     tier          (str)   'T1'–'T4'
     urgency       (str)   'routine' | 'urgent' | 'emergent'
-    context       (str)   Clinical context text.
-    is_real       (bool)  Marks card as real (vs simulated).
+    context       (str)   Clinical context shown below action title.
+    confidence    (float) 0.0–1.0
+    sla_display   (str)   Pre-formatted SLA countdown.
+    sla_class     (str)   'sla-ok' | 'sla-warning' | 'sla-critical'
+
+  CSS classes: sim-approval-item · tier-border-t{n} · approval-item-top
+               approval-action-col · approval-col-header · approval-action-texts
+               approval-action-title · approval-buttons · approval-sla
+               approval-patient-col · approval-escalation-banner
+               feed-person-col · feed-person-patient · feed-person-headings
+               feed-person-label · feed-person-name · feed-age-sex · feed-chief
+               feed-agent-reasoning · feed-vitals · feed-vital
+               feed-vital-label · feed-vital-value
+               feed-inline-badge · feed-inline-confidence
   ─────────────────────────────────────────────────────────────
 #}
 {% from 'components/atoms/badge.html' import badge %}
 {% from 'components/atoms/button.html' import button %}
-{% from 'components/atoms/code_label.html' import code_label %}
 
 {% macro sim_approval_card(item_id, patient_name, tool, tier, urgency,
                             description, confidence, sla_display='',
                             sla_class='sla-ok', is_escalation=false,
-                            escalation_html='') %}
+                            age_sex='', chief='', reasoning='', vitals={},
+                            escalation_title='') %}
 <div class="sim-approval-item tier-border-t{{ tier }}">
-  <div class="sim-approval-header">
-    <div>
-      {{ badge(urgency | upper, urgency) }}
-      {{ badge('T' ~ tier, 't' ~ tier) }}
-      {{ code_label(tool) }}
-    </div>
-    {%- if sla_display %}
-    <span class="sla-timer {{ sla_class }}">SLA: {{ sla_display }}</span>
-    {%- endif %}
+  {%- if is_escalation %}
+  <div class="approval-escalation-banner">
+    <i data-lucide="alert-circle" class="icon"></i>
+    <span class="approval-escalation-banner-text">{{ escalation_title if escalation_title else 'Escalation' }}</span>
   </div>
-  <div class="sim-approval-body">
-    <div class="sim-approval-patient">{{ patient_name }}</div>
-    <div class="sim-approval-action">{{ description }}</div>
-    {%- if escalation_html %}{{ escalation_html | safe }}{% endif %}
-    <div style="margin-top:var(--space-3);font-size:var(--text-sm);color:var(--text-secondary);">
-      Confidence: {{ (confidence * 100) | int }}%
+  {%- endif %}
+  <div class="approval-item-top">
+    <div class="approval-action-col">
+      <div class="approval-agent-text">
+        <span class="approval-col-header">Agent:</span>
+        <div class="approval-action-texts">
+          <div class="approval-action-heading">
+            <span class="approval-action-title">{{ description }}</span>
+            <div style="display:flex;gap:var(--space-2);align-items:center;flex-wrap:wrap;">
+              {{ badge(urgency | capitalize, urgency) }}
+              <span class="feed-inline-badge feed-inline-confidence">Confidence {{ (confidence * 100) | int }}%</span>
+            </div>
+          </div>
+          {%- if reasoning %}
+          <p class="feed-agent-reasoning">{{ reasoning }}</p>
+          {%- endif %}
+        </div>
+      </div>
+    </div>
+    <div class="approval-patient-col">
+      <div class="feed-person-col">
+        <div class="feed-person-patient">
+          <i data-lucide="user" class="icon icon-xl feed-person-icon"></i>
+          <div class="feed-person-headings">
+            <span class="feed-person-label">Patient:</span>
+            <span class="feed-person-name">{{ patient_name }}{%- if age_sex %}<span class="feed-age-sex">{{ age_sex }}</span>{% endif %}</span>
+          </div>
+        </div>
+        {%- if chief %}<p class="feed-chief">{{ chief }}</p>{% endif %}
+      </div>
+      <div class="feed-vitals">
+        {%- if vitals %}
+        <div class="feed-vital"><span class="feed-vital-label">°C:</span><span class="feed-vital-value">{{ vitals.temp | default('—') }}</span></div>
+        <div class="feed-vital"><span class="feed-vital-label">HR:</span><span class="feed-vital-value">{{ vitals.hr | default('—') }}</span></div>
+        <div class="feed-vital"><span class="feed-vital-label">BP:</span><span class="feed-vital-value">{{ vitals.bp | default('—') }}</span></div>
+        <div class="feed-vital"><span class="feed-vital-label">SpO2:</span><span class="feed-vital-value">{{ vitals.spo2 | default('—') }}</span></div>
+        {%- else %}
+        <div class="feed-vital" style="border:none;"><span class="feed-vital-label" style="color:var(--text-tertiary);">No vitals</span></div>
+        {%- endif %}
+      </div>
     </div>
   </div>
-  <div class="sim-approval-actions" id="sim-actions-{{ item_id }}">
-    {{ button('Approve', 'success', 'sm', 'simApproveAction(\'' ~ item_id ~ '\')') }}
+  <div class="approval-buttons" id="sim-actions-{{ item_id }}">
+    <button class="btn btn-outline btn-icon" onclick="simApproveAction('{{ item_id }}')">
+      <i data-lucide="check" class="icon icon-sm" style="color:var(--status-success);"></i>Approve
+    </button>
     {%- if is_escalation %}
-    {{ button('Take Over', 'primary', 'sm', 'takeOverEncounter(\'' ~ item_id ~ '\')') }}
+    <button class="btn btn-outline btn-icon" onclick="takeOverEncounter('{{ item_id }}')">
+      <i data-lucide="message-square" class="icon icon-sm" style="color:var(--text-secondary);"></i>Take Over
+    </button>
     {%- else %}
-    {{ button('Reject', 'warning', 'sm', 'simShowRejectForm(\'' ~ item_id ~ '\')') }}
+    <button class="btn btn-outline btn-icon" onclick="simShowRejectForm('{{ item_id }}')">
+      <i data-lucide="x" class="icon icon-sm" style="color:var(--status-danger);"></i>Reject
+    </button>
+    {%- endif %}
+    {%- if sla_display %}
+    <span class="approval-sla">SLA: {{ sla_display }}</span>
     {%- endif %}
   </div>
 </div>
 {% endmacro %}
 
-{% macro admin_approval_card(item_id, patient_id, patient_name, action, tier,
-                              urgency, context, is_real=false) %}
-<div class="approval-item{{ ' real-approval' if is_real }} tier-border-{{ tier | lower }}">
-  <div class="approval-content">
-    <div class="approval-patient">
-      <span class="approval-patient-id">{{ patient_id }}</span>
-      <span class="approval-patient-name">{{ patient_name }}</span>
+{% macro admin_approval_card(item_id, patient_name, action, tier,
+                              urgency, context='', confidence=0.85,
+                              sla_display='', sla_class='sla-ok') %}
+<div class="sim-approval-item tier-border-{{ tier | lower }}">
+  <div class="approval-item-top">
+    <div class="approval-action-col">
+      <div class="approval-agent-text">
+        <span class="approval-col-header">Agent:</span>
+        <div class="approval-action-texts">
+          <div class="approval-action-heading">
+            <span class="approval-action-title">{{ action }}</span>
+            <div style="display:flex;gap:var(--space-2);align-items:center;flex-wrap:wrap;">
+              {{ badge(urgency | capitalize, urgency) }}
+              {{ badge(tier, 't' ~ tier[1]) }}
+              <span class="feed-inline-badge feed-inline-confidence">Confidence {{ (confidence * 100) | int }}%</span>
+            </div>
+          </div>
+          {%- if context %}
+          <p class="feed-agent-reasoning">{{ context }}</p>
+          {%- endif %}
+        </div>
+      </div>
     </div>
-    <div class="approval-action">{{ action }}</div>
-    <div class="approval-reason">{{ context }}</div>
-    <div class="approval-meta">
-      {{ badge(tier, 't' ~ tier[1]) }}
-      {{ badge(urgency | upper, urgency) }}
+    <div class="approval-patient-col">
+      <div class="feed-person-col">
+        <div class="feed-person-patient">
+          <i data-lucide="user" class="icon icon-xl feed-person-icon"></i>
+          <div class="feed-person-headings">
+            <span class="feed-person-label">Patient:</span>
+            <span class="feed-person-name">{{ patient_name }}</span>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-  <div class="approval-actions">
-    {{ button('Approve', 'success', 'sm', 'approveAdminAction(\'' ~ item_id ~ '\')') }}
-    {{ button('Reject', 'danger', 'sm', 'rejectAdminAction(\'' ~ item_id ~ '\')') }}
+  <div class="approval-buttons" id="admin-actions-{{ item_id }}">
+    <button class="btn btn-outline btn-icon" onclick="adminApproveAction('{{ item_id }}')">
+      <i data-lucide="check" class="icon icon-sm" style="color:var(--status-success);"></i>Approve
+    </button>
+    <button class="btn btn-outline btn-icon" onclick="adminShowRejectForm('{{ item_id }}')">
+      <i data-lucide="x" class="icon icon-sm" style="color:var(--status-danger);"></i>Reject
+    </button>
+    {%- if sla_display %}
+    <span class="approval-sla">SLA: {{ sla_display }}</span>
+    {%- endif %}
   </div>
 </div>
 {% endmacro %}

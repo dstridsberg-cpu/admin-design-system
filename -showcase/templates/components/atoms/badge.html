@@ -8,7 +8,8 @@
     variant      (str)  Visual style. One of:
                           tier values  : 't1' | 't2' | 't3' | 't4'
                           status       : 'success' | 'danger' | 'info' | 'muted'
-                          nav counter  : 'nav'            → .nav-badge (red dot)
+                          count        : 'count'          → .count-badge (red numeric counter)
+                          count-neutral: 'count-neutral'  → .count-badge .count-badge--neutral (grey bordered counter)
                           live session : 'live'           → .live-badge with animated dot
                           urgency      : 'routine' | 'urgent' | 'emergent'
                           autonomy     : 'l0'|'l1'|'l2'|'l3'|'l4'
@@ -24,7 +25,8 @@
     'danger'   → badge badge-danger
     'info'     → badge badge-info
     'muted'    → badge badge-muted
-    'nav'      → nav-badge
+    'count'         → count-badge
+    'count-neutral' → count-badge count-badge--neutral
     'live'     → live-badge  (prepends animated <span class="live-dot">)
     'routine'  → urgency-badge urgency-routine
     'urgent'   → urgency-badge urgency-urgent
@@ -36,8 +38,10 @@
   {%- set id_attr = ' id="' ~ id ~ '"' if id else '' -%}
   {%- if variant == 'live' -%}
     <span class="live-badge{{ ' ' ~ extra_class if extra_class }}"{{ id_attr }}><span class="live-dot"></span>{{ label }}</span>
-  {%- elif variant == 'nav' -%}
-    <span class="nav-badge{{ ' ' ~ extra_class if extra_class }}"{{ id_attr }}>{{ label }}</span>
+  {%- elif variant == 'count' -%}
+    <span class="count-badge{{ ' ' ~ extra_class if extra_class }}"{{ id_attr }}>{{ label }}</span>
+  {%- elif variant == 'count-neutral' -%}
+    <span class="count-badge count-badge--neutral{{ ' ' ~ extra_class if extra_class }}"{{ id_attr }}>{{ label }}</span>
   {%- elif variant in ('routine', 'urgent', 'emergent') -%}
     <span class="urgency-badge urgency-{{ variant }}{{ ' ' ~ extra_class if extra_class }}"{{ id_attr }}>{{ label }}</span>
   {%- elif variant in ('l0', 'l1', 'l2', 'l3', 'l4') -%}

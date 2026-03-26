@@ -1,0 +1,26 @@
+{#
+  view_header(title, count_id='', extra_html='')
+  ─────────────────────────────────────────────────────────────
+  Standard page-level header used across all main views.
+
+  Parameters:
+    title       (str)  Page heading text. Required.
+    count_id    (str)  If given, renders a .view-count badge with this HTML id
+                       so JS can update it (e.g. id="simApprovalCount").
+    extra_html  (str)  Optional raw HTML appended after the count (e.g. a
+                       view-switcher control). Injected with | safe.
+
+  CSS classes: view-header · view-count
+  ─────────────────────────────────────────────────────────────
+#}
+{% macro view_header(title, count_id='', extra_html='') %}
+<div class="view-header">
+  <h2>{{ title }}</h2>
+  {%- if count_id %}
+  <span class="view-count" id="{{ count_id }}"></span>
+  {%- endif %}
+  {%- if extra_html %}
+  {{ extra_html | safe }}
+  {%- endif %}
+</div>
+{% endmacro %}

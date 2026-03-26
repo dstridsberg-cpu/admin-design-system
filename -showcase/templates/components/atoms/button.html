@@ -22,10 +22,11 @@
 {% macro button(label, variant='primary', size='', onclick='', type='button',
                 id='', extra_class='', disabled=false, icon_html='') %}
   {%- set size_cls = ' btn-' ~ size if size else '' -%}
+  {%- set icon_cls = ' btn-icon' if icon_html else '' -%}
   {%- set id_attr = ' id="' ~ id ~ '"' if id else '' -%}
   {%- set onclick_attr = ' onclick="' ~ onclick ~ '"' if onclick else '' -%}
   {%- set disabled_attr = ' disabled' if disabled else '' -%}
-  <button class="btn btn-{{ variant }}{{ size_cls }}{{ ' ' ~ extra_class if extra_class }}"
+  <button class="btn btn-{{ variant }}{{ size_cls }}{{ icon_cls }}{{ ' ' ~ extra_class if extra_class }}"
           type="{{ type }}"{{ id_attr }}{{ onclick_attr }}{{ disabled_attr }}>
     {%- if icon_html %}{{ icon_html | safe }}{% endif -%}
     {{ label }}

@@ -34,16 +34,16 @@
   {%- if icon_svg %}{{ icon_svg | safe }}{% endif -%}
   {{ label }}
   {%- if badge_count is defined and badge_id %}
-  <span class="nav-badge" id="{{ badge_id }}"
+  <span class="count-badge" id="{{ badge_id }}"
         style="{{ 'display:none' if badge_count == 0 }}">{{ badge_count }}</span>
   {%- endif %}
 </div>
 {% endmacro %}
 
-{% macro encounter_nav_item(label, onclick='', dot_state='active') %}
+{% macro encounter_nav_item(label, suffix='', onclick='', dot_state='active') %}
 <div class="encounter-nav-item"
      {{ 'onclick="' ~ onclick ~ '"' if onclick | safe }}>
   <span class="encounter-dot{{ ' encounter-dot--urgent' if dot_state == 'danger' }}"></span>
-  {{ label }}
+  <span>{{ label }}{%- if suffix %}<span class="encounter-nav-suffix">{{ suffix }}</span>{%- endif %}</span>
 </div>
 {% endmacro %}

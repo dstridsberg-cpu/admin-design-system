@@ -1,0 +1,83 @@
+{#
+  side_panel(title, panel_id, toggle_fn, is_ghost, extra_classes)
+  ─────────────────────────────────────────────────────────────
+  Right-hand collapsible panel used for both the Activity feed
+  column and the Approval Timeline column. Shares all CSS under
+  .activity-col.
+
+  Parameters:
+    title         (str)   Heading text shown in the panel header.
+    panel_id      (str)   HTML id applied to the <aside> element.
+    toggle_fn     (str)   JS function name called by the close button.
+    is_ghost      (bool)  If true, adds .activity-col--ghost so the
+                          ghost skeleton shows and body is hidden.
+                          Default false.
+    extra_classes (str)   Additional CSS classes on the <aside>.
+
+  Slots (caller block):
+    The macro uses Jinja2 caller() for the panel body. Place any
+    content between {% call side_panel(...) %} … {% endcall %}.
+    This renders inside .activity-col-body (scrollable area below
+    the header). For a pure timeline (no metrics/chart), render
+    .approval-timeline directly inside the caller block instead of
+    .activity-col-body.
+
+  CSS classes:  activity-col · activity-col--ghost · activity-col-header
+                activity-col-heading · activity-close-btn · activity-col-body
+                activity-ghost · activity-ghost-cards · activity-ghost-card
+                activity-ghost-chart · activity-ghost-footer
+
+  Behaviour notes:
+    • Header is always pinned (flex-shrink: 0).
+    • .activity-col-body is overflow-y: auto — scrolls on short windows.
+    • Ghost skeleton auto-hides when .activity-col--ghost is absent.
+    • Panel is shown/hidden by toggling .has-activity-col on .app and
+      setting display:none on the <aside> via JS (toggleActivityPanel).
+  ─────────────────────────────────────────────────────────────
+#}
+{% macro side_panel(title, panel_id='activityPanel', toggle_fn='toggleActivityPanel()',
+                    is_ghost=false, extra_classes='') %}
+<aside class="activity-col{{ ' activity-col--ghost' if is_ghost }}{{ (' ' ~ extra_classes) if extra_classes }}" id="{{ panel_id }}">
+  <div class="activity-col-header">
+    <h2 class="activity-col-heading">{{ title }}</h2>
+    <button class="activity-close-btn" title="Hide {{ title }} panel" onclick="{{ toggle_fn }}">
+      <i data-lucide="panel-right-close" class="icon icon-sm"></i>
+    </button>
+  </div>
+
+  <!-- Ghost preloader — visible only when .activity-col--ghost is present -->
+  <div class="activity-ghost">
+    <div class="activity-ghost-cards">
+      {%- for _ in range(8) %}
+      <div class="activity-ghost-card">
+        <div class="activity-ghost-caption">
+          <div class="ghost-pill" style="width:73px"></div>
+          <div class="ghost-square"></div>
+        </div>
+        <div class="ghost-pill" style="width:114px"></div>
+      </div>
+      {%- endfor %}
+    </div>
+    <div class="activity-ghost-chart">
+      <div class="activity-ghost-chart-left">
+        <img src="/static/ghost-chart.png" alt="" style="display:block;width:100%;height:auto;">
+      </div>
+      <div class="activity-ghost-chart-right">
+        <div class="ghost-pill" style="width:24px"></div>
+        <div class="activity-ghost-legend">
+          <div class="ghost-pill" style="width:37px"></div>
+          <div class="ghost-pill" style="width:59px"></div>
+          <div class="ghost-pill" style="width:40px"></div>
+          <div class="ghost-pill" style="width:54px"></div>
+        </div>
+      </div>
+    </div>
+    <div class="activity-ghost-footer"></div>
+  </div>
+
+  <!-- Body — scrollable, hidden during ghost state -->
+  <div class="activity-col-body">
+    {{ caller() }}
+  </div>
+</aside>
+{% endmacro %}

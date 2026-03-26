@@ -239,7 +239,7 @@
   /* ── Status: Success / Routine ── */
   --status-success:        var(--green-500);
   --status-success-hover:  var(--green-600);
-  --status-success-bg:     var(--green-100);
+  --status-success-bg:     #e7fbf4;
   --status-success-text:   var(--green-800);
 
   /* ── Status: Warning / Attention ── */
@@ -297,6 +297,7 @@
   --sidebar-width:    240px;
   --card-padding:     16px;
   --card-padding-lg:  18px;
+  --card-gap:         var(--space-8);  /* 16px – spacing between stacked cards / feed items */
 
   /* ── Component radii (semantic) ── */
   --card-radius:      var(--radius-lg);       /* 8px - main cards */
@@ -374,8 +375,17 @@ body.dark {
 
   --status-danger:        #c45050;
   --status-danger-hover:  #d06060;
-  --status-danger-bg:     rgba(160,40,40,0.06);
+  --status-danger-bg:     rgba(160,40,40,0.28);
   --status-danger-text:   #c45050;
+
+  --tier-1-bg:            rgba(46,107,74,0.28);
+  --tier-1-text:          #4aaa7a;
+  --tier-2-bg:            rgba(140,96,14,0.28);
+  --tier-2-text:          #d4902a;
+  --tier-3-bg:            rgba(160,40,40,0.28);
+  --tier-3-text:          #c45050;
+  --tier-4-bg:            rgba(160,40,40,0.28);
+  --tier-4-text:          #c45050;
 
   --card-shadow:      none;
   --card-shadow-hover: none;

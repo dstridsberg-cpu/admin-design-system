@@ -17,15 +17,16 @@
   IDs set by children: agentStatus, statusText, pauseBtn, demoControlsBtn, demoControlsPanel, autonomyBtns
   ─────────────────────────────────────────────────────────────
 #}
+{% from 'components/atoms/brand.html' import brandmark, wordmark %}
 {% from 'components/atoms/toggle_pill_group.html' import autonomy_switcher, speed_control %}
 {% from 'components/molecules/dropdown_menu.html' import dropdown_menu %}
 
 {% macro top_bar(active_autonomy=2, active_speed='1', app_title='Consultations', company='Company A') %}
 <header class="top-nav">
   <div class="nav-brand">
-    <img class="nav-logo" src="https://www.figma.com/api/mcp/asset/6358ae29-e7d7-45d7-bf0b-9d8bc29bad11" alt="Admin" width="24" height="19">
+    <span class="nav-logo">{{ brandmark(24, 19) }}</span>
     <div class="nav-brand-text">
-      <img class="nav-wordmark" src="https://www.figma.com/api/mcp/asset/ea685a85-b46c-493f-bf45-cb878fe05cd1" alt="admin." width="54" height="10">
+      <span class="nav-wordmark">{{ wordmark(54, 10) }}</span>
       <span class="nav-app-title">{{ app_title }}</span>
     </div>
   </div>
