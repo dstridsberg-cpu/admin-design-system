@@ -49,9 +49,9 @@ The macro handles all the internal structure. Changing how the top bar looks mea
 
 This architecture means the design system can grow into a real front-end framework for Admin's UI: new screens are assembled from existing macros, styled by existing tokens, with no redundant code.
 
-## Where are we as of 2026-03-24?
+## Where are we as of 2026-03-26?
 
-The foundation is in place. The token system is mature, the component library covers the core UI patterns, and the showcase documents both. The demo is a credible, interactive representation of the actual product — including a live Activity column, animated metrics, and a working bar chart.
+The foundation is in place. The token system is mature, the component library covers the core UI patterns, and the showcase documents both. The demo is a credible, interactive representation of the actual product — including a live Activity column, animated metrics, a working bar chart, and full light/dark mode support.
 
 ### Tokens
 A full token system exists across: color (primitives + semantic), typography, spacing, radius, shadows, icon sizing, and component-level aliases. Colors follow a 3-step severity scale (green → amber → red) and an 8-step autonomy scale (L0–L4).
@@ -68,20 +68,25 @@ A full token system exists across: color (primitives + semantic), typography, sp
 - 12 named text styles covering every recurring text role in the interface
 - Heading weight is Medium (500) throughout; Bold has been removed from the system
 
+### Brand assets
+A dedicated `brand.html` atom (`-showcase/templates/components/atoms/brand.html`) provides two macros — `brandmark()` and `wordmark()` — as inline SVGs using `fill="currentColor"`. They adapt to light/dark mode automatically via the parent text color, with no CSS filter hacks or external URLs. Any template importing the macro gets logo updates for free.
+
 ### Components
-The component library covers atoms, molecules, and organisms — badges, buttons, inputs, pills, status indicators, feed items, approval cards, patient cards, nav items, toasts, metric cards, dropdown menus, the top bar, and the sidebar.
+The component library covers atoms, molecules, and organisms — badges, buttons, inputs, pills, status indicators, feed items, approval cards, patient cards, nav items, toasts, metric cards, dropdown menus, the top bar, the sidebar, and the side panel.
 
 The showcase is kept in sync with the demo: components that are no longer used in the demo are removed from the showcase (template file, CSS, nav entry).
 
 ### Demo
 The Supervisor Console demo shows the product working: live agent activity, a patient panel with three concurrent encounters, an approvals queue, analytics, and configuration. It uses the design system's tokens and components directly.
 
-**Key demo features (as of 2026-03-24):**
+**Key demo features (as of 2026-03-26):**
 - **Live Consultations feed** — one card per patient, updated in-place with staggered fade transitions
 - **Activity column** — 476px full-height right panel (CSS grid column 3), visible on the feed view only; shows the same metrics and tier chart as the Analytics page
+- **Reasoning Trace panel** — app-level side panel on the individual patient encounter view; same structure as Activity/Timeline, toggled via reopen button in patient header
 - **Animated metrics** — count-up animation on value changes (integers and percentages); Time card ticks every real second independently via wall-clock tracking
 - **Animated tier bar chart** — `updateTierChart()` helper handles both enter animation (height from 0) and in-place updates (CSS `transition: height 0.5s ease-out`)
 - **Autonomy level switcher** — L0–L4 changes what needs physician approval in real time
+- **Light / Dark mode** — full dark mode support with semantic tokens; switcher on the Configuration page
 
 **Key rendering functions:**
 | Function | Role |
@@ -95,10 +100,9 @@ The Supervisor Console demo shows the product working: live agent activity, a pa
 ### Showcase
 The showcase documents all tokens and components with live rendered output. Served locally at `localhost:5001`.
 
-**Current component counts:** 6 Atoms · 7 Molecules · 3 Organisms
+**Current component counts:** 7 Atoms · 8 Molecules · 4 Organisms
 
 ## What's still missing?
 
 - **Aktiv Grotesk** is not yet loaded from a real font source — the UI currently falls back to system sans-serif. This is the single biggest visual gap.
 - No mobile or responsive work has been done.
-- Dark mode is defined in tokens but not tested in the demo.
