@@ -166,6 +166,7 @@ body::after {
   font-weight: 300;
   color: var(--text-secondary);
   white-space: nowrap;
+  margin-bottom: 4px;
 }
 .company-name {
   font-size: var(--text-md);
