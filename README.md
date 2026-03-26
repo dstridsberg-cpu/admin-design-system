@@ -66,4 +66,5 @@ Use `.icon-sm` or `.icon-lg` CSS classes for size variants.
 | `-showcase/app.py` | Starts the showcase server |
 | `-showcase/templates/showcase.html` | The component showcase page |
 | `-showcase/templates/components/` | Reusable component macros (atoms, molecules, organisms) |
+| `-showcase/templates/components/atoms/brand.html` | Brand macros — `brandmark()` and `wordmark()` as inline SVG, theme-aware via `currentColor` |
 | `-docs/` | Design analysis documents |
